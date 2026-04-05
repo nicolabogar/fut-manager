@@ -1,4 +1,4 @@
-const CACHE = 'futmanager-v1';
+const CACHE = 'futmanager-v3-' + new Date().toISOString().slice(0,10);
 const ARQUIVOS = ['./index.html', './manifest.json'];
 
 self.addEventListener('install', e => {
@@ -7,15 +7,32 @@ self.addEventListener('install', e => {
 });
 
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))));
-  self.clients.claim();
+  e.waitUntil(
+    caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(() => self.clients.claim())
+  );
 });
 
 self.addEventListener('fetch', e => {
-  // Deixa o Firebase e outros requests de rede passarem normalmente
-  if (e.request.url.includes('firebase') || e.request.url.includes('google') || e.request.url.includes('gstatic')) {
+  const url = e.request.url;
+  // Deixa Firebase, Google, CDNs e APIs passarem direto
+  if (url.includes('firebase') || url.includes('google') || url.includes('gstatic') || url.includes('flagcdn')) {
     return;
   }
+  // Network-first para HTML (sempre pega versão nova quando online)
+  if (e.request.mode === 'navigate' || url.endsWith('.html') || url.endsWith('/')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(resp => {
+          const copy = resp.clone();
+          caches.open(CACHE).then(c => c.put(e.request, copy));
+          return resp;
+        })
+        .catch(() => caches.match(e.request).then(c => c || caches.match('./index.html')))
+    );
+    return;
+  }
+  // Cache-first para outros assets estáticos
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => caches.match('./index.html')))
   );
