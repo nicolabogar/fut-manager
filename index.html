@@ -821,34 +821,88 @@ function toast(msg, tipo = 'ok') {
 function fmt(ts) { try { return (ts?.toDate ? ts.toDate() : new Date(ts)).toLocaleDateString('pt-BR'); } catch { return ''; } }
 
 // ─── AUTH ────────────────────────────────────────────────────────────
-// Detecta iPhone/iPad e modo PWA (atalho na tela inicial)
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-const isPWA = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
-const usarRedirect = isIOS || isPWA; // No iPhone/PWA o popup é bloqueado — usa redirect
+// Detecta iPhone/iPad
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+// Detecta se está rodando como PWA instalada (standalone/fullscreen)
+const isPWA = () => {
+  if (typeof window === 'undefined') return false;
+  return window.navigator.standalone === true ||
+         window.matchMedia('(display-mode: standalone)').matches ||
+         window.matchMedia('(display-mode: fullscreen)').matches;
+};
+// Em iOS + PWA, popups são bloqueados — força redirect flow
+const usarRedirect = () => isIOS && isPWA();
 
-// Processa retorno do redirect (caso o usuário já tenha feito login via redirect)
-getRedirectResult(auth).catch(() => {});
+// Processa retorno do redirect (após OAuth voltar)
+// Isso DEVE ser chamado antes de any outro código de auth
+(async () => {
+  try {
+    console.log('[Auth] Verificando redirect result...');
+    const result = await getRedirectResult(auth);
+    if (result && result.user) {
+      // Usuário retornou do OAuth redirect com sucesso
+      console.log('[Auth] ✓ Redirect result: usuário autenticado', result.user.email);
+      // onAuthStateChanged vai processar automaticamente
+    }
+  } catch (e) {
+    // Erros esperados: user cancelled, popup closed, etc
+    const isExpected = e.code === 'auth/cancelled-popup-request' ||
+                       e.code === 'auth/popup-closed-by-user' ||
+                       e.code === 'auth/operation-not-allowed' ||
+                       !e.code; // sem código = provavelmente nenhum resultado pendente
+    if (!isExpected) {
+      console.warn('[Auth] Erro no redirect result:', e.code, e.message);
+    }
+  }
+})();
 
 async function fazerLogin(provider, btnId) {
   const btn = document.getElementById(btnId);
+  if (!btn) return;
   btn.style.opacity = '0.7';
   btn.style.pointerEvents = 'none';
   try {
-    if (usarRedirect) {
+    // Detecta contexto ao fazer login (pode mudar desde o carregamento)
+    const usar_redirect = usarRedirect();
+    console.log(`[Auth] iOS: ${isIOS}, PWA: ${isPWA()}, Redirect: ${usar_redirect}`);
+
+    if (usar_redirect) {
+      console.log('[Auth] Usando signInWithRedirect (iOS/PWA standalone)');
       await signInWithRedirect(auth, provider);
+      // O app retorna com o resultado em onAuthStateChanged
     } else {
+      console.log('[Auth] Usando signInWithPopup (desktop/browser)');
       await signInWithPopup(auth, provider);
     }
   } catch (e) {
-    if (e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
-      await signInWithRedirect(auth, provider);
-    } else if (e.code !== 'auth/cancelled-popup-request') {
-      const el = document.getElementById('login-erro');
-      el.textContent = 'Erro ao entrar. Tente novamente.';
-      el.style.display = 'block';
+    console.error('[Auth] Erro:', e.code, e.message);
+    // Se popup falhou, tenta redirect como fallback
+    if (!usarRedirect() && (e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user')) {
+      try {
+        console.log('[Auth] Popup falhou, tentando redirect como fallback');
+        await signInWithRedirect(auth, provider);
+      } catch (e2) {
+        mostraErro('Erro ao fazer login. Tente novamente.');
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = '';
+      }
+    } else if (e.code !== 'auth/cancelled-popup-request' && e.code !== 'auth/operation-not-allowed') {
+      mostraErro('Erro ao entrar. Tente novamente.');
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = '';
+    } else {
+      // Usuário cancelou
       btn.style.opacity = '1';
       btn.style.pointerEvents = '';
     }
+  }
+}
+
+function mostraErro(msg) {
+  const el = document.getElementById('login-erro');
+  if (el) {
+    el.textContent = msg;
+    el.style.display = 'block';
   }
 }
 
@@ -858,18 +912,28 @@ document.getElementById('btn-apple').addEventListener('click', () => fazerLogin(
 document.getElementById('btn-sair').addEventListener('click', () => signOut(auth));
 
 onAuthStateChanged(auth, async u => {
+  console.log('[Auth] Estado mudou:', u ? `${u.email}` : 'desconectado');
   if (u) {
     usuario = u;
     document.getElementById('login-screen').style.display = 'none';
     const app = document.getElementById('app');
     app.style.display = 'flex';
     if (u.photoURL) { document.getElementById('user-foto').src = u.photoURL; document.getElementById('user-foto').style.display = ''; }
-    await carregarTimes();
-    await carregarDados();
+    try {
+      await carregarTimes();
+      await carregarDados();
+    } catch (e) {
+      console.error('[Auth] Erro ao carregar dados:', e);
+    }
   } else {
     usuario = null;
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
+    // Restaura botões de login para poder tentar novamente
+    const btnLogin = document.getElementById('btn-login');
+    const btnApple = document.getElementById('btn-apple');
+    if (btnLogin) { btnLogin.style.opacity = '1'; btnLogin.style.pointerEvents = ''; }
+    if (btnApple) { btnApple.style.opacity = '1'; btnApple.style.pointerEvents = ''; }
   }
 });
 
