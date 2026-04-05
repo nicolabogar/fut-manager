@@ -128,12 +128,12 @@
       display: flex; z-index: 40;
       padding-bottom: env(safe-area-inset-bottom);
     }
-    .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 4px; cursor: pointer; background: none; border: none; color: var(--text-muted); transition: color 0.2s; gap: 3px; }
-    .nav-btn .nav-ico { font-size: 22px; line-height: 1; transition: transform 0.2s; display: flex; align-items: center; justify-content: center; }
-    .nav-btn .nav-ico svg { display: block; }
-    .nav-btn .nav-lbl { font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
-    .nav-btn.ativo { color: var(--purple); }
-    .nav-btn.ativo .nav-ico { transform: scale(1.1); }
+    .nav-btn { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 8px 2px 10px; cursor: pointer; background: none; border: none; color: var(--text-muted); transition: color 0.2s; gap: 4px; position: relative; }
+    .nav-btn .nav-ico { width: 34px; height: 28px; border-radius: 10px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .nav-btn .nav-ico svg { display: block; width: 19px; height: 19px; }
+    .nav-btn .nav-lbl { font-size: 9px; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+    .nav-btn.ativo { color: #E9D5FF; }
+    .nav-btn.ativo .nav-ico { background: linear-gradient(135deg, rgba(139,92,246,0.35), rgba(6,182,212,0.25)); box-shadow: 0 4px 14px rgba(139,92,246,0.35); }
 
     /* Header */
     #header {
@@ -272,28 +272,28 @@
 
       <!-- Stats -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px;">
-        <div class="stat-card">
+        <div class="stat-card" onclick="irPara('jogadores')" style="cursor:pointer;">
           <div class="stat-num" style="color: var(--green);" id="s-jog">0</div>
           <div class="stat-lbl">Jogadores</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" onclick="irPara('amistosos')" style="cursor:pointer;">
           <div class="stat-num" style="color: var(--cyan);" id="s-ami">0</div>
-          <div class="stat-lbl">Jogos</div>
+          <div class="stat-lbl">Partidas</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" onclick="irPara('campeonatos')" style="cursor:pointer;">
           <div class="stat-num" style="color: var(--yellow);" id="s-cam">0</div>
           <div class="stat-lbl">Campeonatos</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" onclick="irPara('ranking')" style="cursor:pointer;">
           <div class="stat-num" style="color: var(--purple);" id="s-par">0</div>
-          <div class="stat-lbl">Partidas</div>
+          <div class="stat-lbl">Finalizadas</div>
         </div>
       </div>
 
-      <!-- Jogos em aberto -->
+      <!-- Partidas em andamento -->
       <div id="home-abertos-sec" style="display:none;margin-bottom:24px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-          <p class="sec-title">🟢 Jogos em Aberto</p>
+          <p class="sec-title">🟢 Em Andamento</p>
           <button onclick="irPara('amistosos')" style="background:none;border:none;color:var(--purple);font-size:12px;font-weight:700;cursor:pointer;">Ver todos →</button>
         </div>
         <div id="home-abertos"></div>
@@ -325,14 +325,14 @@
       </div>
     </div>
 
-    <!-- ── JOGOS ── -->
+    <!-- ── PARTIDAS ── -->
     <div id="view-amistosos" class="view">
       <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0 20px;">
-        <h2 style="font-size:22px; font-weight:900;">Jogos</h2>
+        <h2 style="font-size:22px; font-weight:900;">Partidas</h2>
         <button class="btn-icon" id="btn-criar-ami">+ Criar</button>
       </div>
       <div id="lista-ami">
-        <p style="color:var(--text-muted); text-align:center; padding:48px 0; font-size:14px;">Nenhum jogo registrado</p>
+        <p style="color:var(--text-muted); text-align:center; padding:48px 0; font-size:14px;">Nenhuma partida registrada</p>
       </div>
     </div>
 
@@ -381,37 +381,37 @@
   <nav id="nav">
     <button class="nav-btn ativo" data-view="home">
       <span class="nav-ico">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5V20a1.5 1.5 0 01-1.5 1.5H4.5A1.5 1.5 0 013 20v-9.5z"/><path d="M9 21.5V14h6v7.5"/></svg>
       </span>
       <span class="nav-lbl">Início</span>
     </button>
     <button class="nav-btn" data-view="jogadores">
       <span class="nav-ico">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20.5v-.5a5 5 0 015-5h2a5 5 0 015 5v.5"/><path d="M16 4a3.5 3.5 0 010 7"/><path d="M21 20.5v-.5a4.8 4.8 0 00-3.5-4.6"/></svg>
       </span>
       <span class="nav-lbl">Jogadores</span>
     </button>
     <button class="nav-btn" data-view="amistosos">
       <span class="nav-ico">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3.5l3.3 3-1.3 4h-4L8.7 6.5z" fill="currentColor" fill-opacity="0.15"/><path d="M12 21l3.3-3M12 21l-3.3-3M21 12l-3-1.7M3 12l3-1.7M15.3 6.5L18 9M8.7 6.5L6 9"/></svg>
       </span>
-      <span class="nav-lbl">Jogos</span>
+      <span class="nav-lbl">Partidas</span>
     </button>
     <button class="nav-btn" data-view="campeonatos">
       <span class="nav-ico">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M17 3H7v8a5 5 0 0010 0V3z"/><path d="M7 5H4a2 2 0 000 4h3"/><path d="M17 5h3a2 2 0 010 4h-3"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M6.5 4h11v5a5.5 5.5 0 01-11 0V4z"/><path d="M6.5 6H4a1.5 1.5 0 000 3h2.5M17.5 6H20a1.5 1.5 0 010 3h-2.5"/></svg>
       </span>
-      <span class="nav-lbl">Campeonatos</span>
+      <span class="nav-lbl">Torneios</span>
     </button>
     <button class="nav-btn" data-view="ranking">
       <span class="nav-ico">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><rect x="5" y="12" width="3.5" height="8" rx="1"/><rect x="10.25" y="7" width="3.5" height="13" rx="1"/><rect x="15.5" y="14" width="3.5" height="6" rx="1"/></svg>
       </span>
       <span class="nav-lbl">Ranking</span>
     </button>
     <button class="nav-btn" data-view="times">
       <span class="nav-ico">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.25C17.25 23.15 21 18.25 21 13V7L12 2z"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l-8 2.5v6c0 5 3.5 9.4 8 10.5 4.5-1.1 8-5.5 8-10.5V5l-8-2.5z"/></svg>
       </span>
       <span class="nav-lbl">Times</span>
     </button>
@@ -618,10 +618,43 @@ const SELECAO_PAIS = {
   'peru':       { pais:'pe',    paisNome:'Peru'         },
 };
 
+// ─── LISTA DE PAÍSES FIFA (para seleções) ────────────────────────────
+const PAISES_FIFA = [
+  {code:'ar',nome:'Argentina'},{code:'br',nome:'Brasil'},{code:'fr',nome:'França'},{code:'de',nome:'Alemanha'},
+  {code:'es',nome:'Espanha'},{code:'gb-eng',nome:'Inglaterra'},{code:'pt',nome:'Portugal'},{code:'it',nome:'Itália'},
+  {code:'nl',nome:'Holanda'},{code:'be',nome:'Bélgica'},{code:'hr',nome:'Croácia'},{code:'uy',nome:'Uruguai'},
+  {code:'co',nome:'Colômbia'},{code:'ma',nome:'Marrocos'},{code:'tr',nome:'Turquia'},{code:'us',nome:'EUA'},
+  {code:'mx',nome:'México'},{code:'at',nome:'Áustria'},{code:'jp',nome:'Japão'},{code:'sn',nome:'Senegal'},
+  {code:'dk',nome:'Dinamarca'},{code:'ch',nome:'Suíça'},{code:'cl',nome:'Chile'},{code:'pl',nome:'Polônia'},
+  {code:'au',nome:'Austrália'},{code:'ng',nome:'Nigéria'},{code:'kr',nome:'Coreia do Sul'},{code:'ec',nome:'Equador'},
+  {code:'gh',nome:'Gana'},{code:'pe',nome:'Peru'},{code:'py',nome:'Paraguai'},{code:'ve',nome:'Venezuela'},
+  {code:'bo',nome:'Bolívia'},{code:'ca',nome:'Canadá'},{code:'cr',nome:'Costa Rica'},{code:'jm',nome:'Jamaica'},
+  {code:'pa',nome:'Panamá'},{code:'hn',nome:'Honduras'},{code:'sa',nome:'Arábia Saudita'},{code:'qa',nome:'Catar'},
+  {code:'ir',nome:'Irã'},{code:'iq',nome:'Iraque'},{code:'ae',nome:'Emirados Árabes'},{code:'jo',nome:'Jordânia'},
+  {code:'cn',nome:'China'},{code:'th',nome:'Tailândia'},{code:'vn',nome:'Vietnã'},{code:'id',nome:'Indonésia'},
+  {code:'ph',nome:'Filipinas'},{code:'nz',nome:'Nova Zelândia'},{code:'eg',nome:'Egito'},{code:'dz',nome:'Argélia'},
+  {code:'tn',nome:'Tunísia'},{code:'ci',nome:'Costa do Marfim'},{code:'cm',nome:'Camarões'},{code:'za',nome:'África do Sul'},
+  {code:'ke',nome:'Quênia'},{code:'ml',nome:'Mali'},{code:'bf',nome:'Burkina Faso'},{code:'gr',nome:'Grécia'},
+  {code:'rs',nome:'Sérvia'},{code:'ro',nome:'Romênia'},{code:'hu',nome:'Hungria'},{code:'cz',nome:'República Tcheca'},
+  {code:'sk',nome:'Eslováquia'},{code:'si',nome:'Eslovênia'},{code:'ua',nome:'Ucrânia'},{code:'ru',nome:'Rússia'},
+  {code:'se',nome:'Suécia'},{code:'no',nome:'Noruega'},{code:'fi',nome:'Finlândia'},{code:'is',nome:'Islândia'},
+  {code:'ie',nome:'Irlanda'},{code:'gb-sct',nome:'Escócia'},{code:'gb-wls',nome:'País de Gales'},{code:'gb-nir',nome:'Irlanda do Norte'},
+  {code:'ba',nome:'Bósnia'},{code:'al',nome:'Albânia'},{code:'me',nome:'Montenegro'},{code:'mk',nome:'Macedônia'},
+  {code:'bg',nome:'Bulgária'},{code:'cy',nome:'Chipre'},{code:'il',nome:'Israel'},{code:'ge',nome:'Geórgia'},
+  {code:'am',nome:'Armênia'},{code:'az',nome:'Azerbaijão'},{code:'uz',nome:'Uzbequistão'},{code:'kz',nome:'Cazaquistão'}
+];
+
+// ─── ICONES SVG (inline, herdam currentColor) ────────────────────────
+const SVG_USER = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 016-6h4a6 6 0 016 6v1"/></svg>`;
+const SVG_USER_CHIP = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,rgba(139,92,246,0.25),rgba(6,182,212,0.25));color:#C7B8FF;flex-shrink:0;">${SVG_USER}</span>`;
+
 // ─── BADGE HELPERS ────────────────────────────────────────────────────
-function flagImg(paisCode, w=24) {
+function flagImg(paisCode, w=20) {
   if (!paisCode) return '';
-  return `<img src="https://flagcdn.com/w${w}/${paisCode}.png" alt="" style="border-radius:3px;vertical-align:middle;" onerror="this.style.display='none'">`;
+  // flagcdn suporta: 20, 40, 80, 160, 320, 640, 1280, 2560
+  const widths = [20,40,80,160,320,640];
+  const ww = widths.find(x => x >= w) || 40;
+  return `<img src="https://flagcdn.com/w${ww}/${paisCode}.png" alt="" loading="lazy" decoding="async" style="border-radius:3px;vertical-align:middle;width:${w}px;height:auto;" onerror="this.style.display='none'">`;
 }
 
 /** Badge de clube: quadrado colorido com abreviação + bandeira + nome do país */
@@ -641,7 +674,7 @@ function badgeSel(timeId, nomeTime) {
   const d = SELECAO_PAIS[timeId] || { pais:'', paisNome: nomeTime||'' };
   return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
     <div style="width:48px;height:36px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.3);">
-      ${d.pais ? `<img src="https://flagcdn.com/w80/${d.pais}.png" alt="${nomeTime}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='🌍'">` : '<span style="font-size:28px;">🌍</span>'}
+      ${d.pais ? `<img src="https://flagcdn.com/w80/${d.pais}.png" alt="${nomeTime}" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:24px;&quot;>🌍</span>'">` : '<span style="font-size:28px;">🌍</span>'}
     </div>
     <span style="font-size:9px;color:var(--text-muted);font-weight:600;white-space:nowrap;">${d.paisNome}</span>
   </div>`;
@@ -854,6 +887,16 @@ async function carregarTimes() {
 
   clubes   = aplicar(CLUBES_DEFAULT, 'clube');
   selecoes = aplicar(SELECOES_DEFAULT, 'selecao');
+
+  // Hidrata TEAM_DATA e SELECAO_PAIS para times customizados adicionados pelo usuário
+  adicionados.forEach(t => {
+    if (t.tipo === 'selecao' && t.bandeira && !SELECAO_PAIS[t.id]) {
+      SELECAO_PAIS[t.id] = { pais: t.bandeira, paisNome: t.paisNome || t.nome };
+    }
+    if (t.tipo === 'clube' && !TEAM_DATA[t.id]) {
+      TEAM_DATA[t.id] = { abrev:(t.nome||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#FFFFFF', pais:t.bandeira||'eu', paisNome:t.paisNome||'' };
+    }
+  });
 }
 
 // ─── CARREGAMENTO GERAL ──────────────────────────────────────────────
@@ -874,12 +917,16 @@ function renderJogadores() {
   if (!jogadores.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhum jogador cadastrado</p>'; return; }
   c.innerHTML = jogadores.map(j => `
     <div class="entity-card" style="margin-bottom:10px;">
-      <div class="avatar" style="font-size:26px;">${j.emoji || '⚽'}</div>
+      <div class="avatar" style="background:linear-gradient(135deg,rgba(139,92,246,0.25),rgba(6,182,212,0.25));display:flex;align-items:center;justify-content:center;">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C7B8FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 016-6h4a6 6 0 016 6v1"/></svg>
+      </div>
       <div style="flex:1;">
         <div style="font-weight:700;font-size:15px;">${j.nome}</div>
-        <div style="color:var(--text-muted);font-size:12px;margin-top:2px;">👤 Jogador</div>
+        <div style="color:var(--text-muted);font-size:12px;margin-top:2px;">Jogador</div>
       </div>
-      <button onclick="excluirJogador('${j.id}','${j.nome.replace(/'/g,'')}')" style="background:rgba(239,68,68,0.12);border:none;color:#FCA5A5;border-radius:10px;padding:8px 12px;cursor:pointer;font-size:13px;">🗑️</button>
+      <button onclick="excluirJogador('${j.id}','${j.nome.replace(/'/g,'')}')" title="Remover" style="background:rgba(239,68,68,0.12);border:none;color:#FCA5A5;border-radius:10px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      </button>
     </div>`).join('');
 }
 
@@ -897,35 +944,23 @@ window.confirmarExcluirJog = async id => {
 };
 
 document.getElementById('btn-add-jog').addEventListener('click', () => {
-  const emojis = ['⚽','🏆','🎯','🔥','⚡','🦁','🐺','🦊','🐻','🦅','🦉','🐯','🦈','🐉','👑','💎','🚀','🌟','🎮','🏅','😎','🤩','💪','🕹️','🏋️','🥊','🎽','🥅','🎪','🃏'];
   modal(`<p class="modal-title">Adicionar Jogador</p>
-    <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">Digite o nome do amigo que vai participar dos jogos</p>
+    <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px;">Digite o nome do amigo que vai participar</p>
     <div style="display:flex;flex-direction:column;gap:14px;">
       <input class="input" id="i-nome" placeholder="Nome completo (ex: Nicola Bogar)" autocomplete="off">
-      <div>
-        <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Escolha um ícone</p>
-        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;">
-          ${emojis.map((e,i) => `<button type="button" onclick="selEmoji('${e}',this)" style="font-size:24px;padding:10px;border-radius:12px;border:none;background:${i===0?'rgba(139,92,246,0.3)':'rgba(255,255,255,0.05)'};cursor:pointer;transition:background 0.15s;" ${i===0?'id="sel-emoji-btn"':''}>${e}</button>`).join('')}
-        </div>
-        <input type="hidden" id="i-emoji" value="${emojis[0]}">
-      </div>
     </div>
     <div style="display:flex;gap:10px;margin-top:20px;">
       <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
       <button class="btn-primary" onclick="salvarJogador()">Adicionar ✓</button>
     </div>`);
+  setTimeout(() => document.getElementById('i-nome')?.focus(), 100);
 });
 
-window.selEmoji = (e, el) => {
-  document.getElementById('i-emoji').value = e;
-  document.querySelectorAll('#modal-body button[type=button]').forEach(b => b.style.background = 'rgba(255,255,255,0.05)');
-  el.style.background = 'rgba(139,92,246,0.3)';
-};
 window.salvarJogador = async () => {
   const nome = document.getElementById('i-nome').value.trim();
   if (!nome) { toast('Digite o nome','erro'); return; }
-  await addDoc(collection(db, 'jogadores'), { nome, emoji: document.getElementById('i-emoji').value, criadoEm: serverTimestamp() });
-  fecharModal(); await carregarJogadores(); atualizarDash(); toast(`${document.getElementById('i-emoji').value} ${nome} adicionado! 🎉`);
+  await addDoc(collection(db, 'jogadores'), { nome, criadoEm: serverTimestamp() });
+  fecharModal(); await carregarJogadores(); atualizarDash(); toast(`${nome} adicionado!`);
 };
 
 // ─── AMISTOSOS ───────────────────────────────────────────────────────
@@ -938,25 +973,45 @@ async function carregarAmistosos() {
 function cardAmistoso(a, compact=false) {
   const temRes = a.resultado != null;
   const diff = temRes ? Math.abs(a.resultado.g1 - a.resultado.g2) : null;
-  const b1 = badgeTime(a.time1?.timeId, a.time1?.nome, a.tipo);
-  const b2 = badgeTime(a.time2?.timeId, a.time2?.nome, a.tipo);
+  const b1 = compact ? badgeTimeCompact(a.time1?.timeId, a.time1?.nome, a.tipo) : badgeTime(a.time1?.timeId, a.time1?.nome, a.tipo);
+  const b2 = compact ? badgeTimeCompact(a.time2?.timeId, a.time2?.nome, a.tipo) : badgeTime(a.time2?.timeId, a.time2?.nome, a.tipo);
   const nomeJogo = `${a.time1?.nome||'?'} vs ${a.time2?.nome||'?'}`;
-  return `<div class="match-card" style="margin-bottom:10px;">
+  return `<div class="match-card" style="margin-bottom:10px;${compact?'padding:12px;':''}">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <span style="font-size:11px;color:var(--text-muted);">${fmt(a.criadoEm)} · ${a.tipo === 'selecoes' ? '🌍 Seleções' : '⚽ Clubes'}</span>
       <div style="display:flex;align-items:center;gap:6px;">
         ${temRes ? `<span class="tag tag-gray">Finalizado</span>` : `<span class="tag tag-purple">🟢 Em Aberto</span>`}
-        <button onclick="excluirJogo('${a.id}','${nomeJogo.replace(/'/g,"\\'")}',this)" title="Excluir jogo" style="background:none;border:none;cursor:pointer;padding:2px;color:var(--text-muted);display:flex;align-items:center;opacity:0.7;transition:opacity 0.2s;" onmouseover="this.style.opacity=1;this.style.color='#ef4444'" onmouseout="this.style.opacity=0.7;this.style.color='var(--text-muted)'">
+        <button onclick="excluirJogo('${a.id}','${nomeJogo.replace(/'/g,"\\'")}',this)" title="Excluir partida" style="background:none;border:none;cursor:pointer;padding:2px;color:var(--text-muted);display:flex;align-items:center;opacity:0.7;transition:opacity 0.2s;" onmouseover="this.style.opacity=1;this.style.color='#ef4444'" onmouseout="this.style.opacity=0.7;this.style.color='var(--text-muted)'">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
         </button>
       </div>
     </div>
+    ${compact ? `
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;">
+        ${b1}
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:800;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.time1?.nome || '?'}</div>
+          ${a.time1?.forca ? `<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Força ${a.time1.forca}</div>` : ''}
+        </div>
+      </div>
+      ${temRes
+        ? `<div style="font-size:16px;font-weight:900;letter-spacing:0.5px;flex-shrink:0;">${a.resultado.g1}<span style="color:var(--text-muted);font-size:11px;"> × </span>${a.resultado.g2}</div>`
+        : `<button onclick="abrirPlacar('${a.id}')" style="background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;padding:7px 10px;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Placar</button>`}
+      <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;flex-direction:row-reverse;">
+        ${b2}
+        <div style="flex:1;min-width:0;text-align:right;">
+          <div style="font-weight:800;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${a.time2?.nome || '?'}</div>
+          ${a.time2?.forca ? `<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">Força ${a.time2.forca}</div>` : ''}
+        </div>
+      </div>
+    </div>` : `
     <div style="display:flex;align-items:flex-start;gap:6px;">
       <div style="flex:1;text-align:center;">
         <div style="display:flex;justify-content:center;margin-bottom:6px;">${b1}</div>
         <div style="font-weight:800;font-size:13px;line-height:1.2;">${a.time1?.nome || '?'}</div>
         ${a.time1?.forca ? `<div style="margin:3px 0;">${forcaBadge(a.time1.forca)}</div>` : ''}
-        ${!compact ? `<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${(a.time1?.jogadores||[]).join(' · ')}</div>` : ''}
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${(a.time1?.jogadores||[]).join(' · ')}</div>
       </div>
       <div style="text-align:center;min-width:60px;padding-top:36px;">
         ${temRes
@@ -968,10 +1023,21 @@ function cardAmistoso(a, compact=false) {
         <div style="display:flex;justify-content:center;margin-bottom:6px;">${b2}</div>
         <div style="font-weight:800;font-size:13px;line-height:1.2;">${a.time2?.nome || '?'}</div>
         ${a.time2?.forca ? `<div style="margin:3px 0;">${forcaBadge(a.time2.forca)}</div>` : ''}
-        ${!compact ? `<div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${(a.time2?.jogadores||[]).join(' · ')}</div>` : ''}
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${(a.time2?.jogadores||[]).join(' · ')}</div>
       </div>
-    </div>
+    </div>`}
   </div>`;
+}
+
+function badgeTimeCompact(timeId, nomeTime, tipo) {
+  if (tipo === 'selecoes') {
+    const d = SELECAO_PAIS[timeId] || { pais:'', paisNome: nomeTime||'' };
+    return `<div style="width:36px;height:28px;border-radius:6px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.3);">
+      ${d.pais ? `<img src="https://flagcdn.com/w80/${d.pais}.png" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=&quot;font-size:18px;&quot;>🌍</span>'">` : '<span style="font-size:18px;">🌍</span>'}
+    </div>`;
+  }
+  const d = TEAM_DATA[timeId] || { abrev:(nomeTime||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#AAAAAA' };
+  return `<div style="width:36px;height:36px;border-radius:9px;background:${d.fundo};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:${d.cor};letter-spacing:-0.3px;flex-shrink:0;border:1px solid rgba(255,255,255,0.12);box-shadow:0 2px 6px rgba(0,0,0,0.3);">${d.abrev}</div>`;
 }
 
 window.excluirJogo = async (id, nome, btnEl) => {
@@ -982,14 +1048,14 @@ window.excluirJogo = async (id, nome, btnEl) => {
     await deleteDoc(doc(db, 'amistosos', id));
     card.style.transition = 'opacity 0.3s';
     card.style.opacity = '0';
-    setTimeout(async () => { await carregarAmistosos(); atualizarDash(); toast('Jogo excluído'); }, 300);
+    setTimeout(async () => { await carregarAmistosos(); atualizarDash(); toast('Partida excluída'); }, 300);
     return;
   }
   card.dataset.confirmando = '1';
   // Mostra banner de confirmação
   const banner = document.createElement('div');
   banner.style.cssText = 'margin-top:10px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;';
-  banner.innerHTML = `<span style="font-size:12px;font-weight:600;color:#ef4444;">Excluir este jogo?</span>
+  banner.innerHTML = `<span style="font-size:12px;font-weight:600;color:#ef4444;">Excluir esta partida?</span>
     <div style="display:flex;gap:6px;">
       <button onclick="cancelarExcluirJogo(this)" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:var(--text-muted);padding:4px 10px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;">Cancelar</button>
       <button onclick="excluirJogo('${id}','',this.closest('.match-card').querySelector('[onclick*=excluirJogo]'))" style="background:#ef4444;border:none;color:#fff;padding:4px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;">Excluir</button>
@@ -1006,13 +1072,13 @@ window.cancelarExcluirJogo = (btn) => {
 
 function renderAmistosos() {
   const c = document.getElementById('lista-ami');
-  if (!amistosos.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhum jogo registrado</p>'; return; }
+  if (!amistosos.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhuma partida registrada</p>'; return; }
   c.innerHTML = amistosos.map(a => cardAmistoso(a)).join('');
 }
 
 document.getElementById('btn-criar-ami').addEventListener('click', () => {
   if (jogadores.length < 2) { toast('Cadastre pelo menos 2 jogadores', 'erro'); return; }
-  modal(`<p class="modal-title">Novo Jogo</p>
+  modal(`<p class="modal-title">Nova Partida</p>
     <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">Selecione os jogadores para o sorteio balanceado de times</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
       <div class="tipo-btn sel" id="tp-clubes" onclick="selTipoAmi('clubes')">⚽<br><span style="font-size:12px;font-weight:700;">Clubes</span></div>
@@ -1021,7 +1087,7 @@ document.getElementById('btn-criar-ami').addEventListener('click', () => {
     <input type="hidden" id="ami-tipo" value="clubes">
     <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Jogadores</p>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="ami-jogs">
-      ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="jc" value="${j.id}" data-nome="${j.nome}"><span style="font-size:20px">${j.emoji||'⚽'}</span><span style="font-weight:700;">${j.nome}</span></label>`).join('')}
+      ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="jc" value="${j.id}" data-nome="${j.nome}">${SVG_USER_CHIP}<span style="font-weight:700;">${j.nome}</span></label>`).join('')}
     </div>
     <div id="ami-sorteio" style="display:none;margin-bottom:16px;"></div>
     <div style="display:flex;gap:10px;">
@@ -1046,7 +1112,7 @@ window.iniciarPartida = () => {
   <input type="hidden" id="ami-tipo" value="clubes">
   <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Selecionar Jogadores</p>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="ami-jogs">
-    ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="jc" value="${j.id}" data-nome="${j.nome}"><span style="font-size:22px">${j.emoji||'⚽'}</span><span style="font-weight:700;font-size:15px;">${j.nome}</span></label>`).join('')}
+    ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="jc" value="${j.id}" data-nome="${j.nome}">${SVG_USER_CHIP}<span style="font-weight:700;font-size:15px;">${j.nome}</span></label>`).join('')}
   </div>
   <div id="ami-sorteio" style="display:none;margin-bottom:16px;"></div>
   <div style="display:flex;gap:10px;">
@@ -1155,12 +1221,12 @@ window.salvarAmistoso = async () => {
   if (!_sorteioAmi) return;
   const abertos = amistosos.filter(a => !a.resultado);
   if (abertos.length >= 5) {
-    toast('Máximo de 5 jogos em aberto! Registre um placar antes de criar um novo.', 'erro');
+    toast('Máximo de 5 partidas em aberto! Registre um placar antes de criar nova.', 'erro');
     return;
   }
   await addDoc(collection(db, 'amistosos'), { ..._sorteioAmi, criadoEm: serverTimestamp() });
   fecharModal(); _sorteioAmi = null;
-  await carregarAmistosos(); atualizarDash(); toast('Jogo criado! ⚽');
+  await carregarAmistosos(); atualizarDash(); toast('Partida criada! ⚽');
 };
 
 window.abrirPlacar = id => {
@@ -1239,7 +1305,7 @@ document.getElementById('btn-criar-camp').addEventListener('click', () => {
       <div>
         <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Participantes</p>
         <div style="display:flex;flex-direction:column;gap:8px;">
-          ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="cc" value="${j.id}" data-nome="${j.nome}"><span style="font-size:18px">${j.emoji||'⚽'}</span><span style="font-weight:600;">${j.nome}</span></label>`).join('')}
+          ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="cc" value="${j.id}" data-nome="${j.nome}">${SVG_USER_CHIP}<span style="font-weight:600;">${j.nome}</span></label>`).join('')}
         </div>
       </div>
     </div>
@@ -1456,7 +1522,7 @@ window.salvarPartida = async (cid, gi) => {
 // ─── RANKING ─────────────────────────────────────────────────────────
 function calcularRanking() {
   const s = {};
-  jogadores.forEach(j => { s[j.id]={nome:j.nome,emoji:j.emoji||'⚽',vit:0,emp:0,der:0,gp:0,gc:0,pts:0,j:0}; });
+  jogadores.forEach(j => { s[j.id]={nome:j.nome,vit:0,emp:0,der:0,gp:0,gc:0,pts:0,j:0}; });
   amistosos.forEach(a => {
     if (!a.resultado) return;
     const {g1,g2}=a.resultado;
@@ -1472,7 +1538,7 @@ function renderRanking(rank) {
   const html = rank.length===0?'<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhuma partida registrada</p>'
     :rank.map((p,i)=>`<div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:14px;margin-bottom:8px;">
       <div class="rank-pos">${medals[i]||`${i+1}°`}</div>
-      <div style="font-size:28px;">${p.emoji}</div>
+      ${SVG_USER_CHIP}
       <div style="flex:1;">
         <div style="font-weight:800;font-size:15px;">${p.nome}</div>
         <div style="color:var(--text-muted);font-size:11px;margin-top:2px;">${p.j} jogos · ${p.vit}V ${p.emp}E ${p.der}D · ${p.gp}:${p.gc}</div>
@@ -1485,7 +1551,7 @@ function renderRanking(rank) {
   document.getElementById('lista-rank').innerHTML = html;
   document.getElementById('home-ranking').innerHTML = rank.slice(0,3).length===0?'<p style="color:var(--text-muted);text-align:center;padding:16px 0;font-size:14px;">Nenhuma partida ainda</p>'
     :rank.slice(0,3).map((p,i)=>`<div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:12px;margin-bottom:8px;">
-      <span style="font-size:18px;">${medals[i]}</span><span style="font-size:22px;">${p.emoji}</span>
+      <span style="font-size:18px;">${medals[i]}</span>${SVG_USER_CHIP}
       <span style="font-weight:700;flex:1;font-size:14px;">${p.nome}</span>
       <span style="font-weight:900;font-size:15px;" class="grad">${p.pts} pts</span>
     </div>`).join('');
@@ -1543,45 +1609,131 @@ function renderTimesEdit() {
 }
 
 document.getElementById('btn-add-time').addEventListener('click', () => {
+  abrirModalAddTime(abaTimesAtual === 'selecoes' ? 'selecao' : 'clube');
+});
+
+function abrirModalAddTime(tipoInicial) {
   modal(`<p class="modal-title">Adicionar Time</p>
-    <div style="display:flex;flex-direction:column;gap:14px;">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
-        <div class="tipo-btn sel" id="nt-c" onclick="selTipoTime('clube')">⚽<br><span style="font-size:12px;font-weight:700;">Clube</span></div>
-        <div class="tipo-btn" id="nt-s" onclick="selTipoTime('selecao')">🌍<br><span style="font-size:12px;font-weight:700;">Seleção</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      <div class="tipo-btn ${tipoInicial==='clube'?'sel':''}" id="nt-c" onclick="selTipoTime('clube')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5l-8 2.5v6c0 5 3.5 9.4 8 10.5 4.5-1.1 8-5.5 8-10.5V5z"/></svg>
+        <span style="font-size:12px;font-weight:700;display:block;margin-top:4px;">Clube</span>
       </div>
-      <input type="hidden" id="nt-tipo" value="clube">
-      <input class="input" id="nt-nome" placeholder="Nome do time" autocomplete="off">
-      <input class="input" id="nt-bandeira" placeholder="Bandeira/Emoji (ex: 🇧🇷)">
-      <input class="input" id="nt-liga" placeholder="Liga/Confederação (ex: La Liga)">
-      <div>
-        <label style="display:flex;justify-content:space-between;align-items:center;color:var(--text-muted);font-size:12px;margin-bottom:8px;"><span>FORÇA (EA FC 26)</span><span id="nt-forca-val" style="color:var(--cyan);font-weight:800;">80</span></label>
-        <input type="range" id="nt-forca" min="60" max="92" value="80" style="width:100%;accent-color:var(--purple);" oninput="document.getElementById('nt-forca-val').textContent=this.value">
+      <div class="tipo-btn ${tipoInicial==='selecao'?'sel':''}" id="nt-s" onclick="selTipoTime('selecao')">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>
+        <span style="font-size:12px;font-weight:700;display:block;margin-top:4px;">Seleção</span>
       </div>
     </div>
-    <div style="display:flex;gap:10px;margin-top:20px;">
+    <input type="hidden" id="nt-tipo" value="${tipoInicial}">
+    <input class="input" id="nt-busca" placeholder="🔍 Buscar..." autocomplete="off" oninput="filtrarListaAddTime()" style="margin-bottom:12px;">
+    <div id="nt-lista" style="max-height:280px;overflow-y:auto;margin-bottom:14px;border-radius:12px;border:1px solid var(--card-border);background:rgba(0,0,0,0.2);padding:8px;"></div>
+
+    <div id="nt-form" style="display:none;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:12px;margin-bottom:14px;">
+      <p style="font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:10px;">Selecionado</p>
+      <div id="nt-preview" style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"></div>
+      <label style="display:flex;justify-content:space-between;align-items:center;color:var(--text-muted);font-size:12px;margin-bottom:8px;"><span>FORÇA</span><span id="nt-forca-val" style="color:var(--cyan);font-weight:800;">80</span></label>
+      <input type="range" id="nt-forca" min="60" max="92" value="80" style="width:100%;accent-color:var(--purple);" oninput="document.getElementById('nt-forca-val').textContent=this.value">
+    </div>
+
+    <div style="display:flex;gap:10px;">
       <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
-      <button class="btn-primary" onclick="salvarNovoTime()">Adicionar ✓</button>
+      <button id="btn-salvar-time" class="btn-primary" onclick="salvarNovoTime()" disabled style="opacity:0.4;">Adicionar ✓</button>
     </div>`);
-});
+  renderListaAddTime();
+}
+
+let _selNovoTime = null;
+
+window.renderListaAddTime = () => {
+  const tipo = document.getElementById('nt-tipo').value;
+  const filtro = (document.getElementById('nt-busca')?.value || '').toLowerCase().trim();
+  const el = document.getElementById('nt-lista');
+  if (tipo === 'clube') {
+    // Mostra todos clubes de TEAM_DATA que não estão ainda em `clubes`
+    const jaTemIds = new Set(clubes.map(c => c.id));
+    const opcoes = Object.entries(TEAM_DATA)
+      .filter(([id,d]) => !jaTemIds.has(id))
+      .filter(([id,d]) => !filtro || id.includes(filtro) || (d.paisNome||'').toLowerCase().includes(filtro) || (d.abrev||'').toLowerCase().includes(filtro));
+    if (!opcoes.length) { el.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:24px;font-size:12px;">Nenhum clube disponível</p>'; return; }
+    el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">${opcoes.map(([id,d]) => `
+      <button type="button" onclick="escolherClubeAdd('${id}')" style="background:rgba(255,255,255,0.03);border:1.5px solid ${_selNovoTime===id?'var(--purple)':'transparent'};border-radius:10px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="width:36px;height:36px;border-radius:8px;background:${d.fundo};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:${d.cor};border:1px solid rgba(255,255,255,0.1);">${d.abrev}</div>
+        <span style="font-size:9px;color:var(--text);font-weight:700;text-align:center;line-height:1.1;">${id.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</span>
+      </button>`).join('')}</div>`;
+  } else {
+    // Seleções: mostra todos países de PAISES_FIFA que não estão ainda em `selecoes`
+    const jaTemNomes = new Set(selecoes.map(s => s.nome.toLowerCase()));
+    const opcoes = PAISES_FIFA
+      .filter(p => !jaTemNomes.has(p.nome.toLowerCase()))
+      .filter(p => !filtro || p.nome.toLowerCase().includes(filtro) || p.code.includes(filtro));
+    if (!opcoes.length) { el.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:24px;font-size:12px;">Nenhum país disponível</p>'; return; }
+    el.innerHTML = `<div style="display:flex;flex-direction:column;gap:4px;">${opcoes.map(p => `
+      <button type="button" onclick="escolherSelecaoAdd('${p.code}','${p.nome.replace(/'/g,"")}')" style="background:${_selNovoTime===p.code?'rgba(139,92,246,0.2)':'rgba(255,255,255,0.03)'};border:1.5px solid ${_selNovoTime===p.code?'var(--purple)':'transparent'};border-radius:10px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;">
+        <img src="https://flagcdn.com/w40/${p.code}.png" alt="" style="width:30px;height:22px;object-fit:cover;border-radius:4px;flex-shrink:0;" onerror="this.style.display='none'">
+        <span style="font-size:13px;font-weight:700;color:var(--text);flex:1;">${p.nome}</span>
+      </button>`).join('')}</div>`;
+  }
+};
+
+window.filtrarListaAddTime = () => renderListaAddTime();
+
+window.escolherClubeAdd = (id) => {
+  _selNovoTime = id;
+  const d = TEAM_DATA[id];
+  const formEl = document.getElementById('nt-form');
+  formEl.style.display = '';
+  document.getElementById('nt-preview').innerHTML = `
+    <div style="width:44px;height:44px;border-radius:10px;background:${d.fundo};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:${d.cor};border:1px solid rgba(255,255,255,0.12);">${d.abrev}</div>
+    <div style="flex:1;"><div style="font-weight:800;font-size:14px;">${id.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</div><div style="font-size:11px;color:var(--text-muted);">${d.paisNome}</div></div>`;
+  document.getElementById('btn-salvar-time').disabled = false;
+  document.getElementById('btn-salvar-time').style.opacity = '1';
+  renderListaAddTime();
+};
+
+window.escolherSelecaoAdd = (code, nome) => {
+  _selNovoTime = code;
+  window._selNovoTimeNome = nome;
+  const formEl = document.getElementById('nt-form');
+  formEl.style.display = '';
+  document.getElementById('nt-preview').innerHTML = `
+    <div style="width:44px;height:34px;border-radius:6px;overflow:hidden;flex-shrink:0;"><img src="https://flagcdn.com/w80/${code}.png" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'"></div>
+    <div style="flex:1;"><div style="font-weight:800;font-size:15px;">${nome}</div><div style="font-size:11px;color:var(--text-muted);">Seleção</div></div>`;
+  document.getElementById('btn-salvar-time').disabled = false;
+  document.getElementById('btn-salvar-time').style.opacity = '1';
+  renderListaAddTime();
+};
 
 window.selTipoTime = tipo => {
   document.getElementById('nt-tipo').value = tipo;
   document.getElementById('nt-c').classList.toggle('sel', tipo==='clube');
   document.getElementById('nt-s').classList.toggle('sel', tipo==='selecao');
+  _selNovoTime = null;
+  document.getElementById('nt-form').style.display = 'none';
+  document.getElementById('btn-salvar-time').disabled = true;
+  document.getElementById('btn-salvar-time').style.opacity = '0.4';
+  if (document.getElementById('nt-busca')) document.getElementById('nt-busca').value = '';
+  renderListaAddTime();
 };
 
 window.salvarNovoTime = async () => {
-  const nome = document.getElementById('nt-nome').value.trim();
-  if (!nome) { toast('Digite o nome', 'erro'); return; }
-  const novoTime = {
-    id: nome.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') + '-' + Date.now(),
-    nome, tipo: document.getElementById('nt-tipo').value,
-    bandeira: document.getElementById('nt-bandeira').value || '🏆',
-    liga: document.getElementById('nt-liga').value,
-    forca: parseInt(document.getElementById('nt-forca').value)
-  };
+  if (!_selNovoTime) { toast('Selecione um time da lista', 'erro'); return; }
+  const tipo = document.getElementById('nt-tipo').value;
+  const forca = parseInt(document.getElementById('nt-forca').value);
+  let novoTime;
+  if (tipo === 'clube') {
+    const d = TEAM_DATA[_selNovoTime];
+    const nome = _selNovoTime.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+    novoTime = { id:_selNovoTime, nome, tipo:'clube', bandeira:d.pais, paisNome:d.paisNome, liga:'', forca };
+  } else {
+    const nome = window._selNovoTimeNome || _selNovoTime;
+    const id = 'sel-' + _selNovoTime.replace(/-/g,'');
+    novoTime = { id, nome, tipo:'selecao', bandeira:_selNovoTime, paisNome:nome, liga:'', forca };
+    // Registra metadados na SELECAO_PAIS em runtime para badgeSel funcionar
+    SELECAO_PAIS[id] = { pais:_selNovoTime, paisNome:nome };
+  }
   await setDoc(doc(db, 'times', novoTime.id), novoTime);
   await carregarTimes();
+  _selNovoTime = null;
   fecharModal(); renderTimesEdit(); toast('Time adicionado! ✓');
 };
 
