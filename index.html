@@ -129,7 +129,8 @@
       padding-bottom: env(safe-area-inset-bottom);
     }
     .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 4px; cursor: pointer; background: none; border: none; color: var(--text-muted); transition: color 0.2s; gap: 3px; }
-    .nav-btn .nav-ico { font-size: 22px; line-height: 1; transition: transform 0.2s; }
+    .nav-btn .nav-ico { font-size: 22px; line-height: 1; transition: transform 0.2s; display: flex; align-items: center; justify-content: center; }
+    .nav-btn .nav-ico svg { display: block; }
     .nav-btn .nav-lbl { font-size: 10px; font-weight: 600; letter-spacing: 0.02em; }
     .nav-btn.ativo { color: var(--purple); }
     .nav-btn.ativo .nav-ico { transform: scale(1.1); }
@@ -277,7 +278,7 @@
         </div>
         <div class="stat-card">
           <div class="stat-num" style="color: var(--cyan);" id="s-ami">0</div>
-          <div class="stat-lbl">Amistosos</div>
+          <div class="stat-lbl">Jogos</div>
         </div>
         <div class="stat-card">
           <div class="stat-num" style="color: var(--yellow);" id="s-cam">0</div>
@@ -324,14 +325,14 @@
       </div>
     </div>
 
-    <!-- ── AMISTOSOS ── -->
+    <!-- ── JOGOS ── -->
     <div id="view-amistosos" class="view">
       <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0 20px;">
-        <h2 style="font-size:22px; font-weight:900;">Amistosos</h2>
+        <h2 style="font-size:22px; font-weight:900;">Jogos</h2>
         <button class="btn-icon" id="btn-criar-ami">+ Criar</button>
       </div>
       <div id="lista-ami">
-        <p style="color:var(--text-muted); text-align:center; padding:48px 0; font-size:14px;">Nenhum amistoso registrado</p>
+        <p style="color:var(--text-muted); text-align:center; padding:48px 0; font-size:14px;">Nenhum jogo registrado</p>
       </div>
     </div>
 
@@ -379,27 +380,39 @@
   <!-- NAV -->
   <nav id="nav">
     <button class="nav-btn ativo" data-view="home">
-      <span class="nav-ico">🏠</span>
+      <span class="nav-ico">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><polyline points="9 21 9 12 15 12 15 21"/></svg>
+      </span>
       <span class="nav-lbl">Início</span>
     </button>
     <button class="nav-btn" data-view="jogadores">
-      <span class="nav-ico">👥</span>
+      <span class="nav-ico">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><path d="M16 3.13a4 4 0 010 7.75"/><path d="M21 21v-2a4 4 0 00-3-3.87"/></svg>
+      </span>
       <span class="nav-lbl">Jogadores</span>
     </button>
     <button class="nav-btn" data-view="amistosos">
-      <span class="nav-ico">⚽</span>
-      <span class="nav-lbl">Amistosos</span>
+      <span class="nav-ico">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+      </span>
+      <span class="nav-lbl">Jogos</span>
     </button>
     <button class="nav-btn" data-view="campeonatos">
-      <span class="nav-ico">🏆</span>
+      <span class="nav-ico">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M17 3H7v8a5 5 0 0010 0V3z"/><path d="M7 5H4a2 2 0 000 4h3"/><path d="M17 5h3a2 2 0 010 4h-3"/></svg>
+      </span>
       <span class="nav-lbl">Campeonatos</span>
     </button>
     <button class="nav-btn" data-view="ranking">
-      <span class="nav-ico">📊</span>
+      <span class="nav-ico">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+      </span>
       <span class="nav-lbl">Ranking</span>
     </button>
     <button class="nav-btn" data-view="times">
-      <span class="nav-ico">🛠️</span>
+      <span class="nav-ico">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v6c0 5.25 3.75 10.15 9 11.25C17.25 23.15 21 18.25 21 13V7L12 2z"/></svg>
+      </span>
       <span class="nav-lbl">Times</span>
     </button>
   </nav>
@@ -927,10 +940,16 @@ function cardAmistoso(a, compact=false) {
   const diff = temRes ? Math.abs(a.resultado.g1 - a.resultado.g2) : null;
   const b1 = badgeTime(a.time1?.timeId, a.time1?.nome, a.tipo);
   const b2 = badgeTime(a.time2?.timeId, a.time2?.nome, a.tipo);
+  const nomeJogo = `${a.time1?.nome||'?'} vs ${a.time2?.nome||'?'}`;
   return `<div class="match-card" style="margin-bottom:10px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <span style="font-size:11px;color:var(--text-muted);">${fmt(a.criadoEm)} · ${a.tipo === 'selecoes' ? '🌍 Seleções' : '⚽ Clubes'}</span>
-      ${temRes ? `<span class="tag tag-gray">Finalizado</span>` : `<span class="tag tag-purple">🟢 Em Aberto</span>`}
+      <div style="display:flex;align-items:center;gap:6px;">
+        ${temRes ? `<span class="tag tag-gray">Finalizado</span>` : `<span class="tag tag-purple">🟢 Em Aberto</span>`}
+        <button onclick="excluirJogo('${a.id}','${nomeJogo.replace(/'/g,"\\'")}',this)" title="Excluir jogo" style="background:none;border:none;cursor:pointer;padding:2px;color:var(--text-muted);display:flex;align-items:center;opacity:0.7;transition:opacity 0.2s;" onmouseover="this.style.opacity=1;this.style.color='#ef4444'" onmouseout="this.style.opacity=0.7;this.style.color='var(--text-muted)'">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+        </button>
+      </div>
     </div>
     <div style="display:flex;align-items:flex-start;gap:6px;">
       <div style="flex:1;text-align:center;">
@@ -955,15 +974,45 @@ function cardAmistoso(a, compact=false) {
   </div>`;
 }
 
+window.excluirJogo = async (id, nome, btnEl) => {
+  // Confirmação inline no card
+  const card = btnEl.closest('.match-card');
+  if (card.dataset.confirmando) {
+    // Segunda chamada = confirmar exclusão
+    await deleteDoc(doc(db, 'amistosos', id));
+    card.style.transition = 'opacity 0.3s';
+    card.style.opacity = '0';
+    setTimeout(async () => { await carregarAmistosos(); atualizarDash(); toast('Jogo excluído'); }, 300);
+    return;
+  }
+  card.dataset.confirmando = '1';
+  // Mostra banner de confirmação
+  const banner = document.createElement('div');
+  banner.style.cssText = 'margin-top:10px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px;';
+  banner.innerHTML = `<span style="font-size:12px;font-weight:600;color:#ef4444;">Excluir este jogo?</span>
+    <div style="display:flex;gap:6px;">
+      <button onclick="cancelarExcluirJogo(this)" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:var(--text-muted);padding:4px 10px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;">Cancelar</button>
+      <button onclick="excluirJogo('${id}','',this.closest('.match-card').querySelector('[onclick*=excluirJogo]'))" style="background:#ef4444;border:none;color:#fff;padding:4px 10px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;">Excluir</button>
+    </div>`;
+  card.appendChild(banner);
+};
+
+window.cancelarExcluirJogo = (btn) => {
+  const card = btn.closest('.match-card');
+  delete card.dataset.confirmando;
+  const banner = btn.closest('div[style*="rgba(239,68,68"]');
+  if (banner) banner.remove();
+};
+
 function renderAmistosos() {
   const c = document.getElementById('lista-ami');
-  if (!amistosos.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhum amistoso registrado</p>'; return; }
+  if (!amistosos.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhum jogo registrado</p>'; return; }
   c.innerHTML = amistosos.map(a => cardAmistoso(a)).join('');
 }
 
 document.getElementById('btn-criar-ami').addEventListener('click', () => {
   if (jogadores.length < 2) { toast('Cadastre pelo menos 2 jogadores', 'erro'); return; }
-  modal(`<p class="modal-title">Novo Amistoso</p>
+  modal(`<p class="modal-title">Novo Jogo</p>
     <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">Selecione os jogadores para o sorteio balanceado de times</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
       <div class="tipo-btn sel" id="tp-clubes" onclick="selTipoAmi('clubes')">⚽<br><span style="font-size:12px;font-weight:700;">Clubes</span></div>
@@ -1106,12 +1155,12 @@ window.salvarAmistoso = async () => {
   if (!_sorteioAmi) return;
   const abertos = amistosos.filter(a => !a.resultado);
   if (abertos.length >= 5) {
-    toast('Máximo de 5 jogos em aberto! Registre um placar antes de criar novo.', 'erro');
+    toast('Máximo de 5 jogos em aberto! Registre um placar antes de criar um novo.', 'erro');
     return;
   }
   await addDoc(collection(db, 'amistosos'), { ..._sorteioAmi, criadoEm: serverTimestamp() });
   fecharModal(); _sorteioAmi = null;
-  await carregarAmistosos(); atualizarDash(); toast('Amistoso criado! ⚽');
+  await carregarAmistosos(); atualizarDash(); toast('Jogo criado! ⚽');
 };
 
 window.abrirPlacar = id => {
