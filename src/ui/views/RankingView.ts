@@ -271,85 +271,56 @@ export class RankingView {
 
   private static async renderizarHistorico(container: HTMLElement, est: Estatistica): Promise<void> {
     const historicoDiv = container.querySelector('#jogador-historico') as HTMLElement;
+    historicoDiv.innerHTML = '<p style="color:#666; font-size:13px;">Carregando histórico...</p>';
 
-    // Simulando histórico de jogos (em uma aplicação real, isso viria do banco de dados)
-    const historicoJogos = [
-      {
-        id: '1',
-        tipo: 'amistoso',
-        adversarioNome: 'João',
-        resultado: 'vitoria',
-        gp: 2,
-        gc: 1,
-        data: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-      },
-      {
-        id: '2',
-        tipo: 'torneio',
-        adversarioNome: 'Real Madrid',
-        resultado: 'derrota',
-        gp: 1,
-        gc: 3,
-        data: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000),
-      },
-      {
-        id: '3',
-        tipo: 'dupla',
-        adversarioNome: 'Felipe & Pedro',
-        resultado: 'empate',
-        gp: 2,
-        gc: 2,
-        data: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      },
-    ];
+    const tipoFiltro = this.selectedFiltroTipo === 'todos' ? undefined : this.selectedFiltroTipo;
+    const jogos = await rankingService.getHistorico(
+      est.jogadorId,
+      tipoFiltro,
+      this.selectedFiltroAdversario || undefined
+    );
 
-    const filtrados = historicoJogos.filter((j) => {
-      if (this.selectedFiltroTipo !== 'todos' && j.tipo !== this.selectedFiltroTipo) return false;
-      if (this.selectedFiltroAdversario && !j.adversarioNome.toLowerCase().includes(this.selectedFiltroAdversario.toLowerCase()))
-        return false;
-      return true;
-    });
+    const LABEL_TIPO: Record<string, string> = { amistoso: 'Amistoso', torneio: 'Torneio', dupla: 'Dupla' };
+    const COR_RES: Record<string, string> = { vitoria: '#28a745', derrota: '#dc3545', empate: '#ffc107' };
+    const LABEL_RES: Record<string, string> = { vitoria: 'Vitória', derrota: 'Derrota', empate: 'Empate' };
 
     historicoDiv.innerHTML = `
-      <h3 style="margin-top: 0; margin-bottom: 12px;">Histórico de Jogos</h3>
-      ${filtrados
-        .map(
-          (jogo) => `
-        <div style="
-          padding: 12px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          margin-bottom: 12px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        ">
-          <div>
-            <div style="font-weight: 600; margin-bottom: 4px;">
-              ${jogo.adversarioNome} (${jogo.tipo})
-            </div>
-            <div style="font-size: 12px; color: #666;">
-              ${jogo.data.toLocaleDateString('pt-BR')}
-            </div>
-          </div>
-          <div style="text-align: right;">
-            <div style="
-              font-weight: 700;
-              font-size: 18px;
-              color: ${jogo.resultado === 'vitoria' ? '#28a745' : jogo.resultado === 'derrota' ? '#dc3545' : '#ffc107'};
-              margin-bottom: 4px;
-            ">
-              ${jogo.gp} - ${jogo.gc}
-            </div>
-            <div style="font-size: 12px; color: #666;">
-              ${jogo.resultado === 'vitoria' ? 'Vitória' : jogo.resultado === 'derrota' ? 'Derrota' : 'Empate'}
-            </div>
-          </div>
-        </div>
-      `
-        )
-        .join('')}
-      ${filtrados.length === 0 ? '<p style="text-align: center; color: #666;">Nenhum jogo encontrado.</p>' : ''}
+      <h3 style="margin-top: 0; margin-bottom: 12px; font-size: 15px;">Histórico de Jogos</h3>
+      ${jogos.length === 0
+        ? '<p style="text-align:center; color:#666; font-size:13px;">Nenhum jogo encontrado.</p>'
+        : jogos.map(jogo => {
+            const dataObj = jogo.data?.toDate ? jogo.data.toDate() : new Date(jogo.data);
+            const dataStr = isNaN(dataObj.getTime()) ? '' : dataObj.toLocaleDateString('pt-BR');
+            return `
+              <div style="
+                padding: 12px 14px;
+                border: 1px solid #e8e8e8;
+                border-left: 4px solid ${COR_RES[jogo.resultado]};
+                border-radius: 6px;
+                margin-bottom: 10px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              ">
+                <div>
+                  <div style="font-weight: 600; font-size: 14px; margin-bottom: 3px;">
+                    vs ${jogo.adversarioNome || '—'}
+                  </div>
+                  <div style="font-size: 11px; color: #888;">
+                    ${LABEL_TIPO[jogo.tipo] || jogo.tipo}${dataStr ? ' · ' + dataStr : ''}
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 700; font-size: 17px; color: ${COR_RES[jogo.resultado]};">
+                    ${jogo.gp} - ${jogo.gc}
+                  </div>
+                  <div style="font-size: 11px; color: #888;">
+                    ${LABEL_RES[jogo.resultado]}
+                  </div>
+                </div>
+              </div>`;
+          }).join('')
+      }
     `;
   }
 }
