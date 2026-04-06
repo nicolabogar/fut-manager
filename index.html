@@ -288,7 +288,7 @@
       <button onclick="irPara('ranking');fecharHamburger()" style="display:block;width:100%;text-align:left;padding:13px 18px;border:none;background:none;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;">Ranking</button>
     </div>
     <div style="display:flex; align-items:center; gap:10px;">
-      <img id="user-foto" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--purple); display:none; cursor:pointer;" src="" alt="" id="user-foto" onclick="toggleUserMenu()">
+      <img id="user-foto" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--purple); display:none; cursor:pointer;" src="" alt="" onclick="toggleUserMenu()">
       <button id="btn-user" title="Usuário" style="background:rgba(255,255,255,0.06); border:1px solid var(--card-border); color:var(--text-dim); border-radius:10px; padding:6px 10px; cursor:pointer; display:flex; align-items:center; justify-content:center;" onclick="toggleUserMenu()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       </button>
@@ -933,19 +933,7 @@ document.addEventListener('click', (e) => {
     document.getElementById('user-menu-dropdown').style.display = 'none';
 });
 
-document.getElementById('btn-config').addEventListener('click', () => {
-  modal(`<p class="modal-title">⚙️ Configurações</p>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <button class="btn-ghost" style="display:flex;align-items:center;gap:12px;justify-content:flex-start;text-align:left;" onclick="fecharModal();irPara('jogadores')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20.5v-.5a5 5 0 015-5h2a5 5 0 015 5v.5"/><path d="M16 4a3.5 3.5 0 010 7"/><path d="M21 20.5v-.5a4.8 4.8 0 00-3.5-4.6"/></svg>
-        <div><div style="font-weight:700;color:var(--text);">Jogadores</div><div style="font-size:11px;color:var(--text-muted);">Gerenciar amigos e usuários</div></div>
-      </button>
-      <button class="btn-ghost" style="display:flex;align-items:center;gap:12px;justify-content:flex-start;text-align:left;" onclick="fecharModal();irPara('times')">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l-8 2.5v6c0 5 3.5 9.4 8 10.5 4.5-1.1 8-5.5 8-10.5V5l-8-2.5z"/></svg>
-        <div><div style="font-weight:700;color:var(--text);">Times</div><div style="font-size:11px;color:var(--text-muted);">Gerenciar clubes e seleções</div></div>
-      </button>
-    </div>`);
-});
+// btn-config removido — substituído pelo hamburger menu
 
 getRedirectResult(auth).catch(() => {});
 
