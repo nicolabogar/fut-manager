@@ -271,32 +271,15 @@
   <!-- HEADER -->
   <header id="header">
     <div style="display:flex; align-items:center; gap:10px;">
-      <!-- Hamburger menu -->
-      <button id="btn-hamburger" title="Menu" style="background:rgba(255,255,255,0.06);border:1px solid var(--card-border);color:var(--text);border-radius:10px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:2px;flex-direction:column;">
-        <span style="display:block;width:18px;height:2px;background:currentColor;border-radius:2px;"></span>
-        <span style="display:block;width:18px;height:2px;background:currentColor;border-radius:2px;margin:3px 0;"></span>
-        <span style="display:block;width:18px;height:2px;background:currentColor;border-radius:2px;"></span>
-      </button>
+      <span style="font-size:22px; filter:drop-shadow(0 0 8px rgba(139,92,246,0.7))">⚽</span>
       <span style="font-weight:900; font-size:18px; letter-spacing:-0.5px;" class="grad">FutManager</span>
     </div>
-    <!-- Dropdown menu hamburger -->
-    <div id="menu-hamburger-dropdown" style="display:none;position:fixed;top:56px;left:12px;background:var(--bg2);border:1px solid var(--card-border);border-radius:14px;z-index:500;min-width:180px;box-shadow:0 8px 32px rgba(0,0,0,0.4);overflow:hidden;">
-      <button onclick="irPara('home');fecharHamburger()" style="display:block;width:100%;text-align:left;padding:13px 18px;border:none;background:none;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;border-bottom:1px solid var(--card-border);">Início</button>
-      <button onclick="irPara('amistosos');fecharHamburger()" style="display:block;width:100%;text-align:left;padding:13px 18px;border:none;background:none;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;border-bottom:1px solid var(--card-border);">Amistosos</button>
-      <button onclick="irPara('campeonatos');fecharHamburger()" style="display:block;width:100%;text-align:left;padding:13px 18px;border:none;background:none;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;border-bottom:1px solid var(--card-border);">Torneios</button>
-      <button onclick="irPara('jogadores');fecharHamburger()" style="display:block;width:100%;text-align:left;padding:13px 18px;border:none;background:none;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;border-bottom:1px solid var(--card-border);">Jogadores</button>
-      <button onclick="irPara('ranking');fecharHamburger()" style="display:block;width:100%;text-align:left;padding:13px 18px;border:none;background:none;color:var(--text);font-size:14px;font-weight:700;cursor:pointer;">Ranking</button>
-    </div>
     <div style="display:flex; align-items:center; gap:10px;">
-      <img id="user-foto" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--purple); display:none; cursor:pointer;" src="" alt="" onclick="toggleUserMenu()">
-      <button id="btn-user" title="Usuário" style="background:rgba(255,255,255,0.06); border:1px solid var(--card-border); color:var(--text-dim); border-radius:10px; padding:6px 10px; cursor:pointer; display:flex; align-items:center; justify-content:center;" onclick="toggleUserMenu()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <img id="user-foto" style="width:32px; height:32px; border-radius:50%; border:2px solid var(--purple); display:none;" src="" alt="">
+      <button id="btn-config" title="Configurações" style="background:rgba(255,255,255,0.06); border:1px solid var(--card-border); color:var(--text-dim); border-radius:10px; padding:6px 10px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </button>
-      <!-- Menu usuário: só aparece ao clicar -->
-      <div id="user-menu-dropdown" style="display:none;position:fixed;top:56px;right:12px;background:var(--bg2);border:1px solid var(--card-border);border-radius:14px;z-index:500;min-width:200px;box-shadow:0 8px 32px rgba(0,0,0,0.4);overflow:hidden;">
-        <div id="user-email-display" style="padding:12px 18px;font-size:12px;color:var(--text-muted);border-bottom:1px solid var(--card-border);">Usuário</div>
-        <button id="btn-sair" title="Sair" style="display:block;width:100%;text-align:left;padding:13px 18px;border:none;background:none;color:#FCA5A5;font-size:14px;font-weight:700;cursor:pointer;">Sair</button>
-      </div>
+      <button id="btn-sair" title="Sair" style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); color:#FCA5A5; border-radius:10px; padding:6px 12px; font-size:12px; font-weight:700; cursor:pointer;">Sair</button>
     </div>
   </header>
 
@@ -311,8 +294,8 @@
       </div>
 
       <!-- Iniciar Partida CTA -->
-      <button onclick="iniciarPartida()" style="width:100%;background:linear-gradient(135deg,#7C3AED,#06B6D4);border:none;color:#fff;padding:20px 24px;border-radius:22px;font-size:17px;font-weight:900;cursor:pointer;margin-bottom:12px;box-shadow:0 8px 32px rgba(139,92,246,0.45);transition:opacity 0.15s,transform 0.1s;letter-spacing:-0.3px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''" ontouchend="this.style.transform=''">+ Criar Amistoso</button>
-      <button onclick="iniciarCampeonato()" style="width:100%;background:linear-gradient(135deg,#F59E0B,#EF4444);border:none;color:#fff;padding:20px 24px;border-radius:22px;font-size:17px;font-weight:900;cursor:pointer;margin-bottom:20px;box-shadow:0 8px 32px rgba(245,158,11,0.35);transition:opacity 0.15s,transform 0.1s;letter-spacing:-0.3px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''" ontouchend="this.style.transform=''>+ Criar Torneio</button>
+      <button onclick="iniciarPartida()" style="width:100%;background:linear-gradient(135deg,#7C3AED,#06B6D4);border:none;color:#fff;padding:20px 24px;border-radius:22px;font-size:17px;font-weight:900;cursor:pointer;margin-bottom:12px;box-shadow:0 8px 32px rgba(139,92,246,0.45);transition:opacity 0.15s,transform 0.1s;letter-spacing:-0.3px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''" ontouchend="this.style.transform=''">Iniciar Partida</button>
+      <button onclick="iniciarCampeonato()" style="width:100%;background:linear-gradient(135deg,#F59E0B,#EF4444);border:none;color:#fff;padding:20px 24px;border-radius:22px;font-size:17px;font-weight:900;cursor:pointer;margin-bottom:20px;box-shadow:0 8px 32px rgba(245,158,11,0.35);transition:opacity 0.15s,transform 0.1s;letter-spacing:-0.3px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform=''" ontouchend="this.style.transform=''">🏆 Iniciar Campeonato</button>
 
       <!-- Stats -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:24px;">
@@ -322,11 +305,11 @@
         </div>
         <div class="stat-card" onclick="irPara('amistosos')" style="cursor:pointer;">
           <div class="stat-num" style="color: var(--cyan);" id="s-ami">0</div>
-          <div class="stat-lbl">Amistosos</div>
+          <div class="stat-lbl">Partidas</div>
         </div>
         <div class="stat-card" onclick="irPara('campeonatos')" style="cursor:pointer;">
           <div class="stat-num" style="color: var(--yellow);" id="s-cam">0</div>
-          <div class="stat-lbl">Torneios</div>
+          <div class="stat-lbl">Campeonatos</div>
         </div>
         <div class="stat-card" onclick="irPara('ranking')" style="cursor:pointer;">
           <div class="stat-num" style="color: var(--purple);" id="s-par">0</div>
@@ -366,25 +349,25 @@
       </div>
     </div>
 
-    <!-- ── AMISTOSOS ── -->
+    <!-- ── PARTIDAS ── -->
     <div id="view-amistosos" class="view">
       <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0 20px;">
-        <h2 style="font-size:22px; font-weight:900;">Amistosos</h2>
-        <button class="btn-icon" id="btn-criar-ami">+ Criar Amistoso</button>
+        <h2 style="font-size:22px; font-weight:900;">Partidas</h2>
+        <button class="btn-icon" id="btn-criar-ami">+ Criar</button>
       </div>
       <div id="lista-ami">
-        <p style="color:var(--text-muted); text-align:center; padding:48px 0; font-size:14px;">Nenhum amistoso registrado</p>
+        <p style="color:var(--text-muted); text-align:center; padding:48px 0; font-size:14px;">Nenhuma partida registrada</p>
       </div>
     </div>
 
-    <!-- ── TORNEIOS ── -->
+    <!-- ── CAMPEONATOS ── -->
     <div id="view-campeonatos" class="view">
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 0 16px;">
-        <h2 style="font-size:22px; font-weight:900;">Torneios</h2>
-        <button id="btn-criar-camp" class="btn-icon">+ Criar Torneio</button>
+      <div style="padding:8px 0 16px;">
+        <h2 style="font-size:22px; font-weight:900;">Campeonatos</h2>
       </div>
+      <button id="btn-criar-camp" style="width:100%;background:linear-gradient(135deg,#F59E0B,#EF4444);border:none;color:#fff;padding:18px 24px;border-radius:20px;font-size:16px;font-weight:900;cursor:pointer;margin-bottom:20px;box-shadow:0 8px 28px rgba(245,158,11,0.3);">Criar Campeonato</button>
       <div id="lista-camp">
-        <p style="color:var(--text-muted); text-align:center; padding:48px 0; font-size:14px;">Nenhum torneio criado</p>
+        <p style="color:var(--text-muted); text-align:center; padding:48px 0; font-size:14px;">Nenhum campeonato criado</p>
       </div>
     </div>
 
@@ -430,7 +413,7 @@
       <span class="nav-ico">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3.5l3.3 3-1.3 4h-4L8.7 6.5z" fill="currentColor" fill-opacity="0.15"/><path d="M12 21l3.3-3M12 21l-3.3-3M21 12l-3-1.7M3 12l3-1.7M15.3 6.5L18 9M8.7 6.5L6 9"/></svg>
       </span>
-      <span class="nav-lbl">Amistosos</span>
+      <span class="nav-lbl">Partidas</span>
     </button>
     <button class="nav-btn" data-view="campeonatos">
       <span class="nav-ico">
@@ -913,27 +896,19 @@ function mostraErro(msg) {
 document.getElementById('btn-login').addEventListener('click', () => fazerLogin(gp, 'btn-login'));
 document.getElementById('btn-sair').addEventListener('click', () => signOut(auth));
 
-// ─── HAMBURGER MENU ──────────────────────────────────────────────────
-window.fecharHamburger = () => { document.getElementById('menu-hamburger-dropdown').style.display = 'none'; };
-window.toggleUserMenu = () => {
-  const menu = document.getElementById('user-menu-dropdown');
-  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-  document.getElementById('menu-hamburger-dropdown').style.display = 'none';
-};
-document.getElementById('btn-hamburger').addEventListener('click', (e) => {
-  e.stopPropagation();
-  const menu = document.getElementById('menu-hamburger-dropdown');
-  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-  document.getElementById('user-menu-dropdown').style.display = 'none';
+document.getElementById('btn-config').addEventListener('click', () => {
+  modal(`<p class="modal-title">⚙️ Configurações</p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn-ghost" style="display:flex;align-items:center;gap:12px;justify-content:flex-start;text-align:left;" onclick="fecharModal();irPara('jogadores')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M3 20.5v-.5a5 5 0 015-5h2a5 5 0 015 5v.5"/><path d="M16 4a3.5 3.5 0 010 7"/><path d="M21 20.5v-.5a4.8 4.8 0 00-3.5-4.6"/></svg>
+        <div><div style="font-weight:700;color:var(--text);">Jogadores</div><div style="font-size:11px;color:var(--text-muted);">Gerenciar amigos e usuários</div></div>
+      </button>
+      <button class="btn-ghost" style="display:flex;align-items:center;gap:12px;justify-content:flex-start;text-align:left;" onclick="fecharModal();irPara('times')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l-8 2.5v6c0 5 3.5 9.4 8 10.5 4.5-1.1 8-5.5 8-10.5V5l-8-2.5z"/></svg>
+        <div><div style="font-weight:700;color:var(--text);">Times</div><div style="font-size:11px;color:var(--text-muted);">Gerenciar clubes e seleções</div></div>
+      </button>
+    </div>`);
 });
-document.addEventListener('click', (e) => {
-  if (!e.target.closest('#btn-hamburger') && !e.target.closest('#menu-hamburger-dropdown'))
-    document.getElementById('menu-hamburger-dropdown').style.display = 'none';
-  if (!e.target.closest('#btn-user') && !e.target.closest('#user-menu-dropdown') && !e.target.closest('#user-foto'))
-    document.getElementById('user-menu-dropdown').style.display = 'none';
-});
-
-// btn-config removido — substituído pelo hamburger menu
 
 getRedirectResult(auth).catch(() => {});
 
@@ -945,8 +920,6 @@ onAuthStateChanged(auth, async u => {
     const app = document.getElementById('app');
     app.style.display = 'flex';
     if (u.photoURL) { document.getElementById('user-foto').src = u.photoURL; document.getElementById('user-foto').style.display = ''; }
-    const emailDisplay = document.getElementById('user-email-display');
-    if (emailDisplay) emailDisplay.textContent = u.displayName || u.email || 'Usuário';
     await carregarTimes();
     await carregarDados();
   } else {
@@ -1270,7 +1243,7 @@ function cardAmistoso(a, compact=false) {
       </div>
       ${temRes
         ? `<div style="font-size:16px;font-weight:900;letter-spacing:0.5px;flex-shrink:0;">${a.resultado.g1}<span style="color:var(--text-muted);font-size:11px;"> × </span>${a.resultado.g2}</div>`
-        : `<button onclick="abrirPlacar('${a.id}')" style="background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;padding:7px 10px;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Registrar Placar</button>`}
+        : `<button onclick="abrirPlacar('${a.id}')" style="background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;padding:7px 10px;border-radius:9px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0;">Placar</button>`}
       <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;flex-direction:row-reverse;">
         ${b2}
         <div style="flex:1;min-width:0;text-align:right;">
@@ -1281,22 +1254,22 @@ function cardAmistoso(a, compact=false) {
     </div>` : `
     <div style="display:flex;align-items:flex-start;gap:6px;">
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:15px;line-height:1.2;margin-bottom:3px;">${(a.time1?.jogadores||[]).join(' & ') || '?'}</div>
-        <div style="display:flex;justify-content:center;margin-bottom:4px;">${b1}</div>
-        <div style="font-size:11px;color:var(--text-muted);">${a.time1?.nome || '?'}</div>
-        ${a.time1?.forca ? `<div style="margin:2px 0;">${forcaBadge(a.time1.forca)}</div>` : ''}
+        <div style="display:flex;justify-content:center;margin-bottom:6px;">${b1}</div>
+        <div style="font-weight:800;font-size:13px;line-height:1.2;">${a.time1?.nome || '?'}</div>
+        ${a.time1?.forca ? `<div style="margin:3px 0;">${forcaBadge(a.time1.forca)}</div>` : ''}
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${(a.time1?.jogadores||[]).join(' · ')}</div>
       </div>
-      <div style="text-align:center;min-width:60px;padding-top:28px;">
+      <div style="text-align:center;min-width:60px;padding-top:36px;">
         ${temRes
           ? `<div style="font-size:20px;font-weight:900;letter-spacing:1px;">${a.resultado.g1}<span style="color:var(--text-muted);font-size:12px;"> × </span>${a.resultado.g2}</div>
              <div style="font-size:10px;color:var(--text-muted);">dif. ${diff}</div>`
-          : `<button onclick="abrirPlacar('${a.id}')" style="background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;padding:8px 10px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">Registrar Placar</button>`}
+          : `<button onclick="abrirPlacar('${a.id}')" style="background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;padding:8px 10px;border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;white-space:nowrap;">⚽ Placar</button>`}
       </div>
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:15px;line-height:1.2;margin-bottom:3px;">${(a.time2?.jogadores||[]).join(' & ') || '?'}</div>
-        <div style="display:flex;justify-content:center;margin-bottom:4px;">${b2}</div>
-        <div style="font-size:11px;color:var(--text-muted);">${a.time2?.nome || '?'}</div>
-        ${a.time2?.forca ? `<div style="margin:2px 0;">${forcaBadge(a.time2.forca)}</div>` : ''}
+        <div style="display:flex;justify-content:center;margin-bottom:6px;">${b2}</div>
+        <div style="font-weight:800;font-size:13px;line-height:1.2;">${a.time2?.nome || '?'}</div>
+        ${a.time2?.forca ? `<div style="margin:3px 0;">${forcaBadge(a.time2.forca)}</div>` : ''}
+        <div style="font-size:10px;color:var(--text-muted);margin-top:2px;">${(a.time2?.jogadores||[]).join(' · ')}</div>
       </div>
     </div>`}
   </div>`;
@@ -1334,25 +1307,19 @@ window.cancelarExcluirJogo = (btn) => {
 
 function renderAmistosos() {
   const c = document.getElementById('lista-ami');
-  if (!amistosos.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhum amistoso registrado</p>'; return; }
+  if (!amistosos.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhuma partida registrada</p>'; return; }
   c.innerHTML = amistosos.map(a => cardAmistoso(a)).join('');
 }
 
 document.getElementById('btn-criar-ami').addEventListener('click', () => {
   if (jogadores.length < 2) { toast('Cadastre pelo menos 2 jogadores', 'erro'); return; }
-  modal(`<p class="modal-title">Novo Amistoso</p>
+  modal(`<p class="modal-title">Nova Partida</p>
     <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">Selecione os jogadores para o sorteio balanceado de times</p>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
-      <div class="tipo-btn sel" id="tp-clubes" onclick="selTipoAmi('clubes')"><span style="font-size:12px;font-weight:700;">Clubes</span></div>
-      <div class="tipo-btn" id="tp-selecoes" onclick="selTipoAmi('selecoes')"><span style="font-size:12px;font-weight:700;">Seleções</span></div>
+      <div class="tipo-btn sel" id="tp-clubes" onclick="selTipoAmi('clubes')">⚽<br><span style="font-size:12px;font-weight:700;">Clubes</span></div>
+      <div class="tipo-btn" id="tp-selecoes" onclick="selTipoAmi('selecoes')">🌍<br><span style="font-size:12px;font-weight:700;">Seleções</span></div>
     </div>
     <input type="hidden" id="ami-tipo" value="clubes">
-    <div style="margin-bottom:12px;">
-      <label style="display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:10px 12px;cursor:pointer;">
-        <input type="checkbox" id="ami-dupla" style="width:18px;height:18px;accent-color:var(--purple);">
-        <span style="font-weight:700;font-size:13px;">Modo Dupla</span>
-      </label>
-    </div>
     <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Jogadores</p>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="ami-jogs">
       ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="jc" value="${j.id}" data-nome="${j.nome}">${SVG_USER_CHIP}<span style="font-weight:700;">${j.nome}</span></label>`).join('')}
@@ -1360,27 +1327,24 @@ document.getElementById('btn-criar-ami').addEventListener('click', () => {
     <div id="ami-sorteio" style="display:none;margin-bottom:16px;"></div>
     <div style="display:flex;gap:10px;">
       <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
-      <button class="btn-primary" style="background:linear-gradient(135deg,#7C3AED,#06B6D4);" onclick="sortearAmistoso()">Sortear</button>
-      <button id="btn-ami-salvar" style="display:none;" class="btn-primary" onclick="salvarAmistoso()">Salvar</button>
+      <button class="btn-primary" style="background:linear-gradient(135deg,#7C3AED,#06B6D4);" onclick="sortearAmistoso()">🎲 Sortear</button>
+      <button id="btn-ami-salvar" style="display:none;" class="btn-primary" onclick="salvarAmistoso()">Salvar ✓</button>
     </div>`);
 });
 
-// ─── INICIAR AMISTOSO (botão home) ────────────────────────────────────
+// ─── INICIAR PARTIDA (botão home) ────────────────────────────────────
 window.iniciarPartida = () => {
   if (jogadores.length < 2) { toast('Cadastre pelo menos 2 jogadores', 'erro'); return; }
-  modal(`<p class="modal-title" style="margin-bottom:4px;">Novo Amistoso</p>
-  <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">Selecione os jogadores e sortearemos os times!</p>
+  modal(`<div style="text-align:center;margin-bottom:20px;">
+    <div style="font-size:48px;margin-bottom:8px;filter:drop-shadow(0 0 16px rgba(139,92,246,0.7))">⚡</div>
+    <p class="modal-title" style="margin-bottom:4px;">Iniciar Partida</p>
+    <p style="color:var(--text-muted);font-size:13px;">Selecione os jogadores e sortearemos os times!</p>
+  </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
-    <div class="tipo-btn sel" id="tp-clubes" onclick="selTipoAmi('clubes')"><span style="font-size:12px;font-weight:700;">Clubes</span></div>
-    <div class="tipo-btn" id="tp-selecoes" onclick="selTipoAmi('selecoes')"><span style="font-size:12px;font-weight:700;">Seleções</span></div>
+    <div class="tipo-btn sel" id="tp-clubes" onclick="selTipoAmi('clubes')">⚽<br><span style="font-size:12px;font-weight:700;">Clubes</span></div>
+    <div class="tipo-btn" id="tp-selecoes" onclick="selTipoAmi('selecoes')">🌍<br><span style="font-size:12px;font-weight:700;">Seleções</span></div>
   </div>
   <input type="hidden" id="ami-tipo" value="clubes">
-  <div style="margin-bottom:12px;">
-    <label style="display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:10px 12px;cursor:pointer;">
-      <input type="checkbox" id="ami-dupla" style="width:18px;height:18px;accent-color:var(--purple);">
-      <span style="font-weight:700;font-size:13px;">Modo Dupla</span>
-    </label>
-  </div>
   <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Selecionar Jogadores</p>
   <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;" id="ami-jogs">
     ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="jc" value="${j.id}" data-nome="${j.nome}">${SVG_USER_CHIP}<span style="font-weight:700;font-size:15px;">${j.nome}</span></label>`).join('')}
@@ -1388,8 +1352,8 @@ window.iniciarPartida = () => {
   <div id="ami-sorteio" style="display:none;margin-bottom:16px;"></div>
   <div style="display:flex;gap:10px;">
     <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
-    <button class="btn-primary" style="background:linear-gradient(135deg,#7C3AED,#06B6D4);" onclick="sortearAmistoso()">Sortear</button>
-    <button id="btn-ami-salvar" style="display:none;" class="btn-primary" onclick="salvarAmistoso()">Salvar</button>
+    <button class="btn-primary" style="background:linear-gradient(135deg,#7C3AED,#06B6D4);" onclick="sortearAmistoso()">🎲 Sortear Times!</button>
+    <button id="btn-ami-salvar" style="display:none;" class="btn-primary" onclick="salvarAmistoso()">Salvar ✓</button>
   </div>`);
 };
 
@@ -1440,9 +1404,7 @@ window.selTipoAmi = tipo => {
 let _sorteioAmi = null;
 window.sortearAmistoso = () => {
   const checks = [...document.querySelectorAll('.jc:checked')];
-  const emDupla = document.getElementById('ami-dupla')?.checked || false;
-  const minJog = emDupla ? 4 : 2;
-  if (checks.length < minJog) { toast(`Selecione ${minJog}+ jogadores`, 'erro'); return; }
+  if (checks.length < 2) { toast('Selecione 2+ jogadores', 'erro'); return; }
   const tipo = document.getElementById('ami-tipo').value;
   const pool = tipo === 'selecoes' ? selecoes : clubes;
   const hist = historicoIds(tipo);
@@ -1451,10 +1413,10 @@ window.sortearAmistoso = () => {
   const meio = Math.ceil(jogs.length / 2);
   const j1 = jogs.slice(0, meio), j2 = jogs.slice(meio);
   const diff = Math.abs(t1.forca - t2.forca);
-  const eq = diff <= 2 ? 'Equilibrado' : diff <= 5 ? 'Levemente desigual' : 'Desigual';
+  const eq = diff <= 2 ? '🟢 Equilibrado' : diff <= 5 ? '🟡 Ligeiramente desigual' : '🔴 Desigual';
 
   _sorteioAmi = {
-    tipo, emDupla,
+    tipo,
     time1: { nome: t1.nome, timeId: t1.id, forca: t1.forca, jogadores: j1.map(j => j.nome), jogadoresIds: j1.map(j => j.id) },
     time2: { nome: t2.nome, timeId: t2.id, forca: t2.forca, jogadores: j2.map(j => j.nome), jogadoresIds: j2.map(j => j.id) },
   };
@@ -1462,23 +1424,20 @@ window.sortearAmistoso = () => {
   const box = document.getElementById('ami-sorteio');
   box.style.display = '';
   box.innerHTML = `<div class="vs-card">
-    <div style="text-align:center;margin-bottom:14px;">
-      <span class="tag tag-green">Times Sorteados · ${eq}</span>
-      ${emDupla ? '<span class="tag tag-purple" style="margin-left:6px;">Modo Dupla</span>' : ''}
-    </div>
+    <div style="text-align:center;margin-bottom:14px;"><span class="tag tag-green">🎲 Times Sorteados · ${eq}</span></div>
     <div style="display:flex;align-items:flex-start;gap:8px;">
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:14px;margin-bottom:4px;">${j1.map(j=>j.nome).join(' & ')}</div>
-        <div style="display:flex;justify-content:center;margin-bottom:6px;">${badgeTime(t1.id, t1.nome, tipo)}</div>
-        <div class="vs-team" style="font-size:12px;color:var(--text-muted);">${t1.nome}</div>
+        <div style="display:flex;justify-content:center;margin-bottom:8px;">${badgeTime(t1.id, t1.nome, tipo)}</div>
+        <div class="vs-team">${t1.nome}</div>
         <div style="margin:4px 0;">${forcaBadge(t1.forca)}</div>
+        ${j1.map(j => `<div class="vs-label" style="margin-top:3px;">👤 ${j.nome}</div>`).join('')}
       </div>
       <div class="vs-divider" style="padding-top:28px;"><span class="vs-text">VS</span></div>
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:14px;margin-bottom:4px;">${j2.map(j=>j.nome).join(' & ')}</div>
-        <div style="display:flex;justify-content:center;margin-bottom:6px;">${badgeTime(t2.id, t2.nome, tipo)}</div>
-        <div class="vs-team" style="font-size:12px;color:var(--text-muted);">${t2.nome}</div>
+        <div style="display:flex;justify-content:center;margin-bottom:8px;">${badgeTime(t2.id, t2.nome, tipo)}</div>
+        <div class="vs-team">${t2.nome}</div>
         <div style="margin:4px 0;">${forcaBadge(t2.forca)}</div>
+        ${j2.map(j => `<div class="vs-label" style="margin-top:3px;">👤 ${j.nome}</div>`).join('')}
       </div>
     </div>
     <div style="margin-top:14px;">
@@ -1543,7 +1502,7 @@ async function carregarCampeonatos() {
 
 function renderCampeonatos() {
   const c = document.getElementById('lista-camp');
-  if (!campeonatos.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhum torneio criado</p>'; return; }
+  if (!campeonatos.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhum campeonato criado</p>'; return; }
   c.innerHTML = campeonatos.map(camp => {
     const meta = CAMP_META[camp.tipo] || { emoji:'🏆', nome: camp.tipo };
     return `<div class="match-card" style="margin-bottom:10px;cursor:pointer;" onclick="abrirCampeonato('${camp.id}')">
@@ -1564,14 +1523,16 @@ function renderCampeonatos() {
 
 function abrirModalCriarCamp() {
   if (jogadores.length < 2) { toast('Cadastre pelo menos 2 jogadores', 'erro'); return; }
-  modal(`<p class="modal-title">Novo Torneio</p>
+  modal(`<p class="modal-title">Novo Campeonato</p>
     <div style="display:flex;flex-direction:column;gap:14px;">
       <div>
         <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Formato</p>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
           ${Object.entries(CAMP_META).map(([k,v]) => `<div class="tipo-btn" data-ct="${k}" onclick="selCampTipo('${k}',this)" style="font-size:11px;padding:10px 6px;">
             <div style="height:42px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
-              ${v.logo ? `<img src="${v.logo}" style="max-width:100%;max-height:40px;object-fit:contain;" onerror="this.style.display='none'">` : ''}
+              ${v.logo
+                ? `<img src="${v.logo}" style="max-width:100%;max-height:40px;object-fit:contain;" onerror="this.outerHTML='<span style=&quot;font-size:28px;&quot;>${v.emoji}</span>'">`
+                : `<span style="font-size:28px;">${v.emoji}</span>`}
             </div>
             <div style="font-weight:700;line-height:1.2;font-size:10px;">${v.nome}</div>
             <div style="font-size:9px;color:var(--text-muted);margin-top:2px;">${v.tipo==='selecoes'?'Seleções':'Clubes'}</div>
@@ -1579,61 +1540,27 @@ function abrirModalCriarCamp() {
         </div>
         <input type="hidden" id="ct" value="champions">
       </div>
-      <input class="input" id="cn" placeholder="Nome do torneio" autocomplete="off">
+      <input class="input" id="cn" placeholder="Nome do campeonato" autocomplete="off">
       <div>
         <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Participantes</p>
-        <input type="text" id="camp-busca-jog" class="input" placeholder="Buscar jogador..." autocomplete="off" style="margin-bottom:8px;" oninput="filtrarJogadoresCamp(this.value)">
-        <div id="camp-dropdown-jog" style="max-height:160px;overflow-y:auto;border:1px solid var(--card-border);border-radius:12px;display:none;margin-bottom:8px;"></div>
-        <div id="camp-tags-jog" style="display:flex;flex-wrap:wrap;gap:6px;min-height:8px;"></div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="cc" value="${j.id}" data-nome="${j.nome}">${SVG_USER_CHIP}<span style="font-weight:600;">${j.nome}</span></label>`).join('')}
+        </div>
       </div>
       <div>
-        <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Times</p>
+        <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Times <span id="ct-info" style="text-transform:none;letter-spacing:0;font-weight:500;color:var(--purple);">(automático - sorteio balanceado)</span></p>
         <label style="display:flex;align-items:center;gap:10px;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:10px 12px;cursor:pointer;margin-bottom:8px;">
-          <input type="checkbox" id="manual-times" checked style="width:18px;height:18px;accent-color:var(--purple);" onchange="toggleSelManual()">
+          <input type="checkbox" id="manual-times" style="width:18px;height:18px;accent-color:var(--purple);" onchange="toggleSelManual()">
           <span style="font-weight:700;font-size:13px;">Escolher times manualmente</span>
         </label>
-        <div id="manual-times-box"></div>
+        <div id="manual-times-box" style="display:none;"></div>
       </div>
     </div>
     <div style="display:flex;gap:10px;margin-top:20px;">
       <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
-      <button class="btn-primary" onclick="criarCampeonato()">Criar Torneio</button>
+      <button class="btn-primary" onclick="criarCampeonato()">Criar</button>
     </div>`);
-  setTimeout(() => {
-    selCampTipo('champions', document.querySelector('[data-ct="champions"]'));
-    toggleSelManual(); // já inicia com manual checado
-    window._campJogsSel = [];
-    filtrarJogadoresCamp('');
-  }, 30);
-}
-
-window._campJogsSel = [];
-window.filtrarJogadoresCamp = (filtro) => {
-  const dd = document.getElementById('camp-dropdown-jog');
-  const ids = new Set((window._campJogsSel||[]).map(j=>j.id));
-  const lista = jogadores.filter(j => !ids.has(j.id) && j.nome.toLowerCase().includes(filtro.toLowerCase()));
-  if (!filtro && lista.length === 0) { dd.style.display='none'; return; }
-  dd.style.display = lista.length ? 'block' : 'none';
-  dd.innerHTML = lista.map(j=>`<div onclick="adicionarJogCamp('${j.id}','${j.nome.replace(/'/g,"\\'")}')" style="padding:10px 14px;cursor:pointer;font-weight:700;font-size:13px;border-bottom:1px solid var(--card-border);" onmouseover="this.style.background='rgba(139,92,246,0.12)'" onmouseout="this.style.background=''">${j.nome}</div>`).join('');
-};
-window.adicionarJogCamp = (id, nome) => {
-  if (!(window._campJogsSel||[]).find(j=>j.id===id)) window._campJogsSel.push({id,nome});
-  document.getElementById('camp-busca-jog').value='';
-  document.getElementById('camp-dropdown-jog').style.display='none';
-  renderTagsCamp();
-};
-window.removerJogCamp = (id) => {
-  window._campJogsSel = (window._campJogsSel||[]).filter(j=>j.id!==id);
-  renderTagsCamp();
-};
-function renderTagsCamp() {
-  const tags = document.getElementById('camp-tags-jog');
-  if (!tags) return;
-  tags.innerHTML = (window._campJogsSel||[]).map(j=>`
-    <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(139,92,246,0.18);border:1px solid rgba(139,92,246,0.4);border-radius:14px;font-size:12px;font-weight:700;">
-      ${j.nome}
-      <button onclick="removerJogCamp('${j.id}')" style="background:none;border:none;color:var(--purple);cursor:pointer;font-size:15px;padding:0;line-height:1;">×</button>
-    </span>`).join('');
+  setTimeout(() => selCampTipo('champions', document.querySelector('[data-ct="champions"]')), 30);
 }
 document.getElementById('btn-criar-camp').addEventListener('click', abrirModalCriarCamp);
 window.iniciarCampeonato = abrirModalCriarCamp;
@@ -1676,12 +1603,13 @@ window.selCampTipo = (k, el) => {
 window.criarCampeonato = async () => {
   const nome = document.getElementById('cn').value.trim();
   const tipo = document.getElementById('ct').value;
-  const partic = (window._campJogsSel||[]).map(j => ({ jogadorId: j.id, nome: j.nome }));
+  const checks = [...document.querySelectorAll('.cc:checked')];
   if (!nome) { toast('Digite o nome', 'erro'); return; }
-  if (partic.length < 2) { toast('Selecione 2+ participantes', 'erro'); return; }
+  if (checks.length < 2) { toast('Selecione 2+ participantes', 'erro'); return; }
   const meta = CAMP_META[tipo];
   const isManual = document.getElementById('manual-times')?.checked;
   const hist = historicoIds(meta.tipo);
+  const partic = checks.map(c => ({ jogadorId: c.value, nome: c.dataset.nome }));
 
   let distribuidos;
   if (isManual) {
@@ -1695,7 +1623,7 @@ window.criarCampeonato = async () => {
   }
   const grupos = gerarGrupos(distribuidos, tipo);
   await addDoc(collection(db, 'campeonatos'), { nome, tipo, participantes: distribuidos, grupos, fase:'grupos', status:'ativo', criadoEm: serverTimestamp() });
-  fecharModal(); await carregarCampeonatos(); atualizarDash(); toast('Torneio criado!');
+  fecharModal(); await carregarCampeonatos(); atualizarDash(); toast('Campeonato criado! 🏆');
 };
 
 function gerarGrupos(partic, tipo) {
@@ -1881,7 +1809,7 @@ window.ressortearCampeonato = (id) => {
   // Lista de jogadores já selecionados
   const selecionados = new Set((c.participantes||[]).map(p=>p.jogadorId));
   fecharModal();
-  modal(`<p class="modal-title">Ressortear / Adicionar</p>
+  modal(`<p class="modal-title">🎲 Ressortear / Adicionar</p>
     <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">${meta.emoji} ${c.nome} · Selecione os participantes e sortearemos os times novamente</p>
     <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Participantes</p>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
@@ -1889,7 +1817,7 @@ window.ressortearCampeonato = (id) => {
     </div>
     <div style="display:flex;gap:10px;">
       <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
-      <button class="btn-primary" onclick="confirmarRessortear('${id}')">Sortear</button>
+      <button class="btn-primary" onclick="confirmarRessortear('${id}')">🎲 Sortear</button>
     </div>`);
 };
 window.confirmarRessortear = async (id) => {
@@ -1918,7 +1846,7 @@ window.regPartida = (cid, gi, j1Id, j2Id) => {
   const isSel = CAMP_META[c.tipo]?.tipo === 'selecoes';
   const b1 = isSel ? badgeSel(m1.time?.id||'',m1.time?.nome||'') : badgeClube(m1.time?.id||'',m1.time?.nome||'');
   const b2 = isSel ? badgeSel(m2.time?.id||'',m2.time?.nome||'') : badgeClube(m2.time?.id||'',m2.time?.nome||'');
-  modal(`<p class="modal-title" style="margin-bottom:4px;">Registrar Placar</p>
+  modal(`<p class="modal-title" style="margin-bottom:4px;">⚽ Registrar Placar</p>
     <p style="color:var(--text-muted);font-size:13px;margin-bottom:20px;">${g.nome} · ${c.nome}</p>
     <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:24px;">
       <div style="flex:1;text-align:center;">
@@ -1978,7 +1906,7 @@ function calcularRanking() {
 function renderRanking(rank) {
   const medals=['🥇','🥈','🥉'];
   const html = rank.length===0?'<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhuma partida registrada</p>'
-    :rank.map((p,i)=>`<div onclick="abrirHistoricoJogador('${p.id}','${p.nome.replace(/'/g,"\\'")}')" style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:14px;margin-bottom:8px;cursor:pointer;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--purple)'" onmouseout="this.style.borderColor='var(--card-border)'">
+    :rank.map((p,i)=>`<div style="display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:14px;margin-bottom:8px;">
       <div class="rank-pos">${medals[i]||`${i+1}°`}</div>
       ${SVG_USER_CHIP}
       <div style="flex:1;">
@@ -1998,62 +1926,6 @@ function renderRanking(rank) {
       <span style="font-weight:900;font-size:15px;" class="grad">${p.pts} pts</span>
     </div>`).join('');
 }
-
-window.abrirHistoricoJogador = (jogadorId, nome) => {
-  // Coleta todos os jogos do jogador
-  const jogos = [];
-  amistosos.forEach(a => {
-    if (!a.resultado) return;
-    const noTime1 = (a.time1?.jogadoresIds||[]).includes(jogadorId);
-    const noTime2 = (a.time2?.jogadoresIds||[]).includes(jogadorId);
-    if (!noTime1 && !noTime2) return;
-    const meuTime = noTime1 ? a.time1 : a.time2;
-    const adversTime = noTime1 ? a.time2 : a.time1;
-    const meuGol = noTime1 ? a.resultado.g1 : a.resultado.g2;
-    const advGol = noTime1 ? a.resultado.g2 : a.resultado.g1;
-    const res = meuGol > advGol ? 'vitoria' : meuGol < advGol ? 'derrota' : 'empate';
-    const tipo = a.emDupla ? 'dupla' : 'amistoso';
-    jogos.push({ tipo, adversario: adversTime?.jogadores?.join(' & ') || adversTime?.nome || '?', meuGol, advGol, res, time: meuTime?.nome, criadoEm: a.criadoEm });
-  });
-  campeonatos.forEach(c => {
-    (c.grupos||[]).forEach(g => {
-      (g.partidas||[]).forEach(p => {
-        if (p.j1Id !== jogadorId && p.j2Id !== jogadorId) return;
-        const euSouJ1 = p.j1Id === jogadorId;
-        const meuGol = euSouJ1 ? p.g1 : p.g2;
-        const advGol = euSouJ1 ? p.g2 : p.g1;
-        const adversario = euSouJ1 ? p.j2Nome : p.j1Nome;
-        const res = meuGol > advGol ? 'vitoria' : meuGol < advGol ? 'derrota' : 'empate';
-        jogos.push({ tipo: 'torneio', adversario, meuGol, advGol, res, time: g.membros?.find(m=>m.jogadorId===jogadorId)?.time?.nome||'?' });
-      });
-    });
-  });
-
-  const renderJogos = (filtro) => {
-    const lista = filtro === 'todos' ? jogos : jogos.filter(j => j.tipo === filtro);
-    if (!lista.length) return '<p style="color:var(--text-muted);font-size:13px;text-align:center;padding:16px;">Nenhum jogo encontrado</p>';
-    const corRes = { vitoria: 'var(--green)', derrota: 'var(--red)', empate: 'var(--yellow)' };
-    const lblRes = { vitoria: 'V', derrota: 'D', empate: 'E' };
-    const lblTipo = { amistoso: 'Amistoso', torneio: 'Torneio', dupla: 'Dupla' };
-    return lista.map(j => `
-      <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--card-border);">
-        <div style="width:28px;height:28px;border-radius:50%;background:${corRes[j.res]};display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:#000;flex-shrink:0;">${lblRes[j.res]}</div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">vs ${j.adversario}</div>
-          <div style="font-size:11px;color:var(--text-muted);">${lblTipo[j.tipo]} · ${j.time}</div>
-        </div>
-        <div style="font-weight:900;font-size:15px;flex-shrink:0;">${j.meuGol}×${j.advGol}</div>
-      </div>`).join('');
-  };
-
-  modal(`<p class="modal-title">${nome}</p>
-    <div style="display:flex;gap:6px;margin-bottom:16px;">
-      ${['todos','amistoso','torneio','dupla'].map(f=>`<button onclick="document.getElementById('hist-lista').innerHTML=window._renderHistJogos('${f}');document.querySelectorAll('.hist-filtro').forEach(b=>b.style.background='var(--card)');this.style.background='var(--purple)';" class="hist-filtro" style="flex:1;padding:7px 4px;border-radius:10px;border:1px solid var(--card-border);color:var(--text);font-size:11px;font-weight:700;cursor:pointer;background:${f==='todos'?'var(--purple)':'var(--card)'};">${f.charAt(0).toUpperCase()+f.slice(1)}</button>`).join('')}
-    </div>
-    <div id="hist-lista">${renderJogos('todos')}</div>
-  `);
-  window._renderHistJogos = renderJogos;
-};
 
 function atualizarDash() {
   document.getElementById('s-jog').textContent = jogadores.length;
