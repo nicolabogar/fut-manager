@@ -2,7 +2,7 @@ import { amistosoRepository } from './AmistosoRepository';
 import { jogadorService } from '../jogadores/JogadorService';
 import { sortearBalanceado, shuffle } from '@utils/algorithms';
 import { CLUBES_DEFAULT, SELECOES_DEFAULT } from '@config/constants';
-import type { Amistoso, Jogador } from '@config/types';
+import type { Amistoso, Jogador, ClubePadrao, SelecaoPadrao } from '@config/types';
 
 export class AmistosoService {
   async listar(): Promise<Amistoso[]> {
@@ -19,10 +19,11 @@ export class AmistosoService {
 
   async sortearTimes(
     jogadorIds: string[],
-    usarClubes: boolean = true,
-    emDupla: boolean = false
+    tipoSelecionado: 'clube' | 'selecao' = 'clube',
+    emDupla: boolean = false,
+    duplaIds?: string[]
   ): Promise<Amistoso> {
-    if (jogadorIds.length < 2) {
+    if (jogadorIds.length < 2 && !emDupla) {
       throw new Error('Mínimo 2 jogadores para sortear');
     }
 
@@ -33,29 +34,41 @@ export class AmistosoService {
     const jogadoresValidos = jogadores.filter(Boolean) as Jogador[];
 
     // Sortear times balanceados
-    const [time1Jog, time2Jog] = sortearBalanceado(
-      jogadoresValidos,
-      (j: Jogador) => 50 // força padrão se não tiver
-    );
+    let time1Jog: Jogador[] = [];
+    let time2Jog: Jogador[] = [];
+
+    if (!emDupla && jogadoresValidos.length > 0) {
+      [time1Jog, time2Jog] = sortearBalanceado(
+        jogadoresValidos,
+        (j: Jogador) => 50
+      );
+    }
 
     // Sortear clubes/seleções
-    const times = usarClubes ? CLUBES_DEFAULT : SELECOES_DEFAULT;
-    const temposClubes = shuffle([...times]).slice(0, 2);
+    const times = tipoSelecionado === 'clube' ? CLUBES_DEFAULT : SELECOES_DEFAULT;
+    const temposSelecionados = shuffle([...times]).slice(0, 2);
 
     const amistoso: Amistoso = {
       id: '',
       time1: {
-        nome: temposClubes[0].nome,
+        nome: temposSelecionados[0].nome,
         jogadores: time1Jog,
         duplas: emDupla ? [] : undefined,
+        ...(tipoSelecionado === 'clube'
+          ? { clube: temposSelecionados[0] as ClubePadrao }
+          : { selecao: temposSelecionados[0] as SelecaoPadrao }),
       },
       time2: {
-        nome: temposClubes[1].nome,
+        nome: temposSelecionados[1].nome,
         jogadores: time2Jog,
         duplas: emDupla ? [] : undefined,
+        ...(tipoSelecionado === 'clube'
+          ? { clube: temposSelecionados[1] as ClubePadrao }
+          : { selecao: temposSelecionados[1] as SelecaoPadrao }),
       },
       status: 'sorteando',
-      emodoDupla: emDupla,
+      emModoDupla: emDupla,
+      tipoSelecionado,
       criadoEm: new Date(),
     };
 

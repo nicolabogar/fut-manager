@@ -2,17 +2,27 @@ export type ViewType = 'home' | 'jogadores' | 'amistosos' | 'torneios' | 'rankin
 
 export class Router {
   private currentView: ViewType = 'home';
+  private navigationListeners: ((view: ViewType) => void)[] = [];
 
   async navegarPara(view: ViewType): Promise<void> {
+    if (this.currentView === view) return;
+
     this.currentView = view;
     console.log('Navegando para:', view);
 
-    // TODO: Renderizar view correspondente
-    // Será implementado nas views individuais
+    // Notificar listeners
+    this.navigationListeners.forEach((listener) => listener(view));
+
+    // Atualizar URL
+    window.history.pushState({ view }, '', `#${view}`);
   }
 
   getCurrentView(): ViewType {
     return this.currentView;
+  }
+
+  onNavigate(listener: (view: ViewType) => void): void {
+    this.navigationListeners.push(listener);
   }
 }
 

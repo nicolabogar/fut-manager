@@ -32,21 +32,40 @@ export interface SelecaoPadrao {
   bandeira: string;
 }
 
-export interface Amistoso {
-  id: string;
-  time1: { nome: string; jogadores: Jogador[]; duplas?: Dupla[] };
-  time2: { nome: string; jogadores: Jogador[]; duplas?: Dupla[] };
-  placar?: { time1: number; time2: number };
-  status: 'sorteando' | 'confirmado' | 'finalizado';
-  resultado?: { vencedor: string; placar: { time1: number; time2: number } };
-  emodoDupla?: boolean;
-  criadoEm: any;
-}
-
 export interface Dupla {
   id: string;
   jogador1Id: string;
   jogador2Id: string;
+  nome?: string;
+}
+
+export interface DuplaSelecao {
+  clube?: ClubePadrao;
+  selecao?: SelecaoPadrao;
+}
+
+export interface Amistoso {
+  id: string;
+  time1: {
+    nome: string;
+    jogadores: Jogador[];
+    duplas?: Dupla[];
+    clube?: ClubePadrao;
+    selecao?: SelecaoPadrao;
+  };
+  time2: {
+    nome: string;
+    jogadores: Jogador[];
+    duplas?: Dupla[];
+    clube?: ClubePadrao;
+    selecao?: SelecaoPadrao;
+  };
+  placar?: { time1: number; time2: number };
+  status: 'sorteando' | 'confirmado' | 'finalizado';
+  resultado?: { vencedor: string; placar: { time1: number; time2: number } };
+  emModoDupla?: boolean;
+  tipoSelecionado?: 'clube' | 'selecao';
+  criadoEm: any;
 }
 
 export interface Torneio {
@@ -57,6 +76,8 @@ export interface Torneio {
   fase: 'grupos' | 'classificatorias';
   participantes: Participante[];
   grupos?: Grupo[];
+  emModoDupla?: boolean;
+  tipoParticipante?: 'clube' | 'selecao';
   criadoEm: any;
 }
 
@@ -65,15 +86,7 @@ export interface Grupo {
   nome: string;
   times: Time[];
   tabela: TabelaPosicao[];
-  partidas?: Partida[];
-}
-
-export interface Partida {
-  id: string;
-  time1Id: string;
-  time2Id: string;
-  placar: { time1: number; time2: number };
-  data: any;
+  amistosos?: Amistoso[];
 }
 
 export interface TabelaPosicao {
@@ -93,6 +106,23 @@ export interface Participante {
   tipo: 'clube' | 'selecao';
 }
 
+export interface HistoricoJogo {
+  id: string;
+  jogadorId: string;
+  tipo: 'amistoso' | 'torneio' | 'dupla';
+  adversarioId?: string;
+  adversarioNome?: string;
+  resultado: 'vitoria' | 'derrota' | 'empate';
+  gp: number;
+  gc: number;
+  placarTime1: number;
+  placarTime2: number;
+  data: any;
+  timeId?: string;
+  timeName?: string;
+  duplaId?: string;
+}
+
 export interface Estatistica {
   jogadorId: string;
   nome: string;
@@ -103,6 +133,7 @@ export interface Estatistica {
   gp: number;
   gc: number;
   pontos: number;
+  historicoJogos?: HistoricoJogo[];
 }
 
 export interface TorneioMeta {
