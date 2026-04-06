@@ -114,66 +114,45 @@ export class AmistososView {
       margin-bottom: 16px;
     `;
 
+    // Time 1: jogadores em cima (grande) + nome do time abaixo
     const time1 = document.createElement('div');
-    time1.style.cssText = `
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    `;
+    time1.style.cssText = `margin-bottom: 12px;`;
     time1.innerHTML = `
-      ${amistoso.time1.clube?.logo || amistoso.time1.selecao?.bandeira || ''}
-      ${amistoso.time1.nome}
+      <div style="font-size: 17px; font-weight: 700; color: #222; margin-bottom: 2px;">
+        ${amistoso.time1.jogadores.map((j) => j.nome).join(' & ') || '—'}
+      </div>
+      <div style="font-size: 13px; font-weight: 500; color: #555;">
+        ${amistoso.time1.nome}
+      </div>
     `;
     matchInfo.appendChild(time1);
 
     if (amistoso.placar) {
       const placar = document.createElement('div');
-      placar.style.cssText = `
-        font-size: 24px;
-        font-weight: bold;
-        margin-bottom: 8px;
-      `;
+      placar.style.cssText = `font-size: 26px; font-weight: bold; margin: 8px 0; color: #333;`;
       placar.textContent = `${amistoso.placar.time1} - ${amistoso.placar.time2}`;
       matchInfo.appendChild(placar);
     } else {
       const vsText = document.createElement('div');
-      vsText.style.cssText = `
-        font-size: 12px;
-        color: #666;
-        margin-bottom: 8px;
-      `;
+      vsText.style.cssText = `font-size: 12px; color: #999; margin: 8px 0;`;
       vsText.textContent = 'vs';
       matchInfo.appendChild(vsText);
     }
 
+    // Time 2: jogadores em cima (grande) + nome do time abaixo
     const time2 = document.createElement('div');
-    time2.style.cssText = `
-      font-size: 14px;
-      font-weight: 600;
-    `;
+    time2.style.cssText = `margin-top: 4px;`;
     time2.innerHTML = `
-      ${amistoso.time2.clube?.logo || amistoso.time2.selecao?.bandeira || ''}
-      ${amistoso.time2.nome}
+      <div style="font-size: 17px; font-weight: 700; color: #222; margin-bottom: 2px;">
+        ${amistoso.time2.jogadores.map((j) => j.nome).join(' & ') || '—'}
+      </div>
+      <div style="font-size: 13px; font-weight: 500; color: #555;">
+        ${amistoso.time2.nome}
+      </div>
     `;
     matchInfo.appendChild(time2);
 
     content.appendChild(matchInfo);
-
-    const jogadoresInfo = document.createElement('div');
-    jogadoresInfo.style.cssText = `
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 16px;
-    `;
-    jogadoresInfo.innerHTML = `
-      <div style="margin-bottom: 8px;">
-        <strong>Time 1:</strong> ${amistoso.time1.jogadores.map((j) => j.nome).join(', ')}
-      </div>
-      <div>
-        <strong>Time 2:</strong> ${amistoso.time2.jogadores.map((j) => j.nome).join(', ')}
-      </div>
-    `;
-    content.appendChild(jogadoresInfo);
 
     if (amistoso.emModoDupla) {
       const duplaInfo = document.createElement('div');
