@@ -1849,8 +1849,52 @@ window._pagCamp = (dir) => {
   _renderFinalizadosCamp();
 };
 
+// ── Estado do dropdown de participantes no torneio ──
+const _ccSel = new Map(); // id → nome
+
+function _renderTagsCC() {
+  const container = document.getElementById('cc-tags');
+  if (!container) return;
+  if (_ccSel.size === 0) {
+    container.innerHTML = '<span style="color:var(--text-muted);font-size:12px;align-self:center;padding:4px 0;">NENHUM JOGADOR SELECIONADO</span>';
+    return;
+  }
+  container.innerHTML = [..._ccSel.entries()].map(([id, nome]) =>
+    `<span style="display:inline-flex;align-items:center;gap:5px;background:rgba(139,92,246,0.2);border:1px solid rgba(139,92,246,0.4);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:700;">
+      ${nome}
+      <span onclick="removerJogCC('${id}')" style="cursor:pointer;color:var(--text-muted);font-size:16px;line-height:1;margin-left:2px;">×</span>
+    </span>`
+  ).join('');
+}
+
+window.filtrarJogsCC = () => {
+  const q = (document.getElementById('cc-search')?.value || '').toLowerCase();
+  const drop = document.getElementById('cc-dropdown');
+  if (!drop) return;
+  const disponiveis = jogadores.filter(j => !_ccSel.has(j.id) && (!q || j.nome.toLowerCase().includes(q)));
+  if (!disponiveis.length) { drop.style.display = 'none'; return; }
+  drop.innerHTML = disponiveis.map(j =>
+    `<div onclick="selecionarJogCC('${j.id}','${j.nome.replace(/'/g,"\\'").replace(/"/g,'&quot;')}');document.getElementById('cc-search').value='';document.getElementById('cc-dropdown').style.display='none';"
+      style="padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;">
+      ${SVG_USER_CHIP}<span>${j.nome}</span>
+    </div>`
+  ).join('');
+  drop.style.display = 'block';
+};
+
+window.selecionarJogCC = (id, nome) => {
+  _ccSel.set(id, nome);
+  _renderTagsCC();
+};
+
+window.removerJogCC = (id) => {
+  _ccSel.delete(id);
+  _renderTagsCC();
+};
+
 function abrirModalCriarCamp() {
   if (jogadores.length < 2) { toast('Cadastre pelo menos 2 jogadores', 'erro'); return; }
+  _ccSel.clear();
   fullscreen('NOVO CAMPEONATO', `
     <div style="display:flex;flex-direction:column;gap:14px;">
       <div>
@@ -1874,8 +1918,14 @@ function abrirModalCriarCamp() {
       </div>
       <div>
         <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">PARTICIPANTES</label>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="cc" value="${j.id}" data-nome="${j.nome}">${SVG_USER_CHIP}<span style="font-weight:600;">${j.nome}</span></label>`).join('')}
+        <div id="cc-tags" style="display:flex;flex-wrap:wrap;gap:6px;min-height:40px;padding:8px;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:12px;margin-bottom:8px;">
+          <span style="color:var(--text-muted);font-size:12px;align-self:center;padding:4px 0;">NENHUM JOGADOR SELECIONADO</span>
+        </div>
+        <div style="position:relative;">
+          <input id="cc-search" type="text" class="input" placeholder="BUSCAR JOGADOR..." autocomplete="off"
+            oninput="filtrarJogsCC()" onfocus="filtrarJogsCC()"
+            style="margin-bottom:0;">
+          <div id="cc-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:20;background:var(--bg);border:1px solid var(--card-border);border-radius:12px;max-height:200px;overflow-y:auto;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,0.5);"></div>
         </div>
       </div>
       <div>
@@ -1891,7 +1941,16 @@ function abrirModalCriarCamp() {
       <button class="btn-ghost" onclick="fecharFullscreen()">CANCELAR</button>
       <button class="btn-primary" onclick="criarCampeonato()">CRIAR</button>
     </div>`);
-  setTimeout(() => selCampTipo('champions', document.querySelector('[data-ct="champions"]')), 30);
+  setTimeout(() => {
+    selCampTipo('champions', document.querySelector('[data-ct="champions"]'));
+    // Fecha dropdown ao clicar fora
+    document.getElementById('fullscreen-body')?.addEventListener('click', e => {
+      if (!e.target.closest('#cc-search') && !e.target.closest('#cc-dropdown')) {
+        const d = document.getElementById('cc-dropdown');
+        if (d) d.style.display = 'none';
+      }
+    }, { capture: true });
+  }, 30);
 }
 document.getElementById('btn-criar-camp').addEventListener('click', abrirModalCriarCamp);
 window.iniciarCampeonato = abrirModalCriarCamp;
@@ -1934,14 +1993,13 @@ window.selCampTipo = (k, el) => {
 window.criarCampeonato = async () => {
   const nome = document.getElementById('cn').value.trim();
   const tipo = document.getElementById('ct').value;
-  const checks = [...document.querySelectorAll('.cc:checked')];
   if (!nome) { toast('DIGITE O NOME DO CAMPEONATO', 'erro'); return; }
   if (campeonatos.some(c => c.nome.trim().toLowerCase() === nome.toLowerCase())) { toast('JA EXISTE UM TORNEIO COM ESSE NOME', 'erro'); return; }
-  if (checks.length < 2) { toast('SELECIONE 2+ PARTICIPANTES', 'erro'); return; }
+  if (_ccSel.size < 2) { toast('SELECIONE 2+ PARTICIPANTES', 'erro'); return; }
   const meta = CAMP_META[tipo];
   const isManual = document.getElementById('manual-times')?.checked;
   const hist = historicoIds(meta.tipo);
-  const partic = checks.map(c => ({ jogadorId: c.value, nome: c.dataset.nome }));
+  const partic = [..._ccSel.entries()].map(([jogadorId, nome]) => ({ jogadorId, nome }));
 
   let distribuidos;
   if (isManual) {
