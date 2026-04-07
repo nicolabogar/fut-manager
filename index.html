@@ -180,6 +180,7 @@
     .swipe-wrap { position: relative; overflow: hidden; border-radius: 18px; margin-bottom: 10px; }
     .swipe-bg { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; background: linear-gradient(90deg, transparent, #EF4444); display: flex; align-items: center; justify-content: flex-end; padding-right: 18px; border-radius: 18px; }
     .swipe-bg svg { color: white; }
+    .swipe-bg-label { font-size: 9px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
     .entity-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 18px; padding: 14px; display: flex; align-items: center; gap: 12px; transition: transform 0.25s ease, border-color 0.2s; position: relative; z-index: 1; }
     .entity-card.swiping { transition: none; }
     .entity-card:active { transform: scale(0.99); }
@@ -1007,12 +1008,15 @@ function temPermissao() {
 // ─── SWIPE-TO-DELETE (iOS style) ──────────────────────────────────────
 function initSwipe(container, tipo) {
   container.querySelectorAll('.swipe-wrap').forEach(wrap => {
-    const card = wrap.querySelector('.entity-card');
+    if (wrap.dataset.swipeInit) return;
+    wrap.dataset.swipeInit = '1';
+    const card = wrap.querySelector('.entity-card') || wrap.querySelector('.match-card') || wrap.children[wrap.children.length - 1];
+    if (!card) return;
     let startX = 0, currentX = 0, isDragging = false;
     const THRESHOLD = -70;
     card.addEventListener('touchstart', e => {
+      if (e.target.closest('.placar-input') || e.target.closest('button')) return;
       startX = e.touches[0].clientX; isDragging = true;
-      card.classList.add('swiping');
     }, {passive: true});
     card.addEventListener('touchmove', e => {
       if (!isDragging) return;
@@ -1022,14 +1026,15 @@ function initSwipe(container, tipo) {
       card.style.transform = `translateX(${currentX}px)`;
     }, {passive: true});
     card.addEventListener('touchend', () => {
+      if (!isDragging) return;
       isDragging = false;
-      card.classList.remove('swiping');
       if (currentX < THRESHOLD) {
         card.style.transform = 'translateX(-100px)';
         const id = wrap.dataset.swipeId;
         const nome = wrap.dataset.swipeNome;
         if (tipo === 'jogador') excluirJogador(id, nome);
         else if (tipo === 'time') excluirTime(id);
+        else if (tipo === 'amistoso') excluirJogo(id, nome, card.querySelector('[onclick*=excluirJogo]') || card);
       } else {
         card.style.transform = 'translateX(0)';
       }
@@ -1341,8 +1346,20 @@ window.cancelarExcluirJogo = (btn) => {
 
 function renderAmistosos() {
   const c = document.getElementById('lista-ami');
-  if (!amistosos.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">Nenhuma partida registrada</p>'; return; }
-  c.innerHTML = amistosos.map(a => cardAmistoso(a)).join('');
+  if (!amistosos.length) { c.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:48px 0;font-size:14px;">NENHUMA PARTIDA REGISTRADA</p>'; return; }
+  c.innerHTML = amistosos.map(a => wrapSwipeAmistoso(a, cardAmistoso(a))).join('');
+  initSwipe(c, 'amistoso');
+}
+
+function wrapSwipeAmistoso(a, cardHtml) {
+  const nomeJogo = `${a.time1?.nome||'?'} vs ${a.time2?.nome||'?'}`;
+  return `<div class="swipe-wrap" data-swipe-id="${a.id}" data-swipe-nome="${nomeJogo.replace(/"/g,'&quot;')}">
+    <div class="swipe-bg" style="flex-direction:column;gap:2px;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      <span class="swipe-bg-label">REMOVER</span>
+    </div>
+    <div style="position:relative;z-index:1;transition:transform 0.2s;">${cardHtml}</div>
+  </div>`;
 }
 
 document.getElementById('btn-criar-ami').addEventListener('click', () => {
@@ -2047,7 +2064,8 @@ function atualizarDash() {
   const elAmi = document.getElementById('home-amistosos');
   if (amistososAbertos.length > 0) {
     secAmi.style.display = '';
-    elAmi.innerHTML = amistososAbertos.slice(0,5).map(a => cardAmistoso(a, true)).join('');
+    elAmi.innerHTML = amistososAbertos.slice(0,5).map(a => wrapSwipeAmistoso(a, cardAmistoso(a, true))).join('');
+    initSwipe(elAmi, 'amistoso');
   } else { secAmi.style.display = 'none'; }
 
   // Torneios em andamento na home
