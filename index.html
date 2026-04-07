@@ -365,9 +365,8 @@
       </div>
       <div id="lista-jog">
         <div style="background:rgba(139,92,246,0.08);border:1px dashed rgba(139,92,246,0.3);border-radius:18px;padding:32px 20px;text-align:center;">
-          <div style="font-size:40px;margin-bottom:12px;">👥</div>
-          <p style="font-weight:700;margin-bottom:6px;">Nenhum jogador ainda</p>
-          <p style="color:var(--text-muted);font-size:13px;">Adicione os amigos que vão jogar.<br>Ex: Nicola, Beto, Fabio...</p>
+          <p style="font-weight:700;margin-bottom:6px;text-transform:uppercase;">NENHUM JOGADOR CADASTRADO</p>
+          <p style="color:var(--text-muted);font-size:13px;">ADICIONE OS AMIGOS QUE VÃO JOGAR</p>
         </div>
       </div>
     </div>
@@ -1563,7 +1562,7 @@ function vsCardTime(t, jogadoresList, pool) {
 function compartilharWhatsApp(sorteio) {
   const t1 = sorteio.time1, t2 = sorteio.time2;
   const diff = Math.abs(t1.forca - t2.forca);
-  const eq = diff <= 2 ? '✅ Equilibrado' : diff <= 5 ? '⚠️ Levemente desigual' : '🔴 Desigual';
+  const eq = diff <= 2 ? 'Equilibrado' : diff <= 5 ? 'Levemente desigual' : 'Desigual';
   const pool = sorteio.tipo === 'selecoes' ? selecoes : clubes;
   const td1 = pool.find(x => x.id === t1.timeId) || {};
   const td2 = pool.find(x => x.id === t2.timeId) || {};
@@ -1602,7 +1601,7 @@ window.sortearAmistoso = () => {
   const meio = Math.ceil(jogs.length / 2);
   const j1 = jogs.slice(0, meio), j2 = jogs.slice(meio);
   const diff = Math.abs(t1.forca - t2.forca);
-  const eq = diff <= 2 ? '🟢 Equilibrado' : diff <= 5 ? '🟡 Ligeiramente desigual' : '🔴 Desigual';
+  const eq = diff <= 2 ? 'EQUILIBRADO' : diff <= 5 ? 'LEVEMENTE DESIGUAL' : 'DESIGUAL';
 
   _sorteioAmi = {
     tipo,
@@ -1613,7 +1612,7 @@ window.sortearAmistoso = () => {
   const box = document.getElementById('ami-sorteio');
   box.style.display = '';
   box.innerHTML = `<div class="vs-card">
-    <div style="text-align:center;margin-bottom:14px;"><span class="tag tag-green">🎲 Times Sorteados · ${eq}</span></div>
+    <div style="text-align:center;margin-bottom:14px;"><span class="tag tag-green">TIMES SORTEADOS · ${eq}</span></div>
     <div style="display:flex;align-items:flex-start;gap:8px;">
       <div style="flex:1;text-align:center;">
         <div style="display:flex;justify-content:center;margin-bottom:8px;">${badgeTime(t1.id, t1.nome, tipo)}</div>
