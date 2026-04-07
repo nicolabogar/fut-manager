@@ -570,12 +570,18 @@ const SELECOES_DEFAULT = [
 ];
 
 const CAMP_META = {
-  'champions':     { nome:'Champions League', emoji:'⭐', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/en/thumb/b/bf/UEFA_Champions_League.svg/512px-UEFA_Champions_League.svg.png'  },
-  'libertadores':  { nome:'Libertadores',     emoji:'🌎', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/en/thumb/1/1e/Copa_Libertadores_logo.svg/512px-Copa_Libertadores_logo.svg.png'  },
-  'brasileirao':   { nome:'Brasileirão',      emoji:'🟢', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/pt/thumb/8/89/Brasileir%C3%A3o_-_Log%C3%B3tipo.png/320px-Brasileir%C3%A3o_-_Log%C3%B3tipo.png'  },
-  'paulistao':     { nome:'Paulistão',        emoji:'🐍', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/pt/thumb/6/66/Logo_Paulist%C3%A3o_2021.png/320px-Logo_Paulist%C3%A3o_2021.png'  },
-  'copa-brasil':   { nome:'Copa do Brasil',   emoji:'🏆', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/pt/thumb/4/44/Copa_do_Brasil_logo.png/240px-Copa_do_Brasil_logo.png'  },
-  'copa-do-mundo': { nome:'Copa do Mundo',    emoji:'🌍', tipo:'selecoes', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/6/67/2022_FIFA_World_Cup.svg/512px-2022_FIFA_World_Cup.svg.png' },
+  'champions':     { nome:'Champions League', emoji:'⭐', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/en/thumb/b/bf/UEFA_Champions_League.svg/512px-UEFA_Champions_League.svg.png',
+    desc:'Fase de grupos: todos jogam entre si no grupo. Os 2 primeiros de cada grupo avançam. A partir das oitavas de final, jogos eliminatórios (ida e volta nos torneios oficiais, aqui em jogo único). Campeão é quem vencer a final.' },
+  'libertadores':  { nome:'Libertadores',     emoji:'🌎', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/en/thumb/1/1e/Copa_Libertadores_logo.svg/512px-Copa_Libertadores_logo.svg.png',
+    desc:'Fase de grupos: todos jogam entre si no grupo. Os 2 primeiros avançam para as oitavas. Fase eliminatória a partir das oitavas. Considerada a Champions da América do Sul.' },
+  'brasileirao':   { nome:'Brasileirão',      emoji:'🟢', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/pt/thumb/8/89/Brasileir%C3%A3o_-_Log%C3%B3tipo.png/320px-Brasileir%C3%A3o_-_Log%C3%B3tipo.png',
+    desc:'Todos jogam contra todos (turno e returno). Pontuação: vitória 3 pts, empate 1 pt, derrota 0. Campeão é quem acumular mais pontos ao final. Desempate: vitórias, saldo de gols, gols marcados.' },
+  'paulistao':     { nome:'Paulistão',        emoji:'🐍', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/pt/thumb/6/66/Logo_Paulist%C3%A3o_2021.png/320px-Logo_Paulist%C3%A3o_2021.png',
+    desc:'Fase de grupos com 4 grupos. Os 2 primeiros de cada grupo + 2 melhores terceiros avançam. Quartas, semi e final eliminatórias. Formato regional do estado de São Paulo.' },
+  'copa-brasil':   { nome:'Copa do Brasil',   emoji:'🏆', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/pt/thumb/4/44/Copa_do_Brasil_logo.png/240px-Copa_do_Brasil_logo.png',
+    desc:'Formato eliminatório desde o início. Cada fase tem jogo único (aqui) ou ida e volta. Quem perde está eliminado. Campeão é o time que vencer todas as fases.' },
+  'copa-do-mundo': { nome:'Copa do Mundo',    emoji:'🌍', tipo:'selecoes', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/6/67/2022_FIFA_World_Cup.svg/512px-2022_FIFA_World_Cup.svg.png',
+    desc:'Fase de grupos com seleções do mundo todo. Os 2 primeiros de cada grupo avançam. Oitavas, quartas, semis e final eliminatórias. O maior torneio de seleções do mundo.' },
 };
 
 // ─── DADOS VISUAIS DOS TIMES ──────────────────────────────────────────
@@ -1908,52 +1914,64 @@ function calcularDisp(g) {
 window.abrirCampeonato = (id) => {
   const c = campeonatos.find(x=>x.id===id);
   if (!c) return;
-  const meta = CAMP_META[c.tipo] || {emoji:'🏆',nome:c.tipo};
+  const meta = CAMP_META[c.tipo] || {emoji:'🏆', nome:c.tipo, desc:''};
   const isSel = CAMP_META[c.tipo]?.tipo === 'selecoes';
+  const totalJogosReg = (c.grupos||[]).reduce((acc,g)=>acc+(g.partidas||[]).length,0);
+  const naoIniciado = totalJogosReg === 0;
+  const podeMudar = temPermissao();
+
+  const blocoTime = (m) => {
+    const bc = isSel ? badgeTimeCompact(m.time?.id||'','','selecoes') : badgeTimeCompact(m.time?.id||'',m.time?.nome||'','clubes');
+    return `<div style="flex:1;text-align:center;min-width:0;">
+      <div style="display:flex;justify-content:center;margin-bottom:4px;">${bc}</div>
+      <div style="font-size:13px;font-weight:800;line-height:1.2;">${m.time?.nome||'?'}</div>
+      ${m.time?.forca ? `<div style="font-size:10px;color:var(--text-muted);margin-top:1px;">FORCA ${m.time.forca}</div>` : ''}
+      <div style="font-size:11px;color:var(--cyan);margin-top:3px;font-weight:700;">${m.nome}</div>
+    </div>`;
+  };
 
   const gruposHTML = (c.grupos||[]).map((g,gi) => {
     const ord = [...g.membros].sort((a,b)=>b.pts!==a.pts?b.pts-a.pts:(b.gp-b.gc)!==(a.gp-a.gc)?(b.gp-b.gc)-(a.gp-a.gc):b.gp-a.gp);
     const disp = calcularDisp(g);
     const totalJogos = g.membros.length*(g.membros.length-1)/2;
     const jogados = (g.partidas||[]).length;
-
-    // Todos os confrontos do grupo (jogados + pendentes)
     const todosConf = [];
     for (let i=0;i<g.membros.length;i++) for (let j=i+1;j<g.membros.length;j++) todosConf.push({m1:g.membros[i],m2:g.membros[j]});
 
-    // Função para montar bloco de time no card de jogo (#3: brasão > nome time > força > jogador)
-    const blocoTime = (m) => {
-      const bc = isSel ? badgeTimeCompact(m.time?.id||'','',  'selecoes') : badgeTimeCompact(m.time?.id||'', m.time?.nome||'', 'clubes');
-      return `<div style="flex:1;text-align:center;min-width:0;">
-        <div style="display:flex;justify-content:center;margin-bottom:4px;">${bc}</div>
-        <div style="font-size:11px;font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m.time?.nome||'?'}</div>
-        ${m.time?.forca ? `<div style="font-size:9px;color:var(--text-muted);margin-top:1px;">Força ${m.time.forca}</div>` : ''}
-        <div style="font-size:10px;color:var(--purple);margin-top:3px;font-weight:600;">${m.nome}</div>
-      </div>`;
-    };
-
     const jogosHTML = todosConf.map(({m1,m2}) => {
       const played = (g.partidas||[]).find(p=>(p.j1Id===m1.jogadorId&&p.j2Id===m2.jogadorId)||(p.j1Id===m2.jogadorId&&p.j2Id===m1.jogadorId));
+      const confKey = `${c.id}-${gi}-${m1.jogadorId}-${m2.jogadorId}`;
       if (played) {
         const g1r = played.j1Id===m1.jogadorId ? played.g1 : played.g2;
         const g2r = played.j1Id===m1.jogadorId ? played.g2 : played.g1;
-        return `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:12px;padding:10px;margin-bottom:8px;">
+        return `<div class="match-card" style="margin-bottom:8px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span class="tag tag-purple" style="font-size:9px;">TORNEIO</span>
+            <span class="tag tag-gray" style="font-size:9px;">FINALIZADO</span>
+          </div>
           <div style="display:flex;align-items:center;gap:6px;">
             ${blocoTime(m1)}
-            <div style="text-align:center;min-width:52px;flex-shrink:0;">
-              <div style="font-size:18px;font-weight:900;color:var(--cyan);">${g1r} × ${g2r}</div>
-              <span class="tag tag-gray" style="font-size:9px;">Finalizado</span>
+            <div style="text-align:center;min-width:56px;flex-shrink:0;">
+              <div style="font-size:22px;font-weight:900;">${g1r} <span style="color:var(--text-muted);font-size:13px;">×</span> ${g2r}</div>
             </div>
             ${blocoTime(m2)}
           </div>
         </div>`;
       } else {
-        return `<div style="background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:10px;margin-bottom:8px;">
+        return `<div class="match-card" style="margin-bottom:8px;border-color:rgba(139,92,246,0.3);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+            <span class="tag tag-purple" style="font-size:9px;">TORNEIO</span>
+            <span class="tag tag-cyan" style="font-size:9px;">PENDENTE</span>
+          </div>
           <div style="display:flex;align-items:center;gap:6px;">
             ${blocoTime(m1)}
-            <div style="text-align:center;min-width:52px;flex-shrink:0;">
-              <div style="font-size:13px;font-weight:900;color:var(--text-muted);margin-bottom:4px;">VS</div>
-              <button onclick="regPartida('${c.id}',${gi},'${m1.jogadorId}','${m2.jogadorId}')" style="background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;padding:6px 10px;border-radius:8px;font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap;">Jogar</button>
+            <div style="text-align:center;min-width:70px;flex-shrink:0;">
+              <div style="display:flex;align-items:center;gap:3px;justify-content:center;">
+                <input type="number" min="0" max="99" value="0" id="tg1-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:36px;text-align:center;font-size:20px;font-weight:900;padding:5px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);">
+                <span style="color:var(--text-muted);font-size:12px;font-weight:900;">×</span>
+                <input type="number" min="0" max="99" value="0" id="tg2-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:36px;text-align:center;font-size:20px;font-weight:900;padding:5px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);">
+              </div>
+              <button onclick="event.stopPropagation();salvarPartidaDireta('${c.id}',${gi},'${m1.jogadorId}','${m2.jogadorId}','${confKey}')" class="btn-primary" style="margin-top:5px;padding:5px 10px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:7px;cursor:pointer;white-space:nowrap;">SALVAR</button>
             </div>
             ${blocoTime(m2)}
           </div>
@@ -1961,85 +1979,106 @@ window.abrirCampeonato = (id) => {
       }
     }).join('');
 
-    return `<div style="background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:16px;padding:14px;margin-bottom:12px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <p style="font-weight:800;font-size:15px;">${g.nome}</p>
-        <span class="tag ${disp.length===0?'tag-green':'tag-purple'}">${disp.length===0?'CONCLUIDO':`${jogados}/${totalJogos} jogos`}</span>
-      </div>
-      <table style="width:100%;font-size:12px;border-collapse:collapse;margin-bottom:14px;">
-        <tr style="color:var(--text-muted)">
-          <td style="padding:0 2px 6px;">Pos</td><td style="padding:0 2px 6px;">Jogador</td>
-          <td style="text-align:center;padding:0 2px 6px;">J</td><td style="text-align:center;padding:0 2px 6px;">V</td>
-          <td style="text-align:center;padding:0 2px 6px;">E</td><td style="text-align:center;padding:0 2px 6px;">D</td>
-          <td style="text-align:center;padding:0 2px 6px;">SG</td><td style="text-align:center;padding:0 2px 6px;font-weight:800;">Pts</td>
+    return `<div class="grupo-header aberto" onclick="toggleGrupo(this)" style="margin-bottom:8px;">
+      <span class="grupo-titulo">${g.nome} <span style="color:var(--text-muted);font-weight:600;">${disp.length===0?'· CONCLUIDO':`· ${jogados}/${totalJogos}`}</span></span>
+      <span class="grupo-seta">›</span>
+    </div>
+    <div class="grupo-body" style="margin-bottom:14px;">
+      <table style="width:100%;font-size:12px;border-collapse:collapse;margin-bottom:12px;background:rgba(255,255,255,0.02);border-radius:12px;overflow:hidden;">
+        <tr style="color:var(--text-muted);background:rgba(255,255,255,0.03);">
+          <td style="padding:6px 8px;">POS</td><td style="padding:6px 4px;">JOGADOR</td>
+          <td style="text-align:center;padding:6px 4px;">J</td><td style="text-align:center;padding:6px 4px;">V</td>
+          <td style="text-align:center;padding:6px 4px;">E</td><td style="text-align:center;padding:6px 4px;">D</td>
+          <td style="text-align:center;padding:6px 4px;">SG</td><td style="text-align:center;padding:6px 8px;font-weight:800;">PTS</td>
         </tr>
-        ${ord.map((m,i)=>{
-          const tbc = isSel ? badgeTimeCompact(m.time?.id||'','','selecoes') : badgeTimeCompact(m.time?.id||'',m.time?.nome||'','clubes');
-          return `<tr style="border-top:1px solid rgba(255,255,255,0.04);color:${i<2?'var(--cyan)':'var(--text)'}">
-          <td style="padding:5px 2px;vertical-align:middle;">${i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}°`}</td>
-          <td style="padding:5px 2px;vertical-align:middle;">
-            <div style="display:flex;align-items:center;gap:6px;">
-              <div style="width:24px;height:24px;border-radius:6px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);flex-shrink:0;">${
-                isSel
-                  ? `<img src="https://flagcdn.com/w40/${(SELECAO_PAIS[m.time?.id]||{pais:''}).pais}.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`
-                  : (TEAM_DATA[m.time?.id]?.crest
-                    ? `<img src="${TEAM_DATA[m.time?.id].crest}" style="width:20px;height:20px;object-fit:contain;">`
-                    : `<span style="font-size:8px;font-weight:900;">${(TEAM_DATA[m.time?.id]?.abrev||'?')}</span>`)
-              }</div>
-              <div><div style="font-weight:700;font-size:11px;line-height:1.2;">${m.nome}</div><div style="font-size:9px;color:var(--text-muted);font-weight:400;">${m.time?.nome||'?'}</div></div>
-            </div>
+        ${ord.map((m,i)=>`<tr style="border-top:1px solid rgba(255,255,255,0.04);color:${i<2?'var(--cyan)':'var(--text)'}">
+          <td style="padding:6px 8px;">${i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}°`}</td>
+          <td style="padding:6px 4px;">
+            <div style="font-weight:700;font-size:11px;">${m.nome}</div>
+            <div style="font-size:9px;color:var(--text-muted);">${m.time?.nome||'?'}</div>
           </td>
-          <td style="text-align:center;padding:5px 2px;">${m.vit+m.emp+m.der}</td>
-          <td style="text-align:center;padding:5px 2px;">${m.vit}</td>
-          <td style="text-align:center;padding:5px 2px;">${m.emp}</td>
-          <td style="text-align:center;padding:5px 2px;">${m.der}</td>
-          <td style="text-align:center;padding:5px 2px;">${m.gp-m.gc>0?'+':''}${m.gp-m.gc}</td>
-          <td style="text-align:center;padding:5px 2px;font-weight:900;color:var(--yellow);">${m.pts}</td>
-        </tr>`;}).join('')}
+          <td style="text-align:center;padding:6px 4px;">${m.vit+m.emp+m.der}</td>
+          <td style="text-align:center;padding:6px 4px;">${m.vit}</td>
+          <td style="text-align:center;padding:6px 4px;">${m.emp}</td>
+          <td style="text-align:center;padding:6px 4px;">${m.der}</td>
+          <td style="text-align:center;padding:6px 4px;">${m.gp-m.gc>0?'+':''}${m.gp-m.gc}</td>
+          <td style="text-align:center;padding:6px 8px;font-weight:900;color:var(--yellow);">${m.pts}</td>
+        </tr>`).join('')}
       </table>
-      <p style="color:var(--text-muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">JOGOS DO GRUPO</p>
+      <p style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">JOGOS</p>
       ${jogosHTML}
     </div>`;
   }).join('');
 
-  // Verifica se algum jogo foi registrado (campeonato iniciado)
-  const totalJogosReg = (c.grupos||[]).reduce((acc,g)=>acc+(g.partidas||[]).length,0);
-  const naoIniciado = totalJogosReg === 0;
-  const podeMudar = temPermissao();
-
-  modal(`<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px;">
-    <span style="font-size:44px;filter:drop-shadow(0 0 12px rgba(139,92,246,0.6))">${meta.emoji}</span>
-    <div style="flex:1;">
-      <h3 style="font-size:19px;font-weight:900;">${c.nome}</h3>
-      <p style="color:var(--text-muted);font-size:13px;">${meta.nome} · ${c.participantes?.length} participantes</p>
+  fullscreen(c.nome.toUpperCase(), `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <span style="font-size:40px;">${meta.emoji}</span>
+      <div style="flex:1;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
+          <span class="tag tag-purple" style="font-size:10px;">${meta.nome.toUpperCase()}</span>
+          <span class="tag tag-gray" style="font-size:10px;">${isSel?'SELECOES':'CLUBES'}</span>
+          <span class="tag ${c.status==='finalizado'?'tag-gray':'tag-green'}" style="font-size:10px;">${c.status==='finalizado'?'FINALIZADO':'EM ANDAMENTO'}</span>
+        </div>
+        <p style="color:var(--text-muted);font-size:12px;">${c.participantes?.length||0} PARTICIPANTES · ${totalJogosReg} JOGOS REGISTRADOS</p>
+      </div>
     </div>
-    ${podeMudar && naoIniciado ? `<button onclick="excluirCampeonato('${c.id}')" title="Excluir campeonato" style="background:rgba(239,68,68,0.12);border:none;color:#FCA5A5;border-radius:10px;padding:8px 10px;cursor:pointer;display:flex;align-items:center;flex-shrink:0;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-    </button>` : ''}
-  </div>
-  <p class="sec-title">TIMES SORTEADOS</p>
-  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:${naoIniciado&&podeMudar?'10':'20'}px;">
-    ${(c.participantes||[]).map(p=>`<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 12px 8px 8px;">
-      <div style="width:32px;height:32px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);flex-shrink:0;">
-        ${isSel
-          ? `<img src="https://flagcdn.com/w80/${(SELECAO_PAIS[p.time?.id]||{pais:''}).pais}.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`
-          : (TEAM_DATA[p.time?.id]?.crest
-            ? `<img src="${TEAM_DATA[p.time?.id].crest}" style="width:28px;height:28px;object-fit:contain;">`
-            : `<span style="font-size:10px;font-weight:900;color:var(--text-muted);">${(TEAM_DATA[p.time?.id]?.abrev||'?').slice(0,3)}</span>`)}
-      </div>
-      <div style="min-width:0;">
-        <div style="font-weight:800;font-size:12px;line-height:1.2;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.time?.nome||'?'}${p.time?.forca?` <span style="color:var(--text-muted);font-weight:600;font-size:10px;">${p.time.forca}</span>`:''}</div>
-        <div style="font-size:10px;color:var(--purple);font-weight:600;margin-top:1px;">${p.nome}</div>
-      </div>
-    </div>`).join('')}
-  </div>
-  ${naoIniciado && podeMudar ? `<button onclick="ressortearCampeonato('${c.id}')" style="width:100%;background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(6,182,212,0.2));border:1px solid rgba(139,92,246,0.4);color:#C4B5FD;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:8px;">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.93"/></svg>
-    Sortear novamente / Adicionar jogadores
-  </button>` : ''}
-  <p class="sec-title">GRUPOS</p>
-  ${gruposHTML}
-  <button class="btn-ghost" onclick="fecharModal()" style="margin-top:8px;">Fechar</button>`);
+
+    ${meta.desc ? `
+    <div class="grupo-header" onclick="toggleGrupo(this)" style="margin-bottom:8px;">
+      <span class="grupo-titulo" style="color:var(--text-muted);">COMO FUNCIONA</span>
+      <span class="grupo-seta">›</span>
+    </div>
+    <div class="grupo-body fechado" style="margin-bottom:16px;">
+      <p style="color:var(--text-muted);font-size:13px;line-height:1.6;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:12px;padding:12px;">${meta.desc}</p>
+    </div>` : ''}
+
+    <p class="sec-title" style="margin-bottom:10px;">TIMES SORTEADOS</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
+      ${(c.participantes||[]).map(p=>`<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 12px 8px 8px;">
+        <div style="width:30px;height:30px;border-radius:7px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);flex-shrink:0;">
+          ${isSel
+            ? `<img src="https://flagcdn.com/w80/${(SELECAO_PAIS[p.time?.id]||{pais:''}).pais}.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`
+            : (TEAM_DATA[p.time?.id]?.crest ? `<img src="${TEAM_DATA[p.time?.id].crest}" style="width:26px;height:26px;object-fit:contain;">` : `<span style="font-size:9px;font-weight:900;color:var(--text-muted);">${(TEAM_DATA[p.time?.id]?.abrev||'?').slice(0,3)}</span>`)}
+        </div>
+        <div style="min-width:0;">
+          <div style="font-weight:800;font-size:12px;line-height:1.2;">${p.time?.nome||'?'}</div>
+          <div style="font-size:10px;color:var(--purple);font-weight:600;margin-top:1px;">${p.nome}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+
+    ${naoIniciado && podeMudar ? `<button onclick="ressortearCampeonato('${c.id}')" style="width:100%;background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(6,182,212,0.2));border:1px solid rgba(139,92,246,0.4);color:#C4B5FD;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;">SORTEAR NOVAMENTE / ADICIONAR JOGADORES</button>` : ''}
+    ${naoIniciado && podeMudar ? `<button onclick="excluirCampeonato('${c.id}')" style="width:100%;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;">EXCLUIR CAMPEONATO</button>` : ''}
+
+    <p class="sec-title" style="margin-bottom:10px;">GRUPOS</p>
+    ${gruposHTML}
+  `);
+};
+
+// Salva partida diretamente dos inputs no card (sem modal)
+window.salvarPartidaDireta = async (cid, gi, j1Id, j2Id, confKey) => {
+  const c = campeonatos.find(x=>x.id===cid);
+  if (!c) return;
+  const g = c.grupos[gi];
+  const m1 = g.membros.find(m=>m.jogadorId===j1Id);
+  const m2 = g.membros.find(m=>m.jogadorId===j2Id);
+  if (!m1||!m2) return;
+  const el1 = document.getElementById('tg1-'+confKey);
+  const el2 = document.getElementById('tg2-'+confKey);
+  const g1 = parseInt(el1?.value)||0;
+  const g2 = parseInt(el2?.value)||0;
+  const grupos = c.grupos.map((gr,idx) => {
+    if (idx!==gi) return gr;
+    const membros = gr.membros.map(m => {
+      const mm={...m};
+      if (m.jogadorId===m1.jogadorId) { mm.gp+=g1;mm.gc+=g2;mm.vit+=g1>g2?1:0;mm.emp+=g1===g2?1:0;mm.der+=g1<g2?1:0;mm.pts+=g1>g2?3:g1===g2?1:0; }
+      else if (m.jogadorId===m2.jogadorId) { mm.gp+=g2;mm.gc+=g1;mm.vit+=g2>g1?1:0;mm.emp+=g1===g2?1:0;mm.der+=g2<g1?1:0;mm.pts+=g2>g1?3:g1===g2?1:0; }
+      return mm;
+    });
+    return {...gr,membros,partidas:[...(gr.partidas||[]),{j1Id:m1.jogadorId,j1Nome:m1.nome,j2Id:m2.jogadorId,j2Nome:m2.nome,g1,g2}]};
+  });
+  await updateDoc(doc(db,'campeonatos',cid),{grupos});
+  await carregarCampeonatos(); atualizarDash(); toast('PARTIDA REGISTRADA!'); abrirCampeonato(cid);
 };
 
 window.excluirCampeonato = (id) => {
@@ -2057,26 +2096,23 @@ window.excluirCampeonato = (id) => {
 };
 window.confirmarExcluirCamp = async (id) => {
   await deleteDoc(doc(db,'campeonatos',id));
-  fecharModal(); await carregarCampeonatos(); atualizarDash(); toast('Campeonato excluído');
+  fecharModal(); fecharFullscreen(); await carregarCampeonatos(); atualizarDash(); toast('Campeonato excluído');
 };
 
 window.ressortearCampeonato = (id) => {
   const c = campeonatos.find(x=>x.id===id);
   if (!c) return;
   const meta = CAMP_META[c.tipo] || { emoji:'🏆', nome: c.tipo };
-  const pool = meta.tipo === 'selecoes' ? selecoes : clubes;
-  // Lista de jogadores já selecionados
   const selecionados = new Set((c.participantes||[]).map(p=>p.jogadorId));
-  fecharModal();
-  modal(`<p class="modal-title">🎲 Ressortear / Adicionar</p>
-    <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">${meta.emoji} ${c.nome} · Selecione os participantes e sortearemos os times novamente</p>
-    <p style="color:var(--text-muted);font-size:12px;margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;">Participantes</p>
+  fullscreen('RESSORTEAR TIMES', `
+    <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">SELECIONE OS PARTICIPANTES E SORTEAREMOS OS TIMES NOVAMENTE PARA <strong>${c.nome.toUpperCase()}</strong></p>
+    <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">PARTICIPANTES</label>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
       ${jogadores.map(j => `<label class="check-row"><input type="checkbox" class="rsc" value="${j.id}" data-nome="${j.nome}" ${selecionados.has(j.id)?'checked':''}>${SVG_USER_CHIP}<span style="font-weight:700;">${j.nome}</span></label>`).join('')}
     </div>
     <div style="display:flex;gap:10px;">
-      <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
-      <button class="btn-primary" onclick="confirmarRessortear('${id}')">🎲 Sortear</button>
+      <button class="btn-ghost" onclick="abrirCampeonato('${id}')">CANCELAR</button>
+      <button class="btn-primary" onclick="confirmarRessortear('${id}')">SORTEAR</button>
     </div>`);
 };
 window.confirmarRessortear = async (id) => {
@@ -2091,7 +2127,7 @@ window.confirmarRessortear = async (id) => {
   const distribuidos = distribuirTimesBalanceados(partic, pool, hist);
   const grupos = gerarGrupos(distribuidos, c.tipo);
   await updateDoc(doc(db,'campeonatos',id), { participantes: distribuidos, grupos, fase:'grupos', status:'ativo' });
-  fecharModal(); await carregarCampeonatos(); atualizarDash(); toast('TIMES RESSORTEADOS!');
+  fecharFullscreen(); await carregarCampeonatos(); atualizarDash(); toast('TIMES RESSORTEADOS!'); abrirCampeonato(id);
 };
 
 window.regPartida = (cid, gi, j1Id, j2Id) => {
@@ -2145,7 +2181,7 @@ window.salvarPartida = async (cid, gi) => {
     return {...g,membros,partidas:[...(g.partidas||[]),{j1Id:m1.jogadorId,j1Nome:m1.nome,j2Id:m2.jogadorId,j2Nome:m2.nome,g1,g2}]};
   });
   await updateDoc(doc(db,'campeonatos',cid),{grupos});
-  await carregarCampeonatos(); atualizarDash(); toast('PARTIDA REGISTRADA!'); abrirCampeonato(cid);
+  fecharModal(); await carregarCampeonatos(); atualizarDash(); toast('PARTIDA REGISTRADA!'); abrirCampeonato(cid);
 };
 
 // ─── RANKING ─────────────────────────────────────────────────────────
