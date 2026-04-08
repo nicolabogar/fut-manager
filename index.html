@@ -13,7 +13,7 @@
   <title>FIFA FAR PLAY</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='white' stroke='%23222' stroke-width='4'/><polygon points='50,18 62,30 58,45 42,45 38,30' fill='%23222'/><polygon points='80,36 74,50 60,54 52,42 62,30' fill='%23222'/><polygon points='74,68 60,66 52,54 58,42 72,46' fill='%23222'/><polygon points='50,80 40,68 44,54 56,54 62,68' fill='%23222'/><polygon points='26,68 28,54 42,50 50,62 42,74' fill='%23222'/><polygon points='20,42 32,38 44,46 40,60 26,58' fill='%23222'/></svg>">
   <script>
     // Safety: apenas se erro ANTES do app ficar pronto (inicialização falhou)
     window.addEventListener('error', (ev) => {
@@ -266,7 +266,17 @@
   <div class="orb orb-2"></div>
 
   <div style="text-align:center; margin-bottom: 48px;" class="anim-fade">
-    <div style="font-size: 72px; margin-bottom: 16px; filter: drop-shadow(0 0 24px rgba(139,92,246,0.6))">⚽</div>
+    <div style="width:80px;height:80px;margin:0 auto 16px;filter:drop-shadow(0 0 24px rgba(139,92,246,0.6))">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+        <circle cx="50" cy="50" r="46" fill="white" stroke="#333" stroke-width="3"/>
+        <polygon points="50,18 62,30 58,45 42,45 38,30" fill="#222"/>
+        <polygon points="80,36 74,50 60,54 52,42 62,30" fill="#222"/>
+        <polygon points="74,68 60,66 52,54 58,42 72,46" fill="#222"/>
+        <polygon points="50,80 40,68 44,54 56,54 62,68" fill="#222"/>
+        <polygon points="26,68 28,54 42,50 50,62 42,74" fill="#222"/>
+        <polygon points="20,42 32,38 44,46 40,60 26,58" fill="#222"/>
+      </svg>
+    </div>
     <h1 style="font-size: 38px; font-weight: 900; letter-spacing: -1px;" class="grad">FIFA FAR PLAY</h1>
     <p style="color: var(--text-muted); margin-top: 8px; font-size: 15px;">Seus campeonatos. Seu ranking. Sua glória.</p>
   </div>
@@ -291,10 +301,16 @@
   <!-- HEADER -->
   <header id="header">
     <div style="display:flex; align-items:center; gap:10px;">
-      <button id="btn-hamburger" title="Menu" style="background:rgba(255,255,255,0.06);border:1px solid var(--card-border);color:var(--text);border-radius:10px;padding:6px 10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:2px;flex-direction:column;">
-        <span style="display:block;width:18px;height:2px;background:currentColor;border-radius:2px;"></span>
-        <span style="display:block;width:18px;height:2px;background:currentColor;border-radius:2px;margin:3px 0;"></span>
-        <span style="display:block;width:18px;height:2px;background:currentColor;border-radius:2px;"></span>
+      <button id="btn-hamburger" title="Menu" style="background:rgba(255,255,255,0.06);border:1px solid var(--card-border);color:var(--text);border-radius:10px;padding:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+          <circle cx="50" cy="50" r="46" fill="white" stroke="#555" stroke-width="4"/>
+          <polygon points="50,18 62,30 58,45 42,45 38,30" fill="#333"/>
+          <polygon points="80,36 74,50 60,54 52,42 62,30" fill="#333"/>
+          <polygon points="74,68 60,66 52,54 58,42 72,46" fill="#333"/>
+          <polygon points="50,80 40,68 44,54 56,54 62,68" fill="#333"/>
+          <polygon points="26,68 28,54 42,50 50,62 42,74" fill="#333"/>
+          <polygon points="20,42 32,38 44,46 40,60 26,58" fill="#333"/>
+        </svg>
       </button>
       <span style="font-weight:900; font-size:18px; letter-spacing:-0.5px;" class="grad">FIFA FAR PLAY</span>
     </div>
