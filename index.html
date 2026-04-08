@@ -8,9 +8,9 @@
   <meta http-equiv="Expires" content="0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="FutManager">
+  <meta name="apple-mobile-web-app-title" content="FIFA FAR PLAY">
   <meta name="theme-color" content="#0D0D1A">
-  <title>FutManager</title>
+  <title>FIFA FAR PLAY</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚽</text></svg>">
@@ -267,7 +267,7 @@
 
   <div style="text-align:center; margin-bottom: 48px;" class="anim-fade">
     <div style="font-size: 72px; margin-bottom: 16px; filter: drop-shadow(0 0 24px rgba(139,92,246,0.6))">⚽</div>
-    <h1 style="font-size: 38px; font-weight: 900; letter-spacing: -1px;" class="grad">FutManager</h1>
+    <h1 style="font-size: 38px; font-weight: 900; letter-spacing: -1px;" class="grad">FIFA FAR PLAY</h1>
     <p style="color: var(--text-muted); margin-top: 8px; font-size: 15px;">Seus campeonatos. Seu ranking. Sua glória.</p>
   </div>
 
@@ -296,7 +296,7 @@
         <span style="display:block;width:18px;height:2px;background:currentColor;border-radius:2px;margin:3px 0;"></span>
         <span style="display:block;width:18px;height:2px;background:currentColor;border-radius:2px;"></span>
       </button>
-      <span style="font-weight:900; font-size:18px; letter-spacing:-0.5px;" class="grad">FutManager</span>
+      <span style="font-weight:900; font-size:18px; letter-spacing:-0.5px;" class="grad">FIFA FAR PLAY</span>
     </div>
     <div id="menu-hamburger-dropdown" style="display:none;position:fixed;top:56px;left:12px;background:var(--bg2);border:1px solid var(--card-border);border-radius:14px;z-index:500;min-width:220px;box-shadow:0 8px 32px rgba(0,0,0,0.5);overflow:hidden;">
       <div id="ham-user-info" style="padding:14px 18px;border-bottom:1px solid var(--card-border);display:flex;align-items:center;gap:10px;">
@@ -1631,7 +1631,7 @@ function compartilharWhatsApp(sorteio) {
   const icone1 = sorteio.tipo === 'selecoes' ? (td1.bandeira||'') : `${td1.logo||'⚽'} ${td1.bandeira||''}`;
   const icone2 = sorteio.tipo === 'selecoes' ? (td2.bandeira||'') : `${td2.logo||'⚽'} ${td2.bandeira||''}`;
   const texto =
-    `⚽ *FutManager — Nova Partida!*\n\n` +
+    `⚽ *FIFA FAR PLAY — Nova Partida!*\n\n` +
     `${icone1} *${t1.nome}*\n` +
     `👥 ${t1.jogadores.join(', ')}\n` +
     `💪 Força: ${t1.forca}\n\n` +
@@ -1640,7 +1640,7 @@ function compartilharWhatsApp(sorteio) {
     `👥 ${t2.jogadores.join(', ')}\n` +
     `💪 Força: ${t2.forca}\n\n` +
     `${eq} (Diferença: ${diff} pts)\n\n` +
-    `📱 _FutManager App_`;
+    `📱 _FIFA FAR PLAY App_`;
   window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
 }
 window.compartilharWhatsApp = compartilharWhatsApp;

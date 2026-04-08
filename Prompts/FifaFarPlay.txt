@@ -1,0 +1,5 @@
+# FIFA FAR PLAY - Prompts de Features
+# Adicione aqui as features a serem implementadas.
+# Quando todas forem concluídas, este arquivo será renomeado para FifaFarPlay_v1.txt
+# e um novo FifaFarPlay.txt será criado para o próximo ciclo.
+
