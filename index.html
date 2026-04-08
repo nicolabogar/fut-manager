@@ -1297,9 +1297,9 @@ function cardAmistoso(a, compact=false) {
   const placarDireto = temRes
     ? `<div style="font-size:24px;font-weight:900;letter-spacing:1px;">${a.resultado.g1}<span style="color:var(--text-muted);font-size:13px;"> × </span>${a.resultado.g2}</div>`
     : `<div style="display:flex;align-items:center;gap:4px;">
-        <input type="number" min="0" max="99" value="0" id="pdc1-${a.id}" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
+        <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="pdc1-${a.id}" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
         <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
-        <input type="number" min="0" max="99" value="0" id="pdc2-${a.id}" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
+        <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="pdc2-${a.id}" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
       </div>
       <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}')" class="btn-primary" style="margin-top:6px;padding:6px 14px;font-size:11px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;">SALVAR</button>`;
   return `<div class="match-card" style="margin-bottom:10px;${compact?'padding:12px;':''}${temRes?'cursor:pointer;':''}" ${temRes?`onclick="editarAmistoso('${a.id}')"`:''}>
@@ -1324,9 +1324,9 @@ function cardAmistoso(a, compact=false) {
         ${temRes
           ? `<div style="font-size:20px;font-weight:900;letter-spacing:0.5px;">${a.resultado.g1}<span style="color:var(--text-muted);font-size:12px;"> × </span>${a.resultado.g2}</div>`
           : `<div style="display:flex;align-items:center;gap:3px;">
-              <input type="number" min="0" max="99" value="0" id="pdc1-${a.id}" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="pdc1-${a.id}" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
               <span style="color:var(--text-muted);font-size:11px;font-weight:900;">×</span>
-              <input type="number" min="0" max="99" value="0" id="pdc2-${a.id}" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="pdc2-${a.id}" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
               <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}')" style="margin-left:4px;padding:4px 8px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:6px;cursor:pointer;">OK</button>
             </div>`}
       </div>
@@ -1741,13 +1741,13 @@ window.abrirPlacar = id => {
       <div style="flex:1;text-align:center;">
         <div style="font-weight:800;font-size:14px;margin-bottom:8px;">${a.time1?.nome}</div>
         ${a.time1?.forca ? forcaBadge(a.time1.forca) : ''}
-        <input id="pg1" type="number" min="0" max="99" value="0" class="input" style="text-align:center;font-size:32px;font-weight:900;padding:12px;margin-top:8px;">
+        <input id="pg1" type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" class="input" style="text-align:center;font-size:32px;font-weight:900;padding:12px;margin-top:8px;">
       </div>
       <div style="color:var(--text-muted);font-size:28px;font-weight:900;flex-shrink:0;">×</div>
       <div style="flex:1;text-align:center;">
         <div style="font-weight:800;font-size:14px;margin-bottom:8px;">${a.time2?.nome}</div>
         ${a.time2?.forca ? forcaBadge(a.time2.forca) : ''}
-        <input id="pg2" type="number" min="0" max="99" value="0" class="input" style="text-align:center;font-size:32px;font-weight:900;padding:12px;margin-top:8px;">
+        <input id="pg2" type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" class="input" style="text-align:center;font-size:32px;font-weight:900;padding:12px;margin-top:8px;">
       </div>
     </div>
     <div style="display:flex;gap:10px;">
@@ -1788,10 +1788,10 @@ window.editarAmistoso = (id) => {
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:10px;text-align:center;">PLACAR</label>
         <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
-          <input type="number" min="0" max="99" value="${g1}" id="ea-g1" class="placar-input"
+          <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="${g1}" id="ea-g1" class="placar-input"
             style="width:70px;text-align:center;font-size:36px;font-weight:900;padding:10px 4px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:12px;color:var(--text);">
           <span style="font-size:22px;font-weight:900;color:var(--text-muted);">×</span>
-          <input type="number" min="0" max="99" value="${g2}" id="ea-g2" class="placar-input"
+          <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="${g2}" id="ea-g2" class="placar-input"
             style="width:70px;text-align:center;font-size:36px;font-weight:900;padding:10px 4px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:12px;color:var(--text);">
         </div>
       </div>
@@ -2218,9 +2218,9 @@ window.abrirCampeonato = (id) => {
             ${blocoTime(m1)}
             <div style="text-align:center;min-width:70px;flex-shrink:0;">
               <div style="display:flex;align-items:center;gap:3px;justify-content:center;">
-                <input type="number" min="0" max="99" value="0" id="tg1-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:36px;text-align:center;font-size:20px;font-weight:900;padding:5px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg1-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:36px;text-align:center;font-size:20px;font-weight:900;padding:5px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);">
                 <span style="color:var(--text-muted);font-size:12px;font-weight:900;">×</span>
-                <input type="number" min="0" max="99" value="0" id="tg2-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:36px;text-align:center;font-size:20px;font-weight:900;padding:5px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg2-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:36px;text-align:center;font-size:20px;font-weight:900;padding:5px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);">
               </div>
               <button onclick="event.stopPropagation();salvarPartidaDireta('${c.id}',${gi},'${m1.jogadorId}','${m2.jogadorId}','${confKey}')" class="btn-primary" style="margin-top:5px;padding:5px 10px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:7px;cursor:pointer;white-space:nowrap;">SALVAR</button>
             </div>
@@ -2398,14 +2398,14 @@ window.regPartida = (cid, gi, j1Id, j2Id) => {
         <div style="display:flex;justify-content:center;margin-bottom:8px;">${b1}</div>
         <div style="font-weight:800;font-size:14px;">${m1.nome}</div>
         <div style="font-size:11px;color:var(--text-muted);">${m1.time?.nome||'?'}</div>
-        <input id="rg1" type="number" min="0" max="99" value="0" class="input" style="text-align:center;font-size:40px;font-weight:900;padding:14px;margin-top:12px;">
+        <input id="rg1" type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" class="input" style="text-align:center;font-size:40px;font-weight:900;padding:14px;margin-top:12px;">
       </div>
       <div style="color:var(--text-muted);font-size:32px;font-weight:900;padding-top:80px;flex-shrink:0;">×</div>
       <div style="flex:1;text-align:center;">
         <div style="display:flex;justify-content:center;margin-bottom:8px;">${b2}</div>
         <div style="font-weight:800;font-size:14px;">${m2.nome}</div>
         <div style="font-size:11px;color:var(--text-muted);">${m2.time?.nome||'?'}</div>
-        <input id="rg2" type="number" min="0" max="99" value="0" class="input" style="text-align:center;font-size:40px;font-weight:900;padding:14px;margin-top:12px;">
+        <input id="rg2" type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" class="input" style="text-align:center;font-size:40px;font-weight:900;padding:14px;margin-top:12px;">
       </div>
     </div>
     <div style="display:flex;gap:10px;">
