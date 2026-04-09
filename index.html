@@ -1759,11 +1759,25 @@ function _htmlNovoAmistoso() {
     </div>`;
 }
 
+function _preencherUltimoJogo() {
+  // Preenche jogadores do último amistoso criado (mais recente)
+  if (!amistosos.length) return;
+  const ultimo = amistosos[0]; // já ordenado por criadoEm desc
+  const ids1 = ultimo.time1?.jogadoresIds || [];
+  const ids2 = ultimo.time2?.jogadoresIds || [];
+  [...ids1, ...ids2].forEach(jid => {
+    const j = jogadores.find(x => x.id === jid);
+    if (j && !_jcSel.has(jid)) _jcSel.set(jid, j.nome);
+  });
+  setTimeout(() => _renderTagsJC(), 50);
+}
+
 document.getElementById('btn-criar-ami').addEventListener('click', () => {
   if (jogadores.length < 2) { toast('CADASTRE PELO MENOS 2 JOGADORES', 'erro'); return; }
   _jcSel.clear();
   _amiTiposSel.clear(); _amiTiposSel.add('clubes'); _amiTiposSel.add('selecoes');
   fullscreen('NOVO AMISTOSO', _htmlNovoAmistoso());
+  _preencherUltimoJogo();
   setTimeout(() => {
     document.getElementById('fullscreen-body')?.addEventListener('click', e => {
       if (!e.target.closest('#jc-search') && !e.target.closest('#jc-dropdown')) {
@@ -1780,6 +1794,7 @@ window.iniciarPartida = () => {
   _jcSel.clear();
   _amiTiposSel.clear(); _amiTiposSel.add('clubes'); _amiTiposSel.add('selecoes');
   fullscreen('NOVO AMISTOSO', _htmlNovoAmistoso());
+  _preencherUltimoJogo();
   setTimeout(() => {
     document.getElementById('fullscreen-body')?.addEventListener('click', e => {
       if (!e.target.closest('#jc-search') && !e.target.closest('#jc-dropdown')) {
