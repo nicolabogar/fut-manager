@@ -1316,6 +1316,7 @@ function cardAmistoso(a, compact=false) {
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="tag tag-purple" style="font-size:9px;">AMISTOSO</span>
         <span class="tag tag-gray" style="font-size:9px;">${a.tipo === 'selecoes' ? 'SELECOES' : 'CLUBES'}</span>
+        ${a.modoDupla ? `<span class="tag tag-cyan" style="font-size:9px;">2v2</span>` : ''}
       </div>
       ${temRes ? `<span class="tag tag-gray">FINALIZADO</span>` : `<span class="tag tag-cyan" style="font-size:9px;">EM ANDAMENTO</span>`}
     </div>
@@ -1582,6 +1583,13 @@ function _htmlNovoAmistoso() {
       <div class="tipo-btn" id="tp-ambos" onclick="selTipoAmi('ambos')"><span style="font-size:12px;font-weight:700;">AMBOS</span></div>
     </div>
     <input type="hidden" id="ami-tipo" value="clubes">
+    <label class="check-row" style="margin-bottom:16px;" id="label-dupla">
+      <input type="checkbox" id="ami-dupla" onchange="toggleModoDupla(this.checked)">
+      <div>
+        <div style="font-size:13px;font-weight:700;">MODO DUPLA (2v2)</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">SELECIONE EXATAMENTE 4 JOGADORES</div>
+      </div>
+    </label>
     <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">JOGADORES</label>
     <div id="jc-tags" style="display:flex;flex-wrap:wrap;gap:6px;min-height:40px;padding:8px;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:12px;margin-bottom:8px;">
       <span style="color:var(--text-muted);font-size:12px;align-self:center;padding:4px 0;">NENHUM JOGADOR SELECIONADO</span>
@@ -1674,9 +1682,25 @@ window.selTipoAmi = tipo => {
   if (tpAmbos) tpAmbos.classList.toggle('sel', tipo === 'ambos');
 };
 
+window.toggleModoDupla = (ativo) => {
+  // Apenas feedback visual, a validação ocorre no sorteio
+  const label = document.getElementById('label-dupla');
+  if (label) label.style.borderColor = ativo ? 'var(--cyan)' : '';
+  // Resetar sorteio ao mudar modo
+  const box = document.getElementById('ami-sorteio');
+  if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+  const btnSalvar = document.getElementById('btn-ami-salvar');
+  if (btnSalvar) btnSalvar.style.display = 'none';
+};
+
 let _sorteioAmi = null;
 window.sortearAmistoso = () => {
-  if (_jcSel.size < 2) { toast('SELECIONE 2+ JOGADORES', 'erro'); return; }
+  const modoDupla = document.getElementById('ami-dupla')?.checked || false;
+  if (modoDupla) {
+    if (_jcSel.size !== 4) { toast('MODO DUPLA: SELECIONE EXATAMENTE 4 JOGADORES', 'erro'); return; }
+  } else {
+    if (_jcSel.size < 2) { toast('SELECIONE 2+ JOGADORES', 'erro'); return; }
+  }
   let tipo = document.getElementById('ami-tipo').value;
 
   // F6: se tipo=ambos, sortear aleatoriamente entre clubes e seleções
@@ -1723,13 +1747,22 @@ window.sortearAmistoso = () => {
   const hist = historicoIds(tipo);
   const [t1, t2] = sortearBalanceado(pool, hist);
   const jogs = shuffle([..._jcSel.entries()].map(([id, nome]) => ({ id, nome })));
-  const meio = Math.ceil(jogs.length / 2);
-  const j1 = jogs.slice(0, meio), j2 = jogs.slice(meio);
+  let j1, j2;
+  if (modoDupla) {
+    // Modo dupla: 4 jogadores divididos em 2 duplas (2 por time)
+    j1 = jogs.slice(0, 2);
+    j2 = jogs.slice(2, 4);
+  } else {
+    const meio = Math.ceil(jogs.length / 2);
+    j1 = jogs.slice(0, meio);
+    j2 = jogs.slice(meio);
+  }
   const diff = Math.abs(t1.forca - t2.forca);
   const eq = diff <= 2 ? 'EQUILIBRADO' : diff <= 5 ? 'LEVEMENTE DESIGUAL' : 'DESIGUAL';
 
   _sorteioAmi = {
     tipo,
+    modoDupla: modoDupla || false,
     time1: { nome: t1.nome, timeId: t1.id, forca: t1.forca, jogadores: j1.map(j => j.nome), jogadoresIds: j1.map(j => j.id) },
     time2: { nome: t2.nome, timeId: t2.id, forca: t2.forca, jogadores: j2.map(j => j.nome), jogadoresIds: j2.map(j => j.id) },
   };
