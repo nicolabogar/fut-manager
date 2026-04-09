@@ -1,0 +1,12 @@
+# FIFA FAR PLAY - Prompts de Features v7
+# FORMATO: Cada feature tem status: [ ] pendente | [x] concluído (hash: XXXXXXX)
+# O agente deve marcar o hash do commit ao concluir cada item.
+# Ao finalizar tudo, este arquivo é renomeado para FifaFarPlay_v7.txt e um novo é criado.
+
+## MELHORIAS ##
+
+1 - Ter opção quando sortear um time, colocar ele como inativo porque nao existe no fifa. [x] (hash: a69c264)
+2 - Outra coisa que quero é que o placar e o botão de finalizar esteja totalmente alinhados. [x] (hash: 3508546)
+3 - Mudar o nome do botão FINALIZAR para FIM. [x] (hash: 3508546)
+4 - Preciso que remova o botão cancelar ou fechar e todas as paginas e sempre coloque a navegação, exemplo de Home > Jogadores, Home > Torneios. [x] (hash: b0f252a)
+5 - Não quero que coloque eventos de notificações como removido com sucesso, criado com sucesso e tals. [x] (hash: 0e2e931)
