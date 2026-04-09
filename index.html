@@ -839,11 +839,11 @@ function badgeTimeCompact(timeId, nomeTime, tipo) {
 function badgeClube(timeId, nomeTime) {
   const d = TEAM_DATA[timeId] || { abrev:(nomeTime||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#AAAAAA', pais:'eu', paisNome:'' };
   return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
-    ${shieldClube(timeId, nomeTime, 48)}
     <div style="display:flex;align-items:center;gap:3px;white-space:nowrap;">
       ${flagImg(d.pais, 20)}
       <span style="font-size:9px;color:var(--text-muted);font-weight:600;">${d.paisNome}</span>
     </div>
+    ${shieldClube(timeId, nomeTime, 48)}
   </div>`;
 }
 
@@ -1580,7 +1580,7 @@ function cardAmistoso(a, compact=false) {
           <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="pdc2-${a.id}" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
         </div>
-        <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}')" class="btn-primary" style="margin-top:6px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>`
+        <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}')" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>`
       : `<div style="color:var(--text-muted);font-size:13px;font-weight:700;">EM ANDAMENTO</div>`;
   const cardId = `ami-card-${a.id}`;
   return `<div id="${cardId}" style="margin-bottom:10px;">
@@ -1965,7 +1965,7 @@ function vsCardTime(t, jogadoresList, pool) {
   const isSel = pool === selecoes;
   const icone = isSel
     ? `<div style="font-size:36px;line-height:1;margin-bottom:4px;">${timeData.bandeira||t.bandeira||'🌍'}</div>`
-    : `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:4px;"><span style="font-size:28px;line-height:1;">${timeData.logo||t.logo||'⚽'}</span><span style="font-size:16px;line-height:1;">${timeData.bandeira||t.bandeira||''}</span></div>`;
+    : `<div style="display:flex;flex-direction:column;align-items:center;gap:2px;margin-bottom:4px;"><span style="font-size:16px;line-height:1;">${timeData.bandeira||t.bandeira||''}</span><span style="font-size:28px;line-height:1;">${timeData.logo||t.logo||'⚽'}</span></div>`;
   return `<div style="flex:1;text-align:center;">
     ${icone}
     <div class="vs-team">${t.nome}</div>
@@ -2939,7 +2939,7 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
             <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
             <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg2-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
           </div>
-          <button onclick="event.stopPropagation();salvarPartidaDireta('${cid}',${gi},'${m1.jogadorId}','${m2.jogadorId}','${confKey}')" class="btn-primary" style="padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>
+          <button onclick="event.stopPropagation();salvarPartidaDireta('${cid}',${gi},'${m1.jogadorId}','${m2.jogadorId}','${confKey}')" class="btn-primary" style="margin-top:14px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>
         </div>`
       : `<div style="font-size:18px;font-weight:900;color:var(--text-muted);">VS</div>`;
 
