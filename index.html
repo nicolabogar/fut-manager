@@ -2844,18 +2844,28 @@ window.abrirCampeonato = (id) => {
     </div>` : ''}
 
     <p class="sec-title" style="margin-bottom:10px;">TIMES SORTEADOS</p>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;">
-      ${(c.participantes||[]).map(p=>`<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:8px 12px 8px 8px;">
-        <div style="width:30px;height:30px;border-radius:7px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.06);flex-shrink:0;">
-          ${isSel
-            ? `<img src="https://flagcdn.com/w80/${(SELECAO_PAIS[p.time?.id]||{pais:''}).pais}.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">`
-            : (TEAM_DATA[p.time?.id]?.crest ? `<img src="${TEAM_DATA[p.time?.id].crest}" style="width:26px;height:26px;object-fit:contain;">` : `<span style="font-size:9px;font-weight:900;color:var(--text-muted);">${(TEAM_DATA[p.time?.id]?.abrev||'?').slice(0,3)}</span>`)}
-        </div>
-        <div style="min-width:0;">
-          <div style="font-weight:800;font-size:12px;line-height:1.2;">${p.time?.nome||'?'}</div>
-          <div style="font-size:10px;color:var(--purple);font-weight:600;margin-top:1px;">${p.nome}</div>
-        </div>
-      </div>`).join('')}
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;">
+      ${(c.participantes||[]).map(p=>{
+        const forca = p.time?.forca;
+        const forcaColor = forca > 85 ? 'var(--green)' : forca < 75 ? 'var(--red)' : 'var(--yellow)';
+        const timeIcon = isSel
+          ? `<div style="width:48px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.4);">
+              <img src="https://flagcdn.com/w80/${(SELECAO_PAIS[p.time?.id]||{pais:''}).pais}.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
+            </div>`
+          : `<div style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              ${TEAM_DATA[p.time?.id]?.crest
+                ? `<img src="${TEAM_DATA[p.time?.id].crest}" style="width:40px;height:40px;object-fit:contain;" onerror="this.style.display='none'">`
+                : `<div style="width:40px;height:40px;border-radius:10px;background:${TEAM_DATA[p.time?.id]?.fundo||'#1E1E35'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:${TEAM_DATA[p.time?.id]?.cor||'#fff'};">${(TEAM_DATA[p.time?.id]?.abrev||'?').slice(0,3)}</div>`}
+            </div>`;
+        return `<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px;">
+          ${timeIcon}
+          <div style="min-width:0;flex:1;">
+            <div style="font-weight:900;font-size:13px;line-height:1.2;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.time?.nome||'?'}</div>
+            ${forca ? `<div style="font-size:11px;font-weight:800;color:${forcaColor};margin-top:2px;">FORÇA ${forca}</div>` : ''}
+            <div style="font-size:11px;color:var(--purple);font-weight:700;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.nome}</div>
+          </div>
+        </div>`;
+      }).join('')}
     </div>
 
     ${podeMudar ? (naoIniciado
