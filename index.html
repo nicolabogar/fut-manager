@@ -644,7 +644,7 @@ const SELECOES_DEFAULT = [
   { id:'portugal',   nome:'Portugal',       forca:83, bandeira:'🇵🇹' },
   { id:'alemanha',   nome:'Alemanha',       forca:83, bandeira:'🇩🇪' },
   { id:'belgica',    nome:'Bélgica',        forca:82, bandeira:'🇧🇪' },
-  { id:'holanda',    nome:'Holanda',        forca:82, bandeira:'🇳🇱' },
+  { id:'holanda',    nome:'Países Baixos',  forca:82, bandeira:'🇳🇱' },
   { id:'italia',     nome:'Itália',         forca:81, bandeira:'🇮🇹' },
   { id:'croacia',    nome:'Croácia',        forca:80, bandeira:'🇭🇷' },
   { id:'uruguai',    nome:'Uruguai',        forca:80, bandeira:'🇺🇾' },
@@ -718,8 +718,8 @@ const TEAM_DATA = {
   'benfica':       { abrev:'SLB', fundo:'#C8102E', cor:'#FFFFFF', pais:'pt', paisNome:'Portugal',  crest:`${FD}1903.png`},
   'porto':         { abrev:'FCP', fundo:'#003087', cor:'#FFD700', pais:'pt', paisNome:'Portugal',  crest:`${FD}503.png` },
   'sporting':      { abrev:'SCP', fundo:'#008136', cor:'#FFD700', pais:'pt', paisNome:'Portugal',  crest:`${FD}498.png` },
-  'ajax':          { abrev:'AFC', fundo:'#C8102E', cor:'#FFFFFF', pais:'nl', paisNome:'Holanda',   crest:`${FD}610.png` },
-  'feyenoord':     { abrev:'FEY', fundo:'#C8102E', cor:'#000000', pais:'nl', paisNome:'Holanda',   crest:`${FD}675.png` },
+  'ajax':          { abrev:'AFC', fundo:'#C8102E', cor:'#FFFFFF', pais:'nl', paisNome:'Países Baixos', crest:`${FD}610.png` },
+  'feyenoord':     { abrev:'FEY', fundo:'#C8102E', cor:'#000000', pais:'nl', paisNome:'Países Baixos', crest:`${FD}675.png` },
   'celtic':        { abrev:'CEL', fundo:'#00843D', cor:'#FFFFFF', pais:'gb-sct', paisNome:'Escócia', crest:`${FD}732.png` },
   'rangers':       { abrev:'RFC', fundo:'#003087', cor:'#FFFFFF', pais:'gb-sct', paisNome:'Escócia', crest:`${FD}733.png` },
   'galatasaray':   { abrev:'GS',  fundo:'#DD0000', cor:'#FFD700', pais:'tr', paisNome:'Turquia',   crest:`${FD}2320.png`},
@@ -733,7 +733,7 @@ const SELECAO_PAIS = {
   'portugal':   { pais:'pt',    paisNome:'Portugal'     },
   'alemanha':   { pais:'de',    paisNome:'Alemanha'     },
   'belgica':    { pais:'be',    paisNome:'Bélgica'      },
-  'holanda':    { pais:'nl',    paisNome:'Holanda'      },
+  'holanda':    { pais:'nl',    paisNome:'Países Baixos' },
   'italia':     { pais:'it',    paisNome:'Itália'       },
   'croacia':    { pais:'hr',    paisNome:'Croácia'      },
   'uruguai':    { pais:'uy',    paisNome:'Uruguai'      },
@@ -761,7 +761,7 @@ const SELECAO_PAIS = {
 const PAISES_FIFA = [
   {code:'ar',nome:'Argentina'},{code:'br',nome:'Brasil'},{code:'fr',nome:'França'},{code:'de',nome:'Alemanha'},
   {code:'es',nome:'Espanha'},{code:'gb-eng',nome:'Inglaterra'},{code:'pt',nome:'Portugal'},{code:'it',nome:'Itália'},
-  {code:'nl',nome:'Holanda'},{code:'be',nome:'Bélgica'},{code:'hr',nome:'Croácia'},{code:'uy',nome:'Uruguai'},
+  {code:'nl',nome:'Países Baixos'},{code:'be',nome:'Bélgica'},{code:'hr',nome:'Croácia'},{code:'uy',nome:'Uruguai'},
   {code:'co',nome:'Colômbia'},{code:'ma',nome:'Marrocos'},{code:'tr',nome:'Turquia'},{code:'us',nome:'EUA'},
   {code:'mx',nome:'México'},{code:'at',nome:'Áustria'},{code:'jp',nome:'Japão'},{code:'sn',nome:'Senegal'},
   {code:'dk',nome:'Dinamarca'},{code:'ch',nome:'Suíça'},{code:'cl',nome:'Chile'},{code:'pl',nome:'Polônia'},
@@ -2726,49 +2726,53 @@ function calcularDisp(g) {
   return disp;
 }
 
-/** Card de jogo de torneio — visual idêntico ao cardAmistoso compact, sem botão excluir */
+/** Card de jogo de torneio — mesmo estilo visual do cardAmistoso (TO3) */
 function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel) {
   const tipo = isSel ? 'selecoes' : 'clubes';
-  const b1 = badgeTimeCompact(m1.time?.id||'', m1.time?.nome||'', tipo);
-  const b2 = badgeTimeCompact(m2.time?.id||'', m2.time?.nome||'', tipo);
   const temRes = !!played;
   const g1r = temRes ? (played.j1Id===m1.jogadorId ? played.g1 : played.g2) : null;
   const g2r = temRes ? (played.j1Id===m1.jogadorId ? played.g2 : played.g1) : null;
+  const forca1 = m1.time?.forca;
+  const forca2 = m2.time?.forca;
 
-  return `<div class="match-card" style="margin-bottom:8px;">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+  // Usar badgeTime (igual ao amistoso não-compact) para ícone centralizado
+  const b1 = badgeTimeCompact(m1.time?.id||'', m1.time?.nome||'', tipo);
+  const b2 = badgeTimeCompact(m2.time?.id||'', m2.time?.nome||'', tipo);
+
+  return `<div class="match-card" style="margin-bottom:10px;border-radius:18px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="tag tag-purple" style="font-size:9px;">TORNEIO</span>
         <span class="tag tag-gray" style="font-size:9px;">${isSel ? 'SELECOES' : 'CLUBES'}</span>
       </div>
       ${temRes
         ? `<span class="tag tag-gray" style="font-size:9px;">FINALIZADO</span>`
-        : `<span class="tag tag-cyan" style="font-size:9px;">PENDENTE</span>`}
+        : `<span class="tag tag-cyan" style="font-size:9px;">EM ANDAMENTO</span>`}
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;">
-        ${b1}
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:800;font-size:14px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;">${m1.time?.nome||'?'}</div>
-          <div style="font-size:10px;color:var(--cyan);margin-top:2px;font-weight:700;">${m1.nome}</div>
-        </div>
+    <div style="display:flex;align-items:flex-start;gap:8px;">
+      <div style="flex:1;text-align:center;">
+        <div style="display:flex;justify-content:center;margin-bottom:6px;">${b1}</div>
+        ${forca1 ? `<div style="margin-bottom:4px;">${forcaBadge(forca1)}</div>` : ''}
+        <div style="font-weight:900;font-size:13px;text-transform:uppercase;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m1.time?.nome||'?'}</div>
+        <div style="font-size:10px;color:var(--cyan);margin-top:3px;font-weight:700;text-transform:uppercase;">${m1.nome}</div>
       </div>
-      <div style="flex-shrink:0;text-align:center;">
+      <div style="text-align:center;min-width:80px;padding-top:8px;">
         ${temRes
-          ? `<div style="font-size:22px;font-weight:900;letter-spacing:0.5px;color:var(--yellow);">${g1r}<span style="color:var(--text-muted);font-size:12px;"> × </span>${g2r}</div>`
-          : `<div style="display:flex;align-items:center;gap:3px;">
-              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg1-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
-              <span style="color:var(--text-muted);font-size:11px;font-weight:900;">×</span>
-              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg2-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
-              <button onclick="event.stopPropagation();salvarPartidaDireta('${cid}',${gi},'${m1.jogadorId}','${m2.jogadorId}','${confKey}')" style="margin-left:4px;padding:4px 8px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:6px;cursor:pointer;">OK</button>
+          ? `<div style="font-size:28px;font-weight:900;letter-spacing:1px;color:var(--yellow);">${g1r}<span style="color:var(--text-muted);font-size:14px;"> × </span>${g2r}</div>`
+          : `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+              <div style="display:flex;align-items:center;gap:4px;">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg1-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:38px;text-align:center;font-size:20px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
+                <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
+                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg2-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:38px;text-align:center;font-size:20px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
+              </div>
+              <button onclick="event.stopPropagation();salvarPartidaDireta('${cid}',${gi},'${m1.jogadorId}','${m2.jogadorId}','${confKey}')" style="padding:5px 14px;font-size:11px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;width:100%;">FINALIZAR</button>
             </div>`}
       </div>
-      <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;flex-direction:row-reverse;">
-        ${b2}
-        <div style="flex:1;min-width:0;text-align:right;">
-          <div style="font-weight:800;font-size:14px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;">${m2.time?.nome||'?'}</div>
-          <div style="font-size:10px;color:var(--cyan);margin-top:2px;font-weight:700;">${m2.nome}</div>
-        </div>
+      <div style="flex:1;text-align:center;">
+        <div style="display:flex;justify-content:center;margin-bottom:6px;">${b2}</div>
+        ${forca2 ? `<div style="margin-bottom:4px;">${forcaBadge(forca2)}</div>` : ''}
+        <div style="font-weight:900;font-size:13px;text-transform:uppercase;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m2.time?.nome||'?'}</div>
+        <div style="font-size:10px;color:var(--cyan);margin-top:3px;font-weight:700;text-transform:uppercase;">${m2.nome}</div>
       </div>
     </div>
   </div>`;
