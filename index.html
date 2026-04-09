@@ -679,8 +679,8 @@ const CAMP_META = {
     desc:'Fase de grupos com 4 grupos. Os 2 primeiros de cada grupo + 2 melhores terceiros avançam. Quartas, semi e final eliminatórias. Formato regional do estado de São Paulo.' },
   'copa-brasil':   { nome:'Copa do Brasil',   emoji:'🏆', tipo:'clubes',   logo:'https://upload.wikimedia.org/wikipedia/pt/thumb/4/44/Copa_do_Brasil_logo.png/240px-Copa_do_Brasil_logo.png',
     desc:'Formato eliminatório desde o início. Cada fase tem jogo único (aqui) ou ida e volta. Quem perde está eliminado. Campeão é o time que vencer todas as fases.' },
-  'copa-do-mundo': { nome:'Copa do Mundo',    emoji:'🌍', tipo:'selecoes', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/6/67/2022_FIFA_World_Cup.svg/512px-2022_FIFA_World_Cup.svg.png',
-    desc:'Fase de grupos com seleções do mundo todo. Os 2 primeiros de cada grupo avançam. Oitavas, quartas, semis e final eliminatórias. O maior torneio de seleções do mundo.' },
+  'copa-do-mundo': { nome:'Copa do Mundo',    emoji:'🌍', tipo:'clubes', logo:'https://upload.wikimedia.org/wikipedia/en/thumb/6/67/2022_FIFA_World_Cup.svg/512px-2022_FIFA_World_Cup.svg.png',
+    desc:'Formato Copa do Mundo: fase de grupos + eliminatórias. Os 2 primeiros de cada grupo avançam. Oitavas, quartas, semis e final eliminatórias. Pode ser jogado com times OU seleções.' },
 };
 
 // ─── DADOS VISUAIS DOS TIMES ──────────────────────────────────────────
@@ -2512,10 +2512,13 @@ function abrirModalCriarCamp() {
       <div>
         <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">FORMATO</label>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
-          ${Object.entries(CAMP_META).map(([k,v]) => `<div class="tipo-btn" data-ct="${k}" onclick="selCampTipo('${k}',this)" style="font-size:11px;padding:10px 6px;">
-            <div style="font-weight:700;line-height:1.2;font-size:10px;">${v.nome}</div>
-            <div style="font-size:9px;color:var(--text-muted);margin-top:2px;">${v.tipo==='selecoes'?'SELECOES':'CLUBES'}</div>
-          </div>`).join('')}
+          ${Object.entries(CAMP_META).map(([k,v]) => {
+            const tipoLabel = k==='copa-do-mundo' ? 'CLUBES/SEL' : (v.tipo==='selecoes' ? 'SELECOES' : 'CLUBES');
+            return `<div class="tipo-btn" data-ct="${k}" onclick="selCampTipo('${k}',this)" style="font-size:11px;padding:10px 6px;">
+              <div style="font-weight:700;line-height:1.2;font-size:10px;">${v.nome}</div>
+              <div style="font-size:9px;color:var(--text-muted);margin-top:2px;">${tipoLabel}</div>
+            </div>`;
+          }).join('')}
         </div>
         <input type="hidden" id="ct" value="champions">
         <div id="ct-regras-box" style="display:none;margin-top:8px;"></div>
