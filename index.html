@@ -1452,13 +1452,11 @@ function cardAmistoso(a, compact=false) {
     </div>
     ${compact ? `
     <div style="display:flex;align-items:center;gap:8px;">
-      <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
         ${b1}
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:800;font-size:14px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;">${a.time1?.nome || '?'}</div>
-          ${a.time1?.forca ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">FORCA ${a.time1.forca}</div>` : ''}
-          ${(a.time1?.jogadores||[]).length ? `<div style="font-size:10px;color:var(--cyan);margin-top:2px;font-weight:700;">${(a.time1.jogadores).join(' · ')}</div>` : ''}
-        </div>
+        ${a.time1?.forca ? `<div style="margin-top:2px;">${forcaBadge(a.time1.forca)}</div>` : ''}
+        <div style="font-weight:800;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;max-width:100%;">${a.time1?.nome || '?'}</div>
+        ${(a.time1?.jogadores||[]).length ? `<div style="font-size:10px;color:var(--cyan);font-weight:700;">${(a.time1.jogadores).join(' · ')}</div>` : ''}
       </div>
       <div style="flex-shrink:0;text-align:center;">
         ${temRes
@@ -1470,13 +1468,11 @@ function cardAmistoso(a, compact=false) {
               <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}')" style="margin-left:4px;padding:4px 8px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:6px;cursor:pointer;">OK</button>
             </div>`}
       </div>
-      <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;flex-direction:row-reverse;">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
         ${b2}
-        <div style="flex:1;min-width:0;text-align:right;">
-          <div style="font-weight:800;font-size:14px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;">${a.time2?.nome || '?'}</div>
-          ${a.time2?.forca ? `<div style="font-size:11px;color:var(--text-muted);margin-top:2px;">FORCA ${a.time2.forca}</div>` : ''}
-          ${(a.time2?.jogadores||[]).length ? `<div style="font-size:10px;color:var(--cyan);margin-top:2px;font-weight:700;">${(a.time2.jogadores).join(' · ')}</div>` : ''}
-        </div>
+        ${a.time2?.forca ? `<div style="margin-top:2px;">${forcaBadge(a.time2.forca)}</div>` : ''}
+        <div style="font-weight:800;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;max-width:100%;">${a.time2?.nome || '?'}</div>
+        ${(a.time2?.jogadores||[]).length ? `<div style="font-size:10px;color:var(--cyan);font-weight:700;">${(a.time2.jogadores).join(' · ')}</div>` : ''}
       </div>
     </div>` : `
     <div style="display:flex;align-items:flex-start;gap:8px;">
