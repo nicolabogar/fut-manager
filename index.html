@@ -1226,14 +1226,13 @@ window.editarJogador = (id) => {
         <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">EMAIL</label>
         <input class="input" id="i-email-edit" type="email" value="${j.email||''}" autocomplete="off">
       </div>
-      ${podeMudarMaster ? `<div>
-        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">DEFINIR COMO MASTER</label>
-        <input type="hidden" id="i-master-edit" value="${masterVal}">
-        <div style="display:flex;gap:8px;">
-          <button type="button" id="btn-medit-sim" onclick="document.getElementById('i-master-edit').value='1';this.style.background='linear-gradient(135deg,var(--purple),var(--cyan))';this.style.color='#fff';document.getElementById('btn-medit-nao').style.background='var(--card)';document.getElementById('btn-medit-nao').style.color='var(--text-muted)'" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--card-border);background:${j.master?'linear-gradient(135deg,var(--purple),var(--cyan))':'var(--card)'};color:${j.master?'#fff':'var(--text-muted)'};font-weight:700;font-size:14px;cursor:pointer;">SIM</button>
-          <button type="button" id="btn-medit-nao" onclick="document.getElementById('i-master-edit').value='0';this.style.background='linear-gradient(135deg,var(--purple),var(--cyan))';this.style.color='#fff';document.getElementById('btn-medit-sim').style.background='var(--card)';document.getElementById('btn-medit-sim').style.color='var(--text-muted)'" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--card-border);background:${j.master?'var(--card)':'linear-gradient(135deg,var(--purple),var(--cyan))'};color:${j.master?'var(--text-muted)':'#fff'};font-weight:700;font-size:14px;cursor:pointer;">NAO</button>
+      ${podeMudarMaster ? `<label class="check-row">
+        <input type="checkbox" id="i-master-edit" ${j.master ? 'checked' : ''}>
+        <div>
+          <div style="font-size:13px;font-weight:700;">USUARIO MASTER</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">PERMISSAO PARA GERENCIAR O APP</div>
         </div>
-      </div>` : ''}
+      </label>` : ''}
       <button class="btn-primary" id="btn-salvar-edit" onclick="salvarEdicaoJogador('${id}')" style="margin-top:10px;font-size:16px;padding:16px;">SALVAR</button>
     </div>`);
   setTimeout(() => document.getElementById('i-nome-edit')?.focus(), 100);
@@ -1253,7 +1252,7 @@ window.previewFotoEdit = (input) => {
 window.salvarEdicaoJogador = async (id) => {
   const nome  = document.getElementById('i-nome-edit')?.value.trim();
   const email = document.getElementById('i-email-edit')?.value.trim().toLowerCase();
-  const isMaster = document.getElementById('i-master-edit')?.value === '1' || document.getElementById('i-master-edit')?.checked || false;
+  const isMaster = document.getElementById('i-master-edit')?.checked || false;
   if (!nome) { toast('DIGITE O NOME','erro'); return; }
   const btn = document.getElementById('btn-salvar-edit');
   if (btn) { btn.textContent = 'SALVANDO...'; btn.disabled = true; }
@@ -1318,14 +1317,13 @@ document.getElementById('btn-add-jog').addEventListener('click', () => {
         <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">EMAIL</label>
         <input class="input" id="i-email" type="email" autocomplete="off">
       </div>
-      ${podeDefinirMaster ? `<div>
-        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">DEFINIR COMO MASTER</label>
-        <input type="hidden" id="i-master" value="0">
-        <div style="display:flex;gap:8px;">
-          <button type="button" id="btn-master-sim" onclick="document.getElementById('i-master').value='1';this.style.background='linear-gradient(135deg,var(--purple),var(--cyan))';this.style.color='#fff';document.getElementById('btn-master-nao').style.background='var(--card)';document.getElementById('btn-master-nao').style.color='var(--text-muted)'" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--card-border);background:var(--card);color:var(--text-muted);font-weight:700;font-size:14px;cursor:pointer;">SIM</button>
-          <button type="button" id="btn-master-nao" onclick="document.getElementById('i-master').value='0';this.style.background='linear-gradient(135deg,var(--purple),var(--cyan))';this.style.color='#fff';document.getElementById('btn-master-sim').style.background='var(--card)';document.getElementById('btn-master-sim').style.color='var(--text-muted)'" style="flex:1;padding:12px;border-radius:12px;border:1px solid var(--card-border);background:linear-gradient(135deg,var(--purple),var(--cyan));color:#fff;font-weight:700;font-size:14px;cursor:pointer;">NAO</button>
+      ${podeDefinirMaster ? `<label class="check-row">
+        <input type="checkbox" id="i-master">
+        <div>
+          <div style="font-size:13px;font-weight:700;">USUARIO MASTER</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">PERMISSAO PARA GERENCIAR O APP</div>
         </div>
-      </div>` : ''}
+      </label>` : ''}
       <button class="btn-primary" id="btn-salvar-jog" onclick="salvarJogador()" style="margin-top:10px;font-size:16px;padding:16px;">SALVAR</button>
     </div>`);
   setTimeout(() => document.getElementById('i-nome')?.focus(), 100);
@@ -1368,7 +1366,7 @@ window.previewFoto = (input) => {
 window.salvarJogador = async () => {
   const nome  = document.getElementById('i-nome')?.value.trim();
   const email = document.getElementById('i-email')?.value.trim().toLowerCase();
-  const isMaster = document.getElementById('i-master')?.value === '1' || document.getElementById('i-master')?.checked || false;
+  const isMaster = document.getElementById('i-master')?.checked || false;
   if (!nome) { toast('DIGITE O NOME','erro'); return; }
   const btn = document.getElementById('btn-salvar-jog');
   if (btn) { btn.textContent = 'SALVANDO...'; btn.disabled = true; }
