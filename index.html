@@ -1576,9 +1576,10 @@ function _htmlNovoAmistoso() {
   return `
     <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">SELECIONE OS JOGADORES E SORTEAREMOS OS TIMES</p>
     <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">TIPO</label>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;">
       <div class="tipo-btn sel" id="tp-clubes" onclick="selTipoAmi('clubes')"><span style="font-size:12px;font-weight:700;">CLUBES</span></div>
       <div class="tipo-btn" id="tp-selecoes" onclick="selTipoAmi('selecoes')"><span style="font-size:12px;font-weight:700;">SELECOES</span></div>
+      <div class="tipo-btn" id="tp-ambos" onclick="selTipoAmi('ambos')"><span style="font-size:12px;font-weight:700;">AMBOS</span></div>
     </div>
     <input type="hidden" id="ami-tipo" value="clubes">
     <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">JOGADORES</label>
@@ -1669,12 +1670,55 @@ window.selTipoAmi = tipo => {
   document.getElementById('ami-tipo').value = tipo;
   document.getElementById('tp-clubes').classList.toggle('sel', tipo === 'clubes');
   document.getElementById('tp-selecoes').classList.toggle('sel', tipo === 'selecoes');
+  const tpAmbos = document.getElementById('tp-ambos');
+  if (tpAmbos) tpAmbos.classList.toggle('sel', tipo === 'ambos');
 };
 
 let _sorteioAmi = null;
 window.sortearAmistoso = () => {
   if (_jcSel.size < 2) { toast('SELECIONE 2+ JOGADORES', 'erro'); return; }
-  const tipo = document.getElementById('ami-tipo').value;
+  let tipo = document.getElementById('ami-tipo').value;
+
+  // F6: se tipo=ambos, sortear aleatoriamente entre clubes e seleções
+  // garantindo diferença máxima de 20% da força média entre os dois times
+  if (tipo === 'ambos') {
+    // Tenta até 20 vezes alternar entre clubes e seleções para respeitar regra dos 20%
+    const opcoes = shuffle(['clubes', 'selecoes']);
+    let escolhido = null;
+    for (let tentativa = 0; tentativa < 20; tentativa++) {
+      const candidato = opcoes[tentativa % 2];
+      const pool = candidato === 'selecoes' ? selecoes : clubes;
+      const hist = historicoIds(candidato);
+      const [ct1, ct2] = sortearBalanceado(pool, hist);
+      const media = (ct1.forca + ct2.forca) / 2;
+      const pctDiff = Math.abs(ct1.forca - ct2.forca) / media;
+      if (pctDiff <= 0.20) {
+        tipo = candidato;
+        escolhido = [ct1, ct2];
+        break;
+      }
+      // Se não encontrou em 20 tentativas, usa o melhor disponível
+      if (tentativa === 19) {
+        tipo = opcoes[0];
+        const pool2 = tipo === 'selecoes' ? selecoes : clubes;
+        escolhido = sortearBalanceado(pool2, historicoIds(tipo));
+      }
+    }
+    const [t1, t2] = escolhido;
+    const jogs = shuffle([..._jcSel.entries()].map(([id, nome]) => ({ id, nome })));
+    const meio = Math.ceil(jogs.length / 2);
+    const j1 = jogs.slice(0, meio), j2 = jogs.slice(meio);
+    const diff = Math.abs(t1.forca - t2.forca);
+    const eq = diff <= 2 ? 'EQUILIBRADO' : diff <= 5 ? 'LEVEMENTE DESIGUAL' : 'DESIGUAL';
+    _sorteioAmi = {
+      tipo,
+      time1: { nome: t1.nome, timeId: t1.id, forca: t1.forca, jogadores: j1.map(j => j.nome), jogadoresIds: j1.map(j => j.id) },
+      time2: { nome: t2.nome, timeId: t2.id, forca: t2.forca, jogadores: j2.map(j => j.nome), jogadoresIds: j2.map(j => j.id) },
+    };
+    _renderSorteioBox(_sorteioAmi, eq, diff);
+    return;
+  }
+
   const pool = tipo === 'selecoes' ? selecoes : clubes;
   const hist = historicoIds(tipo);
   const [t1, t2] = sortearBalanceado(pool, hist);
@@ -1690,20 +1734,28 @@ window.sortearAmistoso = () => {
     time2: { nome: t2.nome, timeId: t2.id, forca: t2.forca, jogadores: j2.map(j => j.nome), jogadoresIds: j2.map(j => j.id) },
   };
 
+  _renderSorteioBox(_sorteioAmi, eq, diff);
+};
+
+function _renderSorteioBox(sorteio, eq, diff) {
+  const t1 = sorteio.time1, t2 = sorteio.time2;
+  const tipo = sorteio.tipo;
+  const j1 = t1.jogadores.map(n => ({ nome: n }));
+  const j2 = t2.jogadores.map(n => ({ nome: n }));
   const box = document.getElementById('ami-sorteio');
   box.style.display = '';
   box.innerHTML = `<div class="vs-card">
     <div style="text-align:center;margin-bottom:14px;"><span class="tag tag-green">TIMES SORTEADOS · ${eq}</span></div>
     <div style="display:flex;align-items:flex-start;gap:8px;">
       <div style="flex:1;text-align:center;">
-        <div style="display:flex;justify-content:center;margin-bottom:8px;">${badgeTime(t1.id, t1.nome, tipo)}</div>
+        <div style="display:flex;justify-content:center;margin-bottom:8px;">${badgeTime(t1.timeId, t1.nome, tipo)}</div>
         <div class="vs-team">${t1.nome}</div>
         <div style="margin:4px 0;">${forcaBadge(t1.forca)}</div>
         ${j1.map(j => `<div class="vs-label" style="margin-top:3px;">${j.nome}</div>`).join('')}
       </div>
       <div class="vs-divider" style="padding-top:28px;"><span class="vs-text">VS</span></div>
       <div style="flex:1;text-align:center;">
-        <div style="display:flex;justify-content:center;margin-bottom:8px;">${badgeTime(t2.id, t2.nome, tipo)}</div>
+        <div style="display:flex;justify-content:center;margin-bottom:8px;">${badgeTime(t2.timeId, t2.nome, tipo)}</div>
         <div class="vs-team">${t2.nome}</div>
         <div style="margin:4px 0;">${forcaBadge(t2.forca)}</div>
         ${j2.map(j => `<div class="vs-label" style="margin-top:3px;">${j.nome}</div>`).join('')}
@@ -1719,7 +1771,7 @@ window.sortearAmistoso = () => {
     </button>
   </div>`;
   document.getElementById('btn-ami-salvar').style.display = '';
-};
+}
 
 window.salvarAmistoso = async () => {
   if (!_sorteioAmi) return;
