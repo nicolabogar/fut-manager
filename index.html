@@ -525,7 +525,7 @@
         <button id="tab-selecoes" onclick="filtrarTimes('selecoes')" style="flex:1; padding:9px; border-radius:10px; border:none; background:none; color:var(--text-muted); font-weight:700; font-size:13px; cursor:pointer;">SELECOES</button>
       </div>
 
-      <button class="btn-icon" id="btn-add-time" style="margin-bottom:14px; width:100%; justify-content:center;">+ Adicionar Time</button>
+      <button class="btn-primary" id="btn-add-time" style="margin-bottom:14px; width:auto; padding:10px 18px; font-size:14px;">+ CRIAR</button>
 
       <div id="lista-times-edit"></div>
     </div>
@@ -3456,31 +3456,43 @@ document.getElementById('btn-add-time').addEventListener('click', () => {
 });
 
 function abrirModalAddTime(tipoInicial) {
-  modal(`<p class="modal-title">Adicionar Time</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
-      <div class="tipo-btn ${tipoInicial==='clube'?'sel':''}" id="nt-c" onclick="selTipoTime('clube')">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5l-8 2.5v6c0 5 3.5 9.4 8 10.5 4.5-1.1 8-5.5 8-10.5V5z"/></svg>
-        <span style="font-size:12px;font-weight:700;display:block;margin-top:4px;">Clube</span>
+  fullscreen('NOVO TIME', `
+    <div style="display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto;">
+      <div>
+        <h2 style="font-size:22px;font-weight:900;margin-bottom:16px;" class="grad">NOVO TIME</h2>
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">TIPO</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+          <div class="tipo-btn ${tipoInicial==='clube'?'sel':''}" id="nt-c" onclick="selTipoTime('clube')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5l-8 2.5v6c0 5 3.5 9.4 8 10.5 4.5-1.1 8-5.5 8-10.5V5z"/></svg>
+            <span style="font-size:12px;font-weight:700;display:block;margin-top:4px;">CLUBE</span>
+          </div>
+          <div class="tipo-btn ${tipoInicial==='selecao'?'sel':''}" id="nt-s" onclick="selTipoTime('selecao')">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>
+            <span style="font-size:12px;font-weight:700;display:block;margin-top:4px;">SELEÇÃO</span>
+          </div>
+        </div>
       </div>
-      <div class="tipo-btn ${tipoInicial==='selecao'?'sel':''}" id="nt-s" onclick="selTipoTime('selecao')">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>
-        <span style="font-size:12px;font-weight:700;display:block;margin-top:4px;">Seleção</span>
+      <input type="hidden" id="nt-tipo" value="${tipoInicial}">
+      <div>
+        <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">BUSCAR TIME</label>
+        <input class="input" id="nt-busca" placeholder="Buscar time ou país..." autocomplete="off" oninput="filtrarListaAddTime()">
       </div>
-    </div>
-    <input type="hidden" id="nt-tipo" value="${tipoInicial}">
-    <input class="input" id="nt-busca" placeholder="🔍 Buscar..." autocomplete="off" oninput="filtrarListaAddTime()" style="margin-bottom:12px;">
-    <div id="nt-lista" style="max-height:280px;overflow-y:auto;margin-bottom:14px;border-radius:12px;border:1px solid var(--card-border);background:rgba(0,0,0,0.2);padding:8px;"></div>
+      <div id="nt-lista" style="max-height:280px;overflow-y:auto;border-radius:12px;border:1px solid var(--card-border);background:rgba(0,0,0,0.2);padding:8px;"></div>
 
-    <div id="nt-form" style="display:none;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:12px;margin-bottom:14px;">
-      <p style="font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;margin-bottom:10px;">Selecionado</p>
-      <div id="nt-preview" style="display:flex;align-items:center;gap:12px;margin-bottom:12px;"></div>
-      <label style="display:flex;justify-content:space-between;align-items:center;color:var(--text-muted);font-size:12px;margin-bottom:8px;"><span>FORÇA</span><span id="nt-forca-val" style="color:var(--cyan);font-weight:800;">80</span></label>
-      <input type="range" id="nt-forca" min="60" max="92" value="80" style="width:100%;accent-color:var(--purple);" oninput="document.getElementById('nt-forca-val').textContent=this.value">
-    </div>
+      <div id="nt-form" style="display:none;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:14px;">
+        <p style="font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">TIME SELECIONADO</p>
+        <div id="nt-preview" style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"></div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">FORÇA DO TIME</label>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <input type="range" id="nt-forca" min="60" max="92" value="80" style="flex:1;accent-color:var(--purple);" oninput="document.getElementById('nt-forca-val').textContent=this.value">
+          <span id="nt-forca-val" style="font-size:20px;font-weight:900;color:var(--cyan);min-width:36px;text-align:center;">80</span>
+        </div>
+      </div>
 
-    <div style="display:flex;gap:10px;">
-      <button class="btn-ghost" onclick="fecharModal()">Cancelar</button>
-      <button id="btn-salvar-time" class="btn-primary" onclick="salvarNovoTime()" disabled style="opacity:0.4;">Adicionar ✓</button>
+      <div style="display:flex;gap:10px;margin-top:6px;">
+        <button class="btn-ghost" onclick="fecharFullscreen()">CANCELAR</button>
+        <button id="btn-salvar-time" class="btn-primary" onclick="salvarNovoTime()" disabled style="opacity:0.4;font-size:16px;padding:16px;">CRIAR</button>
+      </div>
     </div>`);
   renderListaAddTime();
 }
@@ -3577,7 +3589,7 @@ window.salvarNovoTime = async () => {
   await setDoc(doc(db, 'times', novoTime.id), novoTime);
   await carregarTimes();
   _selNovoTime = null;
-  fecharModal(); renderTimesEdit(); toast('TIME ADICIONADO!');
+  fecharFullscreen(); renderTimesEdit(); toast('TIME ADICIONADO!');
 };
 
 window.editarTime = (id) => {
