@@ -3323,8 +3323,19 @@ function atualizarDash() {
   renderRankingAmistosos(rankAmi);
   renderRankingTorneios(rankCamp);
 
+  // RG6: filtrar por participação para usuários não-master
+  const isMaster = temPermissao();
+  const jogadorAtual = !isMaster ? jogadores.find(j => j.email && usuario?.email && j.email.toLowerCase() === usuario.email.toLowerCase()) : null;
+  const jogAtualId = jogadorAtual?.id || null;
+
   // Amistosos em andamento na home
-  const amistososAbertos = amistosos.filter(a => !a.resultado);
+  let amistososAbertos = amistosos.filter(a => !a.resultado);
+  if (!isMaster && jogAtualId) {
+    amistososAbertos = amistososAbertos.filter(a =>
+      (a.time1?.jogadoresIds||[]).includes(jogAtualId) ||
+      (a.time2?.jogadoresIds||[]).includes(jogAtualId)
+    );
+  }
   const secAmi = document.getElementById('home-ami-sec');
   const elAmi = document.getElementById('home-amistosos');
   if (amistososAbertos.length > 0) {
@@ -3333,7 +3344,12 @@ function atualizarDash() {
   } else { secAmi.style.display = 'none'; }
 
   // Torneios em andamento na home
-  const campsAndamento = campeonatos.filter(c => c.status !== 'finalizado');
+  let campsAndamento = campeonatos.filter(c => c.status !== 'finalizado');
+  if (!isMaster && jogAtualId) {
+    campsAndamento = campsAndamento.filter(c =>
+      (c.participantes||[]).some(p => p.jogadorId === jogAtualId)
+    );
+  }
   const secCamp = document.getElementById('home-camp-sec');
   const elCamp = document.getElementById('home-torneios');
   if (campsAndamento.length > 0) {
