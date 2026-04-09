@@ -2654,6 +2654,55 @@ function calcularDisp(g) {
   return disp;
 }
 
+/** Card de jogo de torneio — visual idêntico ao cardAmistoso compact, sem botão excluir */
+function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel) {
+  const tipo = isSel ? 'selecoes' : 'clubes';
+  const b1 = badgeTimeCompact(m1.time?.id||'', m1.time?.nome||'', tipo);
+  const b2 = badgeTimeCompact(m2.time?.id||'', m2.time?.nome||'', tipo);
+  const temRes = !!played;
+  const g1r = temRes ? (played.j1Id===m1.jogadorId ? played.g1 : played.g2) : null;
+  const g2r = temRes ? (played.j1Id===m1.jogadorId ? played.g2 : played.g1) : null;
+
+  return `<div class="match-card" style="margin-bottom:8px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span class="tag tag-purple" style="font-size:9px;">TORNEIO</span>
+        <span class="tag tag-gray" style="font-size:9px;">${isSel ? 'SELECOES' : 'CLUBES'}</span>
+      </div>
+      ${temRes
+        ? `<span class="tag tag-gray" style="font-size:9px;">FINALIZADO</span>`
+        : `<span class="tag tag-cyan" style="font-size:9px;">PENDENTE</span>`}
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;">
+        ${b1}
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:800;font-size:14px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;">${m1.time?.nome||'?'}</div>
+          <div style="font-size:10px;color:var(--cyan);margin-top:2px;font-weight:700;">${m1.nome}</div>
+        </div>
+      </div>
+      <div style="flex-shrink:0;text-align:center;">
+        ${temRes
+          ? `<div style="font-size:22px;font-weight:900;letter-spacing:0.5px;color:var(--yellow);">${g1r}<span style="color:var(--text-muted);font-size:12px;"> × </span>${g2r}</div>`
+          : `<div style="display:flex;align-items:center;gap:3px;">
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg1-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
+              <span style="color:var(--text-muted);font-size:11px;font-weight:900;">×</span>
+              <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg2-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
+              <button onclick="event.stopPropagation();salvarPartidaDireta('${cid}',${gi},'${m1.jogadorId}','${m2.jogadorId}','${confKey}')" style="margin-left:4px;padding:4px 8px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:6px;cursor:pointer;">OK</button>
+            </div>`}
+      </div>
+      <div style="flex:1;display:flex;align-items:center;gap:8px;min-width:0;flex-direction:row-reverse;">
+        ${b2}
+        <div style="flex:1;min-width:0;text-align:right;">
+          <div style="font-weight:800;font-size:14px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;">${m2.time?.nome||'?'}</div>
+          <div style="font-size:10px;color:var(--cyan);margin-top:2px;font-weight:700;">${m2.nome}</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+window.cardJogoTorneio = cardJogoTorneio;
+
 window.abrirCampeonato = (id) => {
   const c = campeonatos.find(x=>x.id===id);
   if (!c) return;
@@ -2684,42 +2733,7 @@ window.abrirCampeonato = (id) => {
     const jogosHTML = todosConf.map(({m1,m2}) => {
       const played = (g.partidas||[]).find(p=>(p.j1Id===m1.jogadorId&&p.j2Id===m2.jogadorId)||(p.j1Id===m2.jogadorId&&p.j2Id===m1.jogadorId));
       const confKey = `${c.id}-${gi}-${m1.jogadorId}-${m2.jogadorId}`;
-      if (played) {
-        const g1r = played.j1Id===m1.jogadorId ? played.g1 : played.g2;
-        const g2r = played.j1Id===m1.jogadorId ? played.g2 : played.g1;
-        return `<div class="match-card" style="margin-bottom:8px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <span class="tag tag-purple" style="font-size:9px;">TORNEIO</span>
-            <span class="tag tag-gray" style="font-size:9px;">FINALIZADO</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            ${blocoTime(m1)}
-            <div style="text-align:center;min-width:56px;flex-shrink:0;">
-              <div style="font-size:22px;font-weight:900;">${g1r} <span style="color:var(--text-muted);font-size:13px;">×</span> ${g2r}</div>
-            </div>
-            ${blocoTime(m2)}
-          </div>
-        </div>`;
-      } else {
-        return `<div class="match-card" style="margin-bottom:8px;border-color:rgba(139,92,246,0.3);">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-            <span class="tag tag-purple" style="font-size:9px;">TORNEIO</span>
-            <span class="tag tag-cyan" style="font-size:9px;">PENDENTE</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:6px;">
-            ${blocoTime(m1)}
-            <div style="text-align:center;min-width:70px;flex-shrink:0;">
-              <div style="display:flex;align-items:center;gap:3px;justify-content:center;">
-                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg1-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:36px;text-align:center;font-size:20px;font-weight:900;padding:5px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);">
-                <span style="color:var(--text-muted);font-size:12px;font-weight:900;">×</span>
-                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" id="tg2-${confKey}" class="placar-input" onclick="event.stopPropagation()" style="width:36px;text-align:center;font-size:20px;font-weight:900;padding:5px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);">
-              </div>
-              <button onclick="event.stopPropagation();salvarPartidaDireta('${c.id}',${gi},'${m1.jogadorId}','${m2.jogadorId}','${confKey}')" class="btn-primary" style="margin-top:5px;padding:5px 10px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:7px;cursor:pointer;white-space:nowrap;">SALVAR</button>
-            </div>
-            ${blocoTime(m2)}
-          </div>
-        </div>`;
-      }
+      return cardJogoTorneio(m1, m2, played||null, confKey, c.id, gi, isSel);
     }).join('');
 
     return `<div class="grupo-header aberto" onclick="toggleGrupo(this)" style="margin-bottom:8px;">
