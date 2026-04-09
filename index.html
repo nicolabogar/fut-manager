@@ -1926,12 +1926,11 @@ function _renderSorteioManual() {
     manualBox.innerHTML = '';
     return;
   }
-  const busca = `<div style="position:relative;margin-bottom:8px;">
-    <input id="ami-manual-search" type="text" class="input" placeholder="BUSCAR TIME..." autocomplete="off"
-      oninput="_filtrarTimesManual()" style="margin-bottom:0;">
-  </div>
-  <div id="ami-manual-lista" style="max-height:200px;overflow-y:auto;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:12px;padding:6px;margin-bottom:8px;"></div>`;
-  const rows = jogsList.map(j => `
+  const rows = jogsList.map(j => {
+    // A3: restaurar seleção existente ao re-render
+    const selAtual = _amiManualSel.get(j.id);
+    const valAtual = selAtual ? selAtual.nome : '';
+    return `
     <div style="margin-bottom:8px;">
       <div style="font-size:12px;font-weight:700;color:var(--cyan);margin-bottom:4px;text-transform:uppercase;">${j.nome}</div>
       <div style="position:relative;">
@@ -1939,11 +1938,11 @@ function _renderSorteioManual() {
           oninput="_filtrarTimesManualJog('${j.id}')"
           onfocus="_abrirDropdownManualJog('${j.id}')"
           onblur="setTimeout(()=>{const d=document.getElementById('ami-manual-drop-${j.id}');if(d)d.style.display='none';},200)"
-          style="margin-bottom:0;font-size:13px;padding:10px 14px;" readonly>
-        <div id="ami-manual-sel-${j.id}" style="display:none;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);border-radius:8px;padding:6px 10px;margin-top:4px;font-size:12px;font-weight:700;cursor:pointer;" onclick="document.getElementById('ami-manual-search-${j.id}').value='';_abrirDropdownManualJog('${j.id}')"></div>
+          value="${valAtual.replace(/"/g,'&quot;')}"
+          style="margin-bottom:0;font-size:13px;padding:10px 14px;">
         <div id="ami-manual-drop-${j.id}" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:25;background:var(--bg);border:1px solid var(--card-border);border-radius:12px;max-height:180px;overflow-y:auto;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,0.5);"></div>
       </div>
-    </div>`).join('');
+    </div>`}).join('');
   manualBox.style.display = 'block';
   manualBox.innerHTML = `<p style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">ESCOLHA O TIME DE CADA JOGADOR</p>${rows}`;
 }
