@@ -1309,7 +1309,9 @@ function cardAmistoso(a, compact=false) {
       </div>
       <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}')" class="btn-primary" style="margin-top:6px;padding:6px 14px;font-size:11px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;">SALVAR</button>`;
   const cardId = `ami-card-${a.id}`;
-  const dblClickAttr = !temRes ? `ondblclick="dblcliqueAmistoso('${a.id}',this)" style="cursor:pointer;"` : `onclick="editarAmistoso('${a.id}')" style="cursor:pointer;"`;
+  const dblClickAttr = !temRes
+    ? `onclick="editarAmistoso('${a.id}')" ondblclick="event.stopPropagation();dblcliqueAmistoso('${a.id}',this)" style="cursor:pointer;"`
+    : `onclick="editarAmistoso('${a.id}')" style="cursor:pointer;"`;
   return `<div id="${cardId}" style="margin-bottom:10px;">
   <div class="match-card" style="${compact?'padding:12px;':''}" ${dblClickAttr}>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:${compact?'8':'10'}px;">
@@ -1849,47 +1851,127 @@ window.salvarPlacar = async id => {
   fecharModal(); await carregarAmistosos(); atualizarDash(); toast('RESULTADO SALVO!');
 };
 
-// ─── PLACAR DIRETO NO CARD ──────────────────────────────────────────
+// ─── EDITAR AMISTOSO ──────────────────────────────────────────────
 window.editarAmistoso = (id) => {
   const a = amistosos.find(x => x.id === id);
   if (!a) return;
-  const b1 = badgeTimeCompact(a.time1?.timeId, a.time1?.nome, a.tipo);
-  const b2 = badgeTimeCompact(a.time2?.timeId, a.time2?.nome, a.tipo);
-  const g1 = a.resultado?.g1 ?? 0;
-  const g2 = a.resultado?.g2 ?? 0;
-  fullscreen('EDITAR AMISTOSO', `
-    <div style="display:flex;flex-direction:column;gap:20px;max-width:400px;margin:0 auto;">
-      <div style="display:flex;align-items:center;justify-content:space-around;gap:8px;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:16px;padding:16px;">
-        <div style="text-align:center;flex:1;">
-          <div style="display:flex;justify-content:center;margin-bottom:8px;">${b1}</div>
-          <div style="font-weight:800;font-size:14px;">${a.time1?.nome||'?'}</div>
-          <div style="font-size:11px;color:var(--cyan);margin-top:4px;">${(a.time1?.jogadores||[]).join(', ')}</div>
+  const temRes = a.resultado != null;
+
+  if (temRes) {
+    // Amistoso finalizado: apenas editar o placar
+    const b1 = badgeTimeCompact(a.time1?.timeId, a.time1?.nome, a.tipo);
+    const b2 = badgeTimeCompact(a.time2?.timeId, a.time2?.nome, a.tipo);
+    const g1 = a.resultado?.g1 ?? 0;
+    const g2 = a.resultado?.g2 ?? 0;
+    fullscreen('EDITAR AMISTOSO', `
+      <div style="display:flex;flex-direction:column;gap:20px;max-width:400px;margin:0 auto;">
+        <div style="display:flex;align-items:center;justify-content:space-around;gap:8px;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:16px;padding:16px;">
+          <div style="text-align:center;flex:1;">
+            <div style="display:flex;justify-content:center;margin-bottom:8px;">${b1}</div>
+            <div style="font-weight:800;font-size:14px;">${a.time1?.nome||'?'}</div>
+            <div style="font-size:11px;color:var(--cyan);margin-top:4px;">${(a.time1?.jogadores||[]).join(', ')}</div>
+          </div>
+          <div style="font-size:18px;font-weight:900;color:var(--text-muted);flex-shrink:0;">VS</div>
+          <div style="text-align:center;flex:1;">
+            <div style="display:flex;justify-content:center;margin-bottom:8px;">${b2}</div>
+            <div style="font-weight:800;font-size:14px;">${a.time2?.nome||'?'}</div>
+            <div style="font-size:11px;color:var(--cyan);margin-top:4px;">${(a.time2?.jogadores||[]).join(', ')}</div>
+          </div>
         </div>
-        <div style="font-size:18px;font-weight:900;color:var(--text-muted);flex-shrink:0;">VS</div>
-        <div style="text-align:center;flex:1;">
-          <div style="display:flex;justify-content:center;margin-bottom:8px;">${b2}</div>
-          <div style="font-weight:800;font-size:14px;">${a.time2?.nome||'?'}</div>
-          <div style="font-size:11px;color:var(--cyan);margin-top:4px;">${(a.time2?.jogadores||[]).join(', ')}</div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:10px;text-align:center;">PLACAR</label>
+          <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
+            <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="${g1}" id="ea-g1" class="placar-input"
+              style="width:70px;text-align:center;font-size:36px;font-weight:900;padding:10px 4px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:12px;color:var(--text);">
+            <span style="font-size:22px;font-weight:900;color:var(--text-muted);">×</span>
+            <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="${g2}" id="ea-g2" class="placar-input"
+              style="width:70px;text-align:center;font-size:36px;font-weight:900;padding:10px 4px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:12px;color:var(--text);">
+          </div>
         </div>
-      </div>
-      <div>
-        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:10px;text-align:center;">PLACAR</label>
-        <div style="display:flex;align-items:center;justify-content:center;gap:12px;">
-          <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="${g1}" id="ea-g1" class="placar-input"
-            style="width:70px;text-align:center;font-size:36px;font-weight:900;padding:10px 4px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:12px;color:var(--text);">
-          <span style="font-size:22px;font-weight:900;color:var(--text-muted);">×</span>
-          <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="${g2}" id="ea-g2" class="placar-input"
-            style="width:70px;text-align:center;font-size:36px;font-weight:900;padding:10px 4px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:12px;color:var(--text);">
+        <div style="display:flex;gap:10px;">
+          <button class="btn-ghost" onclick="fecharFullscreen()">CANCELAR</button>
+          <button class="btn-primary" onclick="salvarEdicaoAmistoso('${id}')">SALVAR</button>
         </div>
-      </div>
-      <div style="display:flex;gap:10px;">
-        <button class="btn-ghost" onclick="fecharFullscreen()">CANCELAR</button>
-        <button class="btn-primary" onclick="salvarEdicaoAmistoso('${id}')">SALVAR</button>
-      </div>
-    </div>`);
+      </div>`);
+    return;
+  }
+
+  // Amistoso em andamento: edição completa com jogadores e sorteio
+  _jcSel.clear();
+  // Pré-selecionar os jogadores do amistoso
+  const todosJogs = [...(a.time1?.jogadoresIds||[]), ...(a.time2?.jogadoresIds||[])];
+  const todosNomes = [...(a.time1?.jogadores||[]), ...(a.time2?.jogadores||[])];
+  todosJogs.forEach((jid, i) => {
+    const jog = jogadores.find(j => j.id === jid);
+    if (jog) _jcSel.set(jid, jog.nome);
+    else if (todosNomes[i]) _jcSel.set(jid || `jog-${i}`, todosNomes[i]);
+  });
+
+  // Pré-preencher _sorteioAmi com os dados atuais
+  _sorteioAmi = {
+    tipo: a.tipo,
+    modoDupla: a.modoDupla || false,
+    time1: { ...a.time1 },
+    time2: { ...a.time2 },
+  };
+
+  fullscreen('EDITAR AMISTOSO', _htmlNovoAmistoso());
+
+  // Após renderizar, configurar os campos com os dados existentes
+  setTimeout(() => {
+    // Selecionar o tipo correto
+    selTipoAmi(a.tipo);
+
+    // Modo dupla
+    const duplaCb = document.getElementById('ami-dupla');
+    if (duplaCb && a.modoDupla) {
+      duplaCb.checked = true;
+      toggleModoDupla(true);
+    }
+
+    // Renderizar tags dos jogadores
+    _renderTagsJC();
+
+    // Mostrar sorteio atual
+    const diff = Math.abs(a.time1.forca - a.time2.forca);
+    const eq = diff <= 2 ? 'EQUILIBRADO' : diff <= 5 ? 'LEVEMENTE DESIGUAL' : 'DESIGUAL';
+    _renderSorteioBox(_sorteioAmi, eq, diff);
+
+    // Trocar o botão SALVAR para chamar a função de atualização
+    const btnSalvar = document.getElementById('btn-ami-salvar');
+    if (btnSalvar) {
+      btnSalvar.style.display = '';
+      btnSalvar.textContent = 'SALVAR ALTERAÇÕES';
+      btnSalvar.onclick = () => salvarEdicaoAmistoso(id);
+    }
+
+    // Event listener para fechar dropdown ao clicar fora
+    document.getElementById('fullscreen-body')?.addEventListener('click', e => {
+      if (!e.target.closest('#jc-search') && !e.target.closest('#jc-dropdown')) {
+        const d = document.getElementById('jc-dropdown');
+        if (d) d.style.display = 'none';
+      }
+    }, { capture: true });
+  }, 30);
 };
 
 window.salvarEdicaoAmistoso = async (id) => {
+  // Se temos _sorteioAmi atualizado (vindo da tela de edição de andamento), usar ele
+  if (_sorteioAmi && !amistosos.find(x => x.id === id)?.resultado) {
+    if (!_sorteioAmi.time1 || !_sorteioAmi.time2) {
+      toast('SORTEAR OS TIMES ANTES DE SALVAR', 'erro'); return;
+    }
+    await updateDoc(doc(db, 'amistosos', id), {
+      tipo: _sorteioAmi.tipo,
+      modoDupla: _sorteioAmi.modoDupla || false,
+      time1: _sorteioAmi.time1,
+      time2: _sorteioAmi.time2,
+    });
+    fecharFullscreen(); _sorteioAmi = null;
+    await carregarAmistosos(); atualizarDash(); toast('AMISTOSO ATUALIZADO!');
+    return;
+  }
+  // Amistoso finalizado: apenas salvar placar
   const g1 = parseInt(document.getElementById('ea-g1')?.value) || 0;
   const g2 = parseInt(document.getElementById('ea-g2')?.value) || 0;
   await updateDoc(doc(db, 'amistosos', id), { resultado: { g1, g2 } });
