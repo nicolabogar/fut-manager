@@ -2506,11 +2506,6 @@ function abrirModalCriarCamp() {
         <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">FORMATO</label>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
           ${Object.entries(CAMP_META).map(([k,v]) => `<div class="tipo-btn" data-ct="${k}" onclick="selCampTipo('${k}',this)" style="font-size:11px;padding:10px 6px;">
-            <div style="height:42px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;">
-              ${v.logo
-                ? `<img src="${v.logo}" style="max-width:100%;max-height:40px;object-fit:contain;" onerror="this.outerHTML='<span style=&quot;font-size:28px;&quot;>${v.emoji}</span>'">`
-                : `<span style="font-size:28px;">${v.emoji}</span>`}
-            </div>
             <div style="font-weight:700;line-height:1.2;font-size:10px;">${v.nome}</div>
             <div style="font-size:9px;color:var(--text-muted);margin-top:2px;">${v.tipo==='selecoes'?'SELECOES':'CLUBES'}</div>
           </div>`).join('')}
@@ -3211,12 +3206,51 @@ function cardCampHome(c) {
   const totalParts  = (c.grupos||[]).reduce((s,g)=>s+(g.partidas||[]).length,0);
   const totalPoss   = (c.grupos||[]).reduce((s,g)=>{const m=g.membros?.length||0; return s+m*(m-1)/2;},0);
   const pct = totalPoss > 0 ? Math.round((totalParts/totalPoss)*100) : 0;
-  return `<div class="match-card" style="margin-bottom:10px;padding:12px;cursor:pointer;" onclick="abrirCampeonato('${c.id}')">
+  const isSel = CAMP_META[c.tipo]?.tipo === 'selecoes';
+
+  // Tags dos jogadores participantes
+  const tagsJogs = (c.participantes||[]).map(p =>
+    `<span style="display:inline-flex;align-items:center;gap:4px;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);border-radius:20px;padding:3px 8px;font-size:11px;font-weight:700;">
+      ${avatarJogador({fotoUrl:''}, 16)}<span style="text-transform:uppercase;">${p.nome}</span>
+    </span>`
+  ).join('');
+
+  // Jogos pendentes (sem placar registrado) — até 3
+  const jogosPendentes = [];
+  (c.grupos||[]).forEach((g,gi) => {
+    for (let i=0;i<g.membros.length;i++) for (let j=i+1;j<g.membros.length;j++) {
+      const m1=g.membros[i],m2=g.membros[j];
+      const played = (g.partidas||[]).some(p=>(p.j1Id===m1.jogadorId&&p.j2Id===m2.jogadorId)||(p.j1Id===m2.jogadorId&&p.j2Id===m1.jogadorId));
+      if (!played) jogosPendentes.push({m1,m2,gi,g});
+    }
+  });
+  const jogosHtml = jogosPendentes.slice(0,2).map(({m1,m2,gi,g}) => {
+    const b1 = isSel ? badgeTimeCompact(m1.time?.id||'','','selecoes') : badgeTimeCompact(m1.time?.id||'',m1.time?.nome||'','clubes');
+    const b2 = isSel ? badgeTimeCompact(m2.time?.id||'','','selecoes') : badgeTimeCompact(m2.time?.id||'',m2.time?.nome||'','clubes');
+    return `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:10px;margin-top:6px;cursor:pointer;" onclick="event.stopPropagation();abrirCampeonato('${c.id}')">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+        <span class="tag tag-yellow" style="font-size:9px;">TORNEIO</span>
+        <span class="tag tag-cyan" style="font-size:9px;">PENDENTE</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="flex:1;display:flex;align-items:center;gap:6px;min-width:0;">${b1}<div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:12px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m1.time?.nome||'?'}</div><div style="font-size:10px;color:var(--cyan);">${m1.nome}</div></div></div>
+        <div style="text-align:center;font-size:12px;font-weight:900;color:var(--text-muted);flex-shrink:0;">VS</div>
+        <div style="flex:1;display:flex;align-items:center;gap:6px;min-width:0;flex-direction:row-reverse;">${b2}<div style="flex:1;min-width:0;text-align:right;"><div style="font-weight:800;font-size:12px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m2.time?.nome||'?'}</div><div style="font-size:10px;color:var(--cyan);">${m2.nome}</div></div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `<div id="camp-home-${c.id}" class="match-card" style="margin-bottom:10px;padding:12px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <span style="font-size:10px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.05em;">TORNEIO</span>
-      <span class="tag tag-yellow" style="text-transform:uppercase;">EM ANDAMENTO</span>
+      <span style="font-size:10px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;" onclick="abrirCampeonato('${c.id}')">TORNEIO</span>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span class="tag tag-yellow" style="text-transform:uppercase;">EM ANDAMENTO</span>
+        <button onclick="event.stopPropagation();mostrarPopupExcluirCampHome('${c.id}',this)" title="EXCLUIR" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#ef4444;border-radius:8px;padding:3px 7px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </button>
+      </div>
     </div>
-    <div style="flex:1;min-width:0;">
+    <div style="cursor:pointer;" onclick="abrirCampeonato('${c.id}')">
       <div style="font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.nome}</div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">${meta.nome} · ${c.participantes?.length||0} JOGADORES</div>
       <div style="margin-top:6px;display:flex;align-items:center;gap:6px;">
@@ -3225,9 +3259,27 @@ function cardCampHome(c) {
         </div>
         <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">${totalParts}/${totalPoss} JOGOS</span>
       </div>
+      ${tagsJogs ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">${tagsJogs}</div>` : ''}
+      ${jogosHtml}
     </div>
   </div>`;
 }
+
+window.mostrarPopupExcluirCampHome = (id, btnEl) => {
+  const container = btnEl ? btnEl.closest(`#camp-home-${id}`) : null;
+  if (!container) return;
+  const existing = container.querySelector('.camp-del-popup');
+  if (existing) { existing.remove(); return; }
+  const popup = document.createElement('div');
+  popup.className = 'camp-del-popup';
+  popup.style.cssText = 'margin-top:6px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;animation:fadeUp 0.2s ease-out;';
+  popup.innerHTML = `<span style="font-size:12px;font-weight:700;color:#ef4444;text-transform:uppercase;">EXCLUIR ESTE TORNEIO?</span>
+    <div style="display:flex;gap:6px;">
+      <button onclick="this.closest('.camp-del-popup').remove()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:var(--text-muted);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">CANCELAR</button>
+      <button onclick="confirmarExcluirCamp('${id}')" style="background:#ef4444;border:none;color:#fff;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">EXCLUIR</button>
+    </div>`;
+  container.appendChild(popup);
+};
 
 // ─── GERENCIAR TIMES ─────────────────────────────────────────────────
 window.filtrarTimes = tipo => {
