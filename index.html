@@ -588,84 +588,85 @@ const storage = getStorage(FB);
 
 const gp = new GoogleAuthProvider();
 
-// ─── DATABASE DE TIMES EA FC 26 ──────────────────────────────────────
+// ─── DATABASE DE TIMES EA FC 25 ──────────────────────────────────────
+// ataque/meio/defesa = atributos EA FC 25; forca = Math.round((ataque+meio+defesa)/3)
 const CLUBES_DEFAULT = [
   // La Liga 🇪🇸
-  { id:'real-madrid',   nome:'Real Madrid',        forca:89, bandeira:'🇪🇸', liga:'La Liga',        logo:'👑' },
-  { id:'barcelona',     nome:'Barcelona',           forca:87, bandeira:'🇪🇸', liga:'La Liga',        logo:'🔵🔴' },
-  { id:'atletico-mad',  nome:'Atlético Madrid',     forca:84, bandeira:'🇪🇸', liga:'La Liga',        logo:'🔴⚪' },
-  { id:'real-sociedad', nome:'Real Sociedad',       forca:80, bandeira:'🇪🇸', liga:'La Liga',        logo:'🔵⚪' },
-  { id:'villarreal',    nome:'Villarreal',          forca:79, bandeira:'🇪🇸', liga:'La Liga',        logo:'🟡' },
-  { id:'sevilla',       nome:'Sevilla',             forca:78, bandeira:'🇪🇸', liga:'La Liga',        logo:'🔴⚪' },
+  { id:'real-madrid',   nome:'Real Madrid',        ataque:89, meio:85, defesa:84, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇪🇸', liga:'La Liga',        logo:'👑' },
+  { id:'barcelona',     nome:'Barcelona',           ataque:84, meio:83, defesa:83, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇪🇸', liga:'La Liga',        logo:'🔵🔴' },
+  { id:'atletico-mad',  nome:'Atlético Madrid',     ataque:82, meio:81, defesa:84, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇪🇸', liga:'La Liga',        logo:'🔴⚪' },
+  { id:'real-sociedad', nome:'Real Sociedad',       ataque:79, meio:80, defesa:79, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇪🇸', liga:'La Liga',        logo:'🔵⚪' },
+  { id:'villarreal',    nome:'Villarreal',          ataque:79, meio:78, defesa:78, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇪🇸', liga:'La Liga',        logo:'🟡' },
+  { id:'sevilla',       nome:'Sevilla',             ataque:77, meio:77, defesa:78, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇪🇸', liga:'La Liga',        logo:'🔴⚪' },
   // Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿
-  { id:'man-city',      nome:'Manchester City',     forca:88, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🩵' },
-  { id:'liverpool',     nome:'Liverpool',           forca:87, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🔴' },
-  { id:'arsenal',       nome:'Arsenal',             forca:86, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🔫' },
-  { id:'chelsea',       nome:'Chelsea',             forca:83, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🦁' },
-  { id:'man-utd',       nome:'Manchester United',   forca:82, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'👹' },
-  { id:'tottenham',     nome:'Tottenham',           forca:81, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🐓' },
-  { id:'newcastle',     nome:'Newcastle',           forca:81, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'⚫⚪' },
-  { id:'aston-villa',   nome:'Aston Villa',         forca:82, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🦁' },
-  { id:'west-ham',      nome:'West Ham',            forca:79, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'⚒️' },
+  { id:'man-city',      nome:'Manchester City',     ataque:86, meio:87, defesa:85, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🩵' },
+  { id:'liverpool',     nome:'Liverpool',           ataque:86, meio:84, defesa:85, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🔴' },
+  { id:'arsenal',       nome:'Arsenal',             ataque:83, meio:85, defesa:81, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🔫' },
+  { id:'chelsea',       nome:'Chelsea',             ataque:82, meio:82, defesa:81, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🦁' },
+  { id:'man-utd',       nome:'Manchester United',   ataque:80, meio:79, defesa:79, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'👹' },
+  { id:'tottenham',     nome:'Tottenham',           ataque:81, meio:80, defesa:79, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🐓' },
+  { id:'newcastle',     nome:'Newcastle',           ataque:80, meio:80, defesa:81, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'⚫⚪' },
+  { id:'aston-villa',   nome:'Aston Villa',         ataque:82, meio:81, defesa:80, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'🦁' },
+  { id:'west-ham',      nome:'West Ham',            ataque:78, meio:78, defesa:77, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿', liga:'Premier League', logo:'⚒️' },
   // Bundesliga 🇩🇪
-  { id:'bayern',        nome:'Bayern Munich',       forca:87, bandeira:'🇩🇪', liga:'Bundesliga',     logo:'🔴⚪' },
-  { id:'leverkusen',    nome:'Bayer Leverkusen',    forca:84, bandeira:'🇩🇪', liga:'Bundesliga',     logo:'⚫🔴' },
-  { id:'dortmund',      nome:'Borussia Dortmund',   forca:83, bandeira:'🇩🇪', liga:'Bundesliga',     logo:'🟡⚫' },
-  { id:'leipzig',       nome:'RB Leipzig',          forca:81, bandeira:'🇩🇪', liga:'Bundesliga',     logo:'🔵🔴' },
+  { id:'bayern',        nome:'Bayern Munich',       ataque:90, meio:85, defesa:83, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇩🇪', liga:'Bundesliga',     logo:'🔴⚪' },
+  { id:'leverkusen',    nome:'Bayer Leverkusen',    ataque:81, meio:84, defesa:81, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇩🇪', liga:'Bundesliga',     logo:'⚫🔴' },
+  { id:'dortmund',      nome:'Borussia Dortmund',   ataque:82, meio:81, defesa:79, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇩🇪', liga:'Bundesliga',     logo:'🟡⚫' },
+  { id:'leipzig',       nome:'RB Leipzig',          ataque:80, meio:80, defesa:79, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇩🇪', liga:'Bundesliga',     logo:'🔵🔴' },
   // Serie A 🇮🇹
-  { id:'inter',         nome:'Inter Milan',         forca:85, bandeira:'🇮🇹', liga:'Serie A',        logo:'🔵⚫' },
-  { id:'milan',         nome:'AC Milan',            forca:83, bandeira:'🇮🇹', liga:'Serie A',        logo:'🔴⚫' },
-  { id:'napoli',        nome:'Napoli',              forca:82, bandeira:'🇮🇹', liga:'Serie A',        logo:'🔵' },
-  { id:'juventus',      nome:'Juventus',            forca:82, bandeira:'🇮🇹', liga:'Serie A',        logo:'⚫⚪' },
-  { id:'roma',          nome:'AS Roma',             forca:80, bandeira:'🇮🇹', liga:'Serie A',        logo:'🟡🔴' },
-  { id:'lazio',         nome:'Lazio',               forca:79, bandeira:'🇮🇹', liga:'Serie A',        logo:'🦅' },
+  { id:'inter',         nome:'Inter Milan',         ataque:83, meio:82, defesa:83, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇮🇹', liga:'Serie A',        logo:'🔵⚫' },
+  { id:'milan',         nome:'AC Milan',            ataque:82, meio:81, defesa:80, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇮🇹', liga:'Serie A',        logo:'🔴⚫' },
+  { id:'napoli',        nome:'Napoli',              ataque:81, meio:80, defesa:80, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇮🇹', liga:'Serie A',        logo:'🔵' },
+  { id:'juventus',      nome:'Juventus',            ataque:80, meio:80, defesa:81, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇮🇹', liga:'Serie A',        logo:'⚫⚪' },
+  { id:'roma',          nome:'AS Roma',             ataque:79, meio:78, defesa:78, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇮🇹', liga:'Serie A',        logo:'🟡🔴' },
+  { id:'lazio',         nome:'Lazio',               ataque:78, meio:77, defesa:77, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇮🇹', liga:'Serie A',        logo:'🦅' },
   // Ligue 1 🇫🇷
-  { id:'psg',           nome:'PSG',                 forca:86, bandeira:'🇫🇷', liga:'Ligue 1',        logo:'🗼' },
-  { id:'monaco',        nome:'Monaco',              forca:80, bandeira:'🇫🇷', liga:'Ligue 1',        logo:'🎲' },
+  { id:'psg',           nome:'PSG',                 ataque:84, meio:82, defesa:80, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇫🇷', liga:'Ligue 1',        logo:'🗼' },
+  { id:'monaco',        nome:'Monaco',              ataque:80, meio:79, defesa:78, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇫🇷', liga:'Ligue 1',        logo:'🎲' },
   // Portugal 🇵🇹
-  { id:'benfica',       nome:'Benfica',             forca:81, bandeira:'🇵🇹', liga:'Primeira Liga',  logo:'🦅' },
-  { id:'porto',         nome:'Porto',               forca:80, bandeira:'🇵🇹', liga:'Primeira Liga',  logo:'🐉' },
-  { id:'sporting',      nome:'Sporting CP',         forca:79, bandeira:'🇵🇹', liga:'Primeira Liga',  logo:'🦁' },
+  { id:'benfica',       nome:'Benfica',             ataque:80, meio:80, defesa:80, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇵🇹', liga:'Primeira Liga',  logo:'🦅' },
+  { id:'porto',         nome:'Porto',               ataque:79, meio:79, defesa:79, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇵🇹', liga:'Primeira Liga',  logo:'🐉' },
+  { id:'sporting',      nome:'Sporting CP',         ataque:78, meio:78, defesa:78, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇵🇹', liga:'Primeira Liga',  logo:'🦁' },
   // Holanda 🇳🇱
-  { id:'ajax',          nome:'Ajax',                forca:79, bandeira:'🇳🇱', liga:'Eredivisie',     logo:'🔴⚪' },
-  { id:'feyenoord',     nome:'Feyenoord',           forca:78, bandeira:'🇳🇱', liga:'Eredivisie',     logo:'🔴⚫' },
+  { id:'ajax',          nome:'Ajax',                ataque:79, meio:77, defesa:76, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇳🇱', liga:'Eredivisie',     logo:'🔴⚪' },
+  { id:'feyenoord',     nome:'Feyenoord',           ataque:78, meio:76, defesa:76, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇳🇱', liga:'Eredivisie',     logo:'🔴⚫' },
   // Escócia 🏴󠁧󠁢󠁳󠁣󠁴󠁿
-  { id:'celtic',        nome:'Celtic',              forca:78, bandeira:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', liga:'Scottish Prem',  logo:'🍀' },
-  { id:'rangers',       nome:'Rangers',             forca:77, bandeira:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', liga:'Scottish Prem',  logo:'🦁' },
+  { id:'celtic',        nome:'Celtic',              ataque:78, meio:76, defesa:76, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', liga:'Scottish Prem',  logo:'🍀' },
+  { id:'rangers',       nome:'Rangers',             ataque:76, meio:76, defesa:75, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁳󠁣󠁴󠁿', liga:'Scottish Prem',  logo:'🦁' },
   // Turquia 🇹🇷
-  { id:'galatasaray',   nome:'Galatasaray',         forca:79, bandeira:'🇹🇷', liga:'Süper Lig',      logo:'🔴🟡' },
+  { id:'galatasaray',   nome:'Galatasaray',         ataque:79, meio:77, defesa:77, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇹🇷', liga:'Süper Lig',      logo:'🔴🟡' },
 ];
 
 const SELECOES_DEFAULT = [
-  { id:'franca',     nome:'França',         forca:86, bandeira:'🇫🇷' },
-  { id:'argentina',  nome:'Argentina',      forca:85, bandeira:'🇦🇷' },
-  { id:'inglaterra', nome:'Inglaterra',     forca:84, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
-  { id:'espanha',    nome:'Espanha',        forca:84, bandeira:'🇪🇸' },
-  { id:'portugal',   nome:'Portugal',       forca:83, bandeira:'🇵🇹' },
-  { id:'alemanha',   nome:'Alemanha',       forca:83, bandeira:'🇩🇪' },
-  { id:'belgica',    nome:'Bélgica',        forca:82, bandeira:'🇧🇪' },
-  { id:'holanda',    nome:'Holanda',        forca:82, bandeira:'🇳🇱' },
-  { id:'italia',     nome:'Itália',         forca:81, bandeira:'🇮🇹' },
-  { id:'croacia',    nome:'Croácia',        forca:80, bandeira:'🇭🇷' },
-  { id:'uruguai',    nome:'Uruguai',        forca:80, bandeira:'🇺🇾' },
-  { id:'colombia',   nome:'Colômbia',       forca:79, bandeira:'🇨🇴' },
-  { id:'marrocos',   nome:'Marrocos',       forca:79, bandeira:'🇲🇦' },
-  { id:'turquia',    nome:'Turquia',        forca:78, bandeira:'🇹🇷' },
-  { id:'eua',        nome:'EUA',            forca:78, bandeira:'🇺🇸' },
-  { id:'mexico',     nome:'México',         forca:78, bandeira:'🇲🇽' },
-  { id:'austria',    nome:'Áustria',        forca:77, bandeira:'🇦🇹' },
-  { id:'japao',      nome:'Japão',          forca:77, bandeira:'🇯🇵' },
-  { id:'senegal',    nome:'Senegal',        forca:77, bandeira:'🇸🇳' },
-  { id:'dinamarca',  nome:'Dinamarca',      forca:77, bandeira:'🇩🇰' },
-  { id:'suica',      nome:'Suíça',          forca:76, bandeira:'🇨🇭' },
-  { id:'chile',      nome:'Chile',          forca:75, bandeira:'🇨🇱' },
-  { id:'polonia',    nome:'Polônia',        forca:75, bandeira:'🇵🇱' },
-  { id:'australia',  nome:'Austrália',      forca:74, bandeira:'🇦🇺' },
-  { id:'nigeria',    nome:'Nigéria',        forca:74, bandeira:'🇳🇬' },
-  { id:'coreia',     nome:'Coreia do Sul',  forca:74, bandeira:'🇰🇷' },
-  { id:'equador',    nome:'Equador',        forca:73, bandeira:'🇪🇨' },
-  { id:'ghana',      nome:'Gana',           forca:72, bandeira:'🇬🇭' },
-  { id:'peru',       nome:'Peru',           forca:72, bandeira:'🇵🇪' },
+  { id:'franca',     nome:'França',         ataque:87, meio:85, defesa:84, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇫🇷' },
+  { id:'argentina',  nome:'Argentina',      ataque:86, meio:83, defesa:83, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇦🇷' },
+  { id:'inglaterra', nome:'Inglaterra',     ataque:84, meio:83, defesa:83, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🏴󠁧󠁢󠁥󠁮󠁧󠁿' },
+  { id:'espanha',    nome:'Espanha',        ataque:84, meio:85, defesa:83, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇪🇸' },
+  { id:'portugal',   nome:'Portugal',       ataque:84, meio:82, defesa:81, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇵🇹' },
+  { id:'alemanha',   nome:'Alemanha',       ataque:83, meio:82, defesa:82, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇩🇪' },
+  { id:'belgica',    nome:'Bélgica',        ataque:82, meio:81, defesa:80, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇧🇪' },
+  { id:'holanda',    nome:'Holanda',        ataque:82, meio:81, defesa:80, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇳🇱' },
+  { id:'italia',     nome:'Itália',         ataque:80, meio:80, defesa:82, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇮🇹' },
+  { id:'croacia',    nome:'Croácia',        ataque:80, meio:80, defesa:79, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇭🇷' },
+  { id:'uruguai',    nome:'Uruguai',        ataque:80, meio:79, defesa:79, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇺🇾' },
+  { id:'colombia',   nome:'Colômbia',       ataque:79, meio:78, defesa:77, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇨🇴' },
+  { id:'marrocos',   nome:'Marrocos',       ataque:78, meio:78, defesa:79, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇲🇦' },
+  { id:'turquia',    nome:'Turquia',        ataque:78, meio:77, defesa:77, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇹🇷' },
+  { id:'eua',        nome:'EUA',            ataque:77, meio:77, defesa:77, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇺🇸' },
+  { id:'mexico',     nome:'México',         ataque:78, meio:77, defesa:76, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇲🇽' },
+  { id:'austria',    nome:'Áustria',        ataque:77, meio:76, defesa:76, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇦🇹' },
+  { id:'japao',      nome:'Japão',          ataque:76, meio:77, defesa:76, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇯🇵' },
+  { id:'senegal',    nome:'Senegal',        ataque:77, meio:76, defesa:76, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇸🇳' },
+  { id:'dinamarca',  nome:'Dinamarca',      ataque:76, meio:77, defesa:77, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇩🇰' },
+  { id:'suica',      nome:'Suíça',          ataque:76, meio:76, defesa:76, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇨🇭' },
+  { id:'chile',      nome:'Chile',          ataque:75, meio:74, defesa:74, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇨🇱' },
+  { id:'polonia',    nome:'Polônia',        ataque:75, meio:74, defesa:74, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇵🇱' },
+  { id:'australia',  nome:'Austrália',      ataque:73, meio:73, defesa:73, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇦🇺' },
+  { id:'nigeria',    nome:'Nigéria',        ataque:75, meio:73, defesa:72, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇳🇬' },
+  { id:'coreia',     nome:'Coreia do Sul',  ataque:74, meio:74, defesa:72, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇰🇷' },
+  { id:'equador',    nome:'Equador',        ataque:73, meio:72, defesa:72, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇪🇨' },
+  { id:'ghana',      nome:'Gana',           ataque:72, meio:71, defesa:70, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇬🇭' },
+  { id:'peru',       nome:'Peru',           ataque:72, meio:71, defesa:70, get forca(){return Math.round((this.ataque+this.meio+this.defesa)/3)}, bandeira:'🇵🇪' },
 ];
 
 const CAMP_META = {
@@ -876,6 +877,19 @@ function forcaBadge(f) {
 function forcaRating(f) {
   const pct = Math.round(((f - 65) / 25) * 100);
   return `<div class="rating-bar"><div class="rating-fill" style="width:${pct}%"></div></div>`;
+}
+
+/** Mini-tags ATK / MID / DEF para o card do time */
+function atributosBadge(t) {
+  if (!t || t.ataque == null) return '';
+  const tag = (label, val) => {
+    let bg, cor;
+    if (val > 85)      { bg='rgba(16,185,129,0.18)'; cor='#6EE7B7'; }
+    else if (val < 75) { bg='rgba(239,68,68,0.18)';  cor='#FCA5A5'; }
+    else               { bg='rgba(245,158,11,0.18)';  cor='#FCD34D'; }
+    return `<span style="font-size:10px;font-weight:800;padding:2px 6px;border-radius:6px;background:${bg};color:${cor};letter-spacing:0.02em;">${label} ${val}</span>`;
+  };
+  return `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">${tag('ATK',t.ataque)}${tag('MID',t.meio)}${tag('DEF',t.defesa)}</div>`;
 }
 
 /**
@@ -1872,6 +1886,7 @@ function vsCardTime(t, jogadoresList, pool) {
     ${icone}
     <div class="vs-team">${t.nome}</div>
     <div style="margin:4px 0;">${forcaBadge(t.forca)}</div>
+    ${timeData.ataque != null ? `<div style="display:flex;justify-content:center;gap:3px;flex-wrap:wrap;margin-bottom:4px;">${atributosBadge(timeData)}</div>` : ''}
     ${jogadoresList.map(j => `<div class="vs-label">${j.nome}</div>`).join('')}
   </div>`;
 }
@@ -3526,7 +3541,7 @@ function renderTimesEdit() {
           <div style="flex:1;min-width:0;">
             <div style="font-weight:800;font-size:16px;text-transform:uppercase;">${t.nome}</div>
             <div style="font-size:12px;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">${d.paisNome||''}</div>
-            <div style="margin-top:6px;">${forcaBadge(t.forca)}</div>
+            <div style="margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${forcaBadge(t.forca)}${atributosBadge(t)}</div>
           </div>
           <button onclick="event.stopPropagation();excluirTime('${t.id}')" title="EXCLUIR" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#ef4444;border-radius:8px;padding:6px 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
@@ -3544,7 +3559,7 @@ function renderTimesEdit() {
               ${flagImg(d.pais, 18)}
               <span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;">${d.paisNome}</span>
             </div>
-            <div style="margin-top:8px;">${forcaBadge(t.forca)}</div>
+            <div style="margin-top:8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">${forcaBadge(t.forca)}${atributosBadge(t)}</div>
           </div>
           <button onclick="event.stopPropagation();excluirTime('${t.id}')" title="EXCLUIR" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#ef4444;border-radius:8px;padding:6px 8px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
