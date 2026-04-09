@@ -3313,17 +3313,21 @@ function cardCampHome(c, modoLista=false) {
 }
 
 window.mostrarPopupExcluirCampHome = (id, btnEl) => {
-  const container = btnEl ? btnEl.closest(`#camp-home-${id}`) : null;
+  // Buscar container: pode ser camp-home-${id} (home) ou qualquer ancestral com match-card
+  const container = btnEl
+    ? (document.getElementById(`camp-home-${id}`) || btnEl.closest('.match-card'))
+    : null;
   if (!container) return;
   const existing = container.querySelector('.camp-del-popup');
   if (existing) { existing.remove(); return; }
   const popup = document.createElement('div');
   popup.className = 'camp-del-popup';
   popup.style.cssText = 'margin-top:6px;background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.4);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;animation:fadeUp 0.2s ease-out;';
+  popup.onclick = e => e.stopPropagation();
   popup.innerHTML = `<span style="font-size:12px;font-weight:700;color:#ef4444;text-transform:uppercase;">EXCLUIR ESTE TORNEIO?</span>
     <div style="display:flex;gap:6px;">
-      <button onclick="this.closest('.camp-del-popup').remove()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:var(--text-muted);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">CANCELAR</button>
-      <button onclick="confirmarExcluirCamp('${id}')" style="background:#ef4444;border:none;color:#fff;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">EXCLUIR</button>
+      <button onclick="event.stopPropagation();this.closest('.camp-del-popup').remove()" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:var(--text-muted);padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">CANCELAR</button>
+      <button onclick="event.stopPropagation();confirmarExcluirCamp('${id}')" style="background:#ef4444;border:none;color:#fff;padding:5px 12px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;">EXCLUIR</button>
     </div>`;
   container.appendChild(popup);
 };
