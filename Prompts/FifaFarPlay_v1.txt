@@ -1,0 +1,19 @@
+# FIFA FAR PLAY - Prompts de Features v1
+# FORMATO: Cada feature tem status: [ ] pendente | [x] concluído (hash: XXXXXXX)
+# O agente deve marcar o hash do commit ao concluir cada item.
+# Ao finalizar tudo, este arquivo é renomeado para FifaFarPlay_v1.txt e um novo é criado.
+
+[x] Ícone do app + substituir menu hamburguer por ícone de bola de futebol SVG (hash: eb5a66f)
+[x] Uppercase em todo texto dinâmico (jogadores, times, países) (hash: f6060fe)
+[x] App mobile: inputs de placar com inputmode="numeric" (hash: caca9c5)
+[x] AMISTOSOS - Remover swipe-to-delete completamente (hash: bf6f4c0)
+[x] AMISTOSOS - Deletar apenas cards "em andamento" via duplo clique (popup confirmação) (hash: 4b1ad1f)
+[x] AMISTOSOS - Placar: limpar/selecionar campo ao focar (hash: 33d722f)
+[x] AMISTOSOS - Mover ícone/bandeira do país ANTES do nome do time no card (hash: e6ddb5f)
+[x] AMISTOSOS - Score em amarelo e fonte maior (hash: 0086a58)
+[x] AMISTOSOS - Nome do jogador mais alinhado no card (hash: d378fb5)
+[x] AMISTOSOS - Teclado numérico nos inputs de placar (hash: caca9c5)
+[x] AMISTOSOS - Permitir selecionar times E seleções juntos (sorteio separado + regra 20% força) (hash: 9d6e449)
+[x] AMISTOSOS - Modo dupla: sortear duplas + times/seleções para 4 jogadores (hash: 01fe55f)
+[x] AMISTOSOS - Botão compartilhar WhatsApp não funciona após criar torneio (investigar e corrigir) (hash: aaae21e)
+[x] AMISTOSOS - Editar amistoso em andamento (abrir tela de edição com dados já preenchidos) (hash: 415aace)
