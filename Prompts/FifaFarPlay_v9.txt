@@ -1,0 +1,9 @@
+# FIFA FAR PLAY - Prompts de Features v9
+# FORMATO: Cada feature tem status: [ ] pendente | [x] concluído (hash: XXXXXXX)
+# O agente deve marcar o hash do commit ao concluir cada item.
+# Ao finalizar tudo, este arquivo é renomeado para FifaFarPlay_v9.txt e um novo é criado.
+
+## MELHORIAS ##
+
+1 - [x] No card de jogos do amistoso coloque o botão de fim de jogo um pouco mais para baixo do placar, as vezes quando clica no placar esta clicando no salvar sem querer. (hash: 263d4af)
+2 - [x] A bandeira do pais quando é time, deve estar antes da descrição do time, deve vir primeiro de tudo. (hash: 263d4af)
