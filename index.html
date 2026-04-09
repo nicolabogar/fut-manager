@@ -3211,7 +3211,7 @@ function cardCampHome(c) {
   const totalParts  = (c.grupos||[]).reduce((s,g)=>s+(g.partidas||[]).length,0);
   const totalPoss   = (c.grupos||[]).reduce((s,g)=>{const m=g.membros?.length||0; return s+m*(m-1)/2;},0);
   const pct = totalPoss > 0 ? Math.round((totalParts/totalPoss)*100) : 0;
-  return `<div class="match-card" style="margin-bottom:10px;padding:12px;cursor:pointer;" onclick="irPara('campeonatos')">
+  return `<div class="match-card" style="margin-bottom:10px;padding:12px;cursor:pointer;" onclick="abrirCampeonato('${c.id}')">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
       <span style="font-size:10px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.05em;">TORNEIO</span>
       <span class="tag tag-yellow" style="text-transform:uppercase;">EM ANDAMENTO</span>
