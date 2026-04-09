@@ -2308,19 +2308,8 @@ async function carregarCampeonatos() {
 const _campState = { filtroTipo: 'todos', filtroTipoTime: 'todos', filtroJog: '', pag: 0 };
 
 function _cardCampeonato(camp) {
-  const meta = CAMP_META[camp.tipo] || { nome: camp.tipo };
-  return `<div class="match-card" style="margin-bottom:0;cursor:pointer;" onclick="abrirCampeonato('${camp.id}')">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div style="flex:1;min-width:0;">
-        <div style="font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${camp.nome}</div>
-        <div style="display:flex;align-items:center;gap:6px;margin-top:4px;">
-          <span class="tag tag-purple" style="font-size:9px;">${meta.nome.toUpperCase()}</span>
-          <span class="tag tag-gray" style="font-size:9px;">${camp.participantes?.length||0} JOGADORES</span>
-        </div>
-      </div>
-      <div style="color:var(--text-muted);font-size:22px;flex-shrink:0;">›</div>
-    </div>
-  </div>`;
+  // Usa o mesmo visual do cardCampHome (T2)
+  return cardCampHome(camp, true); // true = modo lista (sem botão excluir inline, usa swipe)
 }
 
 function _wrapSwipeCamp(camp) {
@@ -3263,12 +3252,13 @@ function atualizarDash() {
   } else { secCamp.style.display = 'none'; }
 }
 
-function cardCampHome(c) {
+function cardCampHome(c, modoLista=false) {
   const meta = CAMP_META[c.tipo] || { nome: c.tipo };
   const totalParts  = (c.grupos||[]).reduce((s,g)=>s+(g.partidas||[]).length,0);
   const totalPoss   = (c.grupos||[]).reduce((s,g)=>{const m=g.membros?.length||0; return s+m*(m-1)/2;},0);
   const pct = totalPoss > 0 ? Math.round((totalParts/totalPoss)*100) : 0;
   const isSel = CAMP_META[c.tipo]?.tipo === 'selecoes';
+  const finalizado = c.status === 'finalizado';
 
   // Tags dos jogadores participantes
   const tagsJogs = (c.participantes||[]).map(p =>
@@ -3277,7 +3267,7 @@ function cardCampHome(c) {
     </span>`
   ).join('');
 
-  // Jogos pendentes (sem placar registrado) — até 3
+  // Jogos em andamento (pendentes sem placar) — mostrar até 2
   const jogosPendentes = [];
   (c.grupos||[]).forEach((g,gi) => {
     for (let i=0;i<g.membros.length;i++) for (let j=i+1;j<g.membros.length;j++) {
@@ -3287,43 +3277,38 @@ function cardCampHome(c) {
     }
   });
   const jogosHtml = jogosPendentes.slice(0,2).map(({m1,m2,gi,g}) => {
-    const b1 = isSel ? badgeTimeCompact(m1.time?.id||'','','selecoes') : badgeTimeCompact(m1.time?.id||'',m1.time?.nome||'','clubes');
-    const b2 = isSel ? badgeTimeCompact(m2.time?.id||'','','selecoes') : badgeTimeCompact(m2.time?.id||'',m2.time?.nome||'','clubes');
-    return `<div style="background:rgba(255,255,255,0.03);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:10px;margin-top:6px;cursor:pointer;" onclick="event.stopPropagation();abrirCampeonato('${c.id}')">
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
-        <span class="tag tag-yellow" style="font-size:9px;">TORNEIO</span>
-        <span class="tag tag-cyan" style="font-size:9px;">PENDENTE</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <div style="flex:1;display:flex;align-items:center;gap:6px;min-width:0;">${b1}<div style="flex:1;min-width:0;"><div style="font-weight:800;font-size:12px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m1.time?.nome||'?'}</div><div style="font-size:10px;color:var(--cyan);">${m1.nome}</div></div></div>
-        <div style="text-align:center;font-size:12px;font-weight:900;color:var(--text-muted);flex-shrink:0;">VS</div>
-        <div style="flex:1;display:flex;align-items:center;gap:6px;min-width:0;flex-direction:row-reverse;">${b2}<div style="flex:1;min-width:0;text-align:right;"><div style="font-weight:800;font-size:12px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${m2.time?.nome||'?'}</div><div style="font-size:10px;color:var(--cyan);">${m2.nome}</div></div></div>
-      </div>
-    </div>`;
+    const confKey = `home-${c.id}-${gi}-${m1.jogadorId}-${m2.jogadorId}`;
+    return cardJogoTorneio(m1, m2, null, confKey, c.id, gi, isSel);
   }).join('');
 
-  return `<div id="camp-home-${c.id}" class="match-card" style="margin-bottom:10px;padding:12px;">
+  const idAttr = modoLista ? '' : `id="camp-home-${c.id}" `;
+  const statusTag = finalizado
+    ? `<span class="tag tag-gray" style="font-size:9px;">FINALIZADO</span>`
+    : `<span class="tag tag-yellow" style="font-size:9px;">EM ANDAMENTO</span>`;
+  const btnExcluir = !modoLista && !finalizado
+    ? `<button onclick="event.stopPropagation();mostrarPopupExcluirCampHome('${c.id}',this)" title="EXCLUIR" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#ef4444;border-radius:8px;padding:3px 7px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+      </button>` : '';
+
+  return `<div ${idAttr}class="match-card" style="margin-bottom:${modoLista?'0':'10px'};padding:12px;cursor:pointer;" onclick="abrirCampeonato('${c.id}')">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
-      <span style="font-size:10px;font-weight:700;color:var(--yellow);text-transform:uppercase;letter-spacing:0.05em;cursor:pointer;" onclick="abrirCampeonato('${c.id}')">TORNEIO</span>
       <div style="display:flex;align-items:center;gap:6px;">
-        <span class="tag tag-yellow" style="text-transform:uppercase;">EM ANDAMENTO</span>
-        <button onclick="event.stopPropagation();mostrarPopupExcluirCampHome('${c.id}',this)" title="EXCLUIR" style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#ef4444;border-radius:8px;padding:3px 7px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
-        </button>
+        <span class="tag tag-purple" style="font-size:9px;">TORNEIO</span>
+        ${statusTag}
+        <span class="tag tag-gray" style="font-size:9px;">${isSel?'SELECOES':'CLUBES'}</span>
       </div>
+      ${btnExcluir}
     </div>
-    <div style="cursor:pointer;" onclick="abrirCampeonato('${c.id}')">
-      <div style="font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.nome}</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">${meta.nome} · ${c.participantes?.length||0} JOGADORES</div>
-      <div style="margin-top:6px;display:flex;align-items:center;gap:6px;">
-        <div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">
-          <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--yellow),var(--green));border-radius:2px;"></div>
-        </div>
-        <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">${totalParts}/${totalPoss} JOGOS</span>
+    <div style="font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.nome}</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">${meta.nome} · ${c.participantes?.length||0} JOGADORES</div>
+    ${!finalizado ? `<div style="margin-top:6px;display:flex;align-items:center;gap:6px;">
+      <div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--yellow),var(--green));border-radius:2px;"></div>
       </div>
-      ${tagsJogs ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">${tagsJogs}</div>` : ''}
-      ${jogosHtml}
-    </div>
+      <span style="font-size:10px;color:var(--text-muted);white-space:nowrap;">${totalParts}/${totalPoss} JOGOS</span>
+    </div>` : ''}
+    ${tagsJogs ? `<div style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;">${tagsJogs}</div>` : ''}
+    ${!finalizado && jogosHtml ? `<div style="margin-top:8px;" onclick="event.stopPropagation();abrirCampeonato('${c.id}')">${jogosHtml}</div>` : ''}
   </div>`;
 }
 
