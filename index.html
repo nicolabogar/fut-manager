@@ -2257,13 +2257,16 @@ window._abrirDropdownManualJog = (jogId) => {
   if (!drop) return;
   if (!filtrado.length) { drop.style.display='none'; return; }
   drop.innerHTML = filtrado.slice(0,30).map(t=>{
-    const paisCode = t._tipo==='selecoes' ? (SELECAO_PAIS[t.id]?.pais||'') : (TEAM_DATA[t.id]?.pais||'');
-    const flagEl = paisCode ? `<img src="https://flagcdn.com/w40/${paisCode}.png" alt="" loading="lazy" style="width:20px;height:15px;object-fit:cover;border-radius:2px;flex-shrink:0;" onerror="this.style.display='none'">` : '';
+    const isSel = t._tipo==='selecoes';
+    const paisCode = isSel ? (SELECAO_PAIS[t.id]?.pais||'') : (TEAM_DATA[t.id]?.pais||'');
+    const flagEl = paisCode ? `<img src="https://flagcdn.com/w40/${paisCode}.png" alt="" loading="lazy" style="width:22px;height:16px;object-fit:cover;border-radius:2px;flex-shrink:0;" onerror="this.style.display='none'">` : '';
+    const shieldEl = !isSel ? `<div style="width:22px;height:22px;border-radius:5px;background:${TEAM_DATA[t.id]?.fundo||'#1E1E35'};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:${TEAM_DATA[t.id]?.cor||'#AAA'};flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">${TEAM_DATA[t.id]?.abrev||t.nome.slice(0,3).toUpperCase()}</div>` : '';
+    const eficEl = t.eficiencia ? `<span class="efic-tag selecionado" data-efic="${t.eficiencia}" style="font-size:9px;padding:2px 8px;cursor:default;pointer-events:none;flex-shrink:0;">${t.eficiencia}</span>` : '';
     return `<div onclick="selecionarTimeManualJog('${jogId}','${t.id}','${t.nome.replace(/'/g,"\\'")}',${t.forca},'${t._tipo}')"
       style="padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:600;font-size:12px;display:flex;align-items:center;gap:8px;">
-      ${flagEl}
-      <span style="text-transform:uppercase;">${t.nome}</span>
-      <span style="color:var(--text-muted);font-size:10px;margin-left:auto;">FORÇA ${t.forca}</span>
+      ${flagEl}${shieldEl}
+      <span style="text-transform:uppercase;flex:1;">${t.nome}</span>
+      ${eficEl}
     </div>`;}).join('');
   drop.style.display='block';
 };
@@ -2962,12 +2965,14 @@ window._abrirDropdownManualCC = (jogId) => {
   const isSel = meta?.tipo === 'selecoes';
   drop.innerHTML = filtrado.slice(0,30).map(t=>{
     const paisCode = isSel ? (SELECAO_PAIS[t.id]?.pais||'') : (TEAM_DATA[t.id]?.pais||'');
-    const flagEl = paisCode ? `<img src="https://flagcdn.com/w40/${paisCode}.png" alt="" loading="lazy" style="width:20px;height:15px;object-fit:cover;border-radius:2px;flex-shrink:0;" onerror="this.style.display='none'">` : '';
+    const flagEl = paisCode ? `<img src="https://flagcdn.com/w40/${paisCode}.png" alt="" loading="lazy" style="width:22px;height:16px;object-fit:cover;border-radius:2px;flex-shrink:0;" onerror="this.style.display='none'">` : '';
+    const shieldEl = !isSel ? `<div style="width:22px;height:22px;border-radius:5px;background:${TEAM_DATA[t.id]?.fundo||'#1E1E35'};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:${TEAM_DATA[t.id]?.cor||'#AAA'};flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">${TEAM_DATA[t.id]?.abrev||t.nome.slice(0,3).toUpperCase()}</div>` : '';
+    const eficEl = t.eficiencia ? `<span class="efic-tag selecionado" data-efic="${t.eficiencia}" style="font-size:9px;padding:2px 8px;cursor:default;pointer-events:none;flex-shrink:0;">${t.eficiencia}</span>` : '';
     return `<div onclick="selecionarTimeManualCC('${jogId}','${t.id}','${t.nome.replace(/'/g,"\\'")}',${t.forca},'${isSel?'selecoes':'clubes'}')"
       style="padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:600;font-size:12px;display:flex;align-items:center;gap:8px;">
-      ${flagEl}
-      <span style="text-transform:uppercase;">${t.nome}</span>
-      <span style="color:var(--text-muted);font-size:10px;margin-left:auto;">FORÇA ${t.forca}</span>
+      ${flagEl}${shieldEl}
+      <span style="text-transform:uppercase;flex:1;">${t.nome}</span>
+      ${eficEl}
     </div>`;}).join('');
   drop.style.display='block';
 };
