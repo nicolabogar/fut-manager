@@ -1375,7 +1375,9 @@ async function carregarTimes() {
       SELECAO_PAIS[t.id] = { pais: t.bandeira, paisNome: t.paisNome || t.nome };
     }
     if (t.tipo === 'clube' && !TEAM_DATA[t.id]) {
-      TEAM_DATA[t.id] = { abrev:(t.nome||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#FFFFFF', pais:t.bandeira||'eu', paisNome:t.paisNome||'' };
+      TEAM_DATA[t.id] = { abrev:(t.nome||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#FFFFFF', pais:t.bandeira||'eu', paisNome:t.paisNome||'', crest:t.crest||'' };
+    } else if (t.tipo === 'clube' && TEAM_DATA[t.id] && t.crest) {
+      TEAM_DATA[t.id] = { ...TEAM_DATA[t.id], crest: t.crest };
     }
   });
 }
@@ -3954,6 +3956,7 @@ document.getElementById('btn-add-time').addEventListener('click', () => {
 });
 
 function abrirModalAddTime(tipoInicial) {
+  const paisOptions = PAISES_FIFA.map(p => `<option value="${p.code}" data-nome="${p.nome}">${p.nome}</option>`).join('');
   fullscreen('NOVO TIME', `
     <div style="display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto;">
       <div>
@@ -3971,36 +3974,74 @@ function abrirModalAddTime(tipoInicial) {
         </div>
       </div>
       <input type="hidden" id="nt-tipo" value="${tipoInicial}">
-      <div>
-        <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">BUSCAR TIME</label>
-        <input class="input" id="nt-busca" placeholder="Buscar time ou país..." autocomplete="off" oninput="filtrarListaAddTime()">
-      </div>
-      <div id="nt-lista" style="max-height:280px;overflow-y:auto;border-radius:12px;border:1px solid var(--card-border);background:rgba(0,0,0,0.2);padding:8px;"></div>
 
-      <div id="nt-form" style="display:none;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:14px;">
-        <p style="font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">TIME SELECIONADO</p>
-        <div id="nt-preview" style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"></div>
-        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">FORÇA DO TIME</label>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <input type="range" id="nt-forca" min="60" max="92" value="80" style="flex:1;accent-color:var(--purple);" oninput="document.getElementById('nt-forca-val').textContent=this.value">
-          <span id="nt-forca-val" style="font-size:20px;font-weight:900;color:var(--cyan);min-width:36px;text-align:center;">80</span>
+      <!-- CLUBE: formulário do zero -->
+      <div id="nt-clube-section" style="display:${tipoInicial==='clube'?'flex':'none'};flex-direction:column;gap:14px;">
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">PAÍS</label>
+          <select id="nt-clube-pais" class="input" style="cursor:pointer;" onchange="_ntClubePreview()">
+            <option value="">Selecione o país...</option>
+            ${paisOptions}
+          </select>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">NOME DO CLUBE</label>
+          <input class="input" id="nt-clube-nome" placeholder="Nome do clube..." autocomplete="off" oninput="_ntClubePreview()">
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">BRASÃO (OPCIONAL)</label>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div id="nt-clube-crest-preview" style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,0.05);border:1.5px dashed rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden;">
+              <span style="font-size:22px;color:var(--text-muted);">🛡️</span>
+            </div>
+            <label style="flex:1;cursor:pointer;">
+              <div class="btn-ghost" style="text-align:center;pointer-events:none;font-size:13px;padding:10px;">ESCOLHER IMAGEM</div>
+              <input type="file" accept="image/*" id="nt-clube-crest-input" style="display:none;" onchange="_ntClubeCarregarCrest(this)">
+            </label>
+          </div>
+        </div>
+        <div>
+          <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIÊNCIA</label>
+          <div class="efic-tags" id="nt-efic-tags">
+            <span class="efic-tag" data-efic="Ruim"     onclick="selecionarEficienciaNT('Ruim')">Ruim</span>
+            <span class="efic-tag" data-efic="Moderado" onclick="selecionarEficienciaNT('Moderado')">Moderado</span>
+            <span class="efic-tag" data-efic="Bom"      onclick="selecionarEficienciaNT('Bom')">Bom</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+          <button id="btn-salvar-time" class="btn-primary" onclick="salvarNovoTime()" disabled style="opacity:0.4;font-size:16px;padding:16px;">CRIAR</button>
+          <button class="btn-ghost" onclick="fecharFullscreen()" style="font-size:15px;padding:14px;">CANCELAR</button>
         </div>
       </div>
 
-      <div>
-        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIÊNCIA DO TIME</label>
-        <div class="efic-tags" id="nt-efic-tags">
-          <span class="efic-tag" data-efic="Ruim"     onclick="selecionarEficienciaNT('Ruim')">Ruim</span>
-          <span class="efic-tag" data-efic="Moderado" onclick="selecionarEficienciaNT('Moderado')">Moderado</span>
-          <span class="efic-tag" data-efic="Bom"      onclick="selecionarEficienciaNT('Bom')">Bom</span>
+      <!-- SELEÇÃO: busca existente -->
+      <div id="nt-selecao-section" style="display:${tipoInicial==='selecao'?'flex':'none'};flex-direction:column;gap:14px;">
+        <div>
+          <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">BUSCAR SELEÇÃO</label>
+          <input class="input" id="nt-busca" placeholder="Buscar país..." autocomplete="off" oninput="filtrarListaAddTime()">
         </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
-        <button id="btn-salvar-time" class="btn-primary" onclick="salvarNovoTime()" disabled style="opacity:0.4;font-size:16px;padding:16px;">CRIAR</button>
-        <button class="btn-ghost" onclick="fecharFullscreen()" style="font-size:15px;padding:14px;">CANCELAR</button>
+        <div id="nt-lista" style="max-height:280px;overflow-y:auto;border-radius:12px;border:1px solid var(--card-border);background:rgba(0,0,0,0.2);padding:8px;"></div>
+
+        <div id="nt-form" style="display:none;background:rgba(139,92,246,0.08);border:1px solid rgba(139,92,246,0.25);border-radius:14px;padding:14px;">
+          <p style="font-size:11px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:10px;">SELEÇÃO ESCOLHIDA</p>
+          <div id="nt-preview" style="display:flex;align-items:center;gap:12px;margin-bottom:14px;"></div>
+        </div>
+
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIÊNCIA</label>
+          <div class="efic-tags" id="nt-efic-tags-sel">
+            <span class="efic-tag" data-efic="Ruim"     onclick="selecionarEficienciaNTSel('Ruim')">Ruim</span>
+            <span class="efic-tag" data-efic="Moderado" onclick="selecionarEficienciaNTSel('Moderado')">Moderado</span>
+            <span class="efic-tag" data-efic="Bom"      onclick="selecionarEficienciaNTSel('Bom')">Bom</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+          <button id="btn-salvar-time-sel" class="btn-primary" onclick="salvarNovoTimeSel()" disabled style="opacity:0.4;font-size:16px;padding:16px;">CRIAR</button>
+          <button class="btn-ghost" onclick="fecharFullscreen()" style="font-size:15px;padding:14px;">CANCELAR</button>
+        </div>
       </div>
     </div>`);
-  renderListaAddTime();
+  if (tipoInicial === 'selecao') renderListaAddTime();
 }
 
 let _selNovoTime = null;
@@ -4011,6 +4052,36 @@ window.selecionarEficienciaNT = (val) => {
   document.querySelectorAll('#nt-efic-tags .efic-tag').forEach(el => {
     el.classList.toggle('selecionado', el.dataset.efic === _eficienciaNT);
   });
+};
+
+window.selecionarEficienciaNTSel = (val) => {
+  _eficienciaNT = (_eficienciaNT === val) ? null : val;
+  document.querySelectorAll('#nt-efic-tags-sel .efic-tag').forEach(el => {
+    el.classList.toggle('selecionado', el.dataset.efic === _eficienciaNT);
+  });
+};
+
+window._ntClubePreview = () => {
+  const nome = document.getElementById('nt-clube-nome')?.value.trim();
+  const btn = document.getElementById('btn-salvar-time');
+  if (btn) {
+    const ok = !!(nome && document.getElementById('nt-clube-pais')?.value);
+    btn.disabled = !ok;
+    btn.style.opacity = ok ? '1' : '0.4';
+  }
+};
+
+window._ntClubeCarregarCrest = (input) => {
+  const file = input.files?.[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    window._ntClubeCrest = dataUrl;
+    const prev = document.getElementById('nt-clube-crest-preview');
+    if (prev) prev.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:contain;">`;
+  };
+  reader.readAsDataURL(file);
 };
 
 window.selecionarEficienciaET = (val) => {
@@ -4025,22 +4096,10 @@ window.selecionarEficienciaET = (val) => {
 };
 
 window.renderListaAddTime = () => {
-  const tipo = document.getElementById('nt-tipo').value;
   const filtro = (document.getElementById('nt-busca')?.value || '').toLowerCase().trim();
   const el = document.getElementById('nt-lista');
-  if (tipo === 'clube') {
-    // Mostra todos clubes de TEAM_DATA que não estão ainda em `clubes`
-    const jaTemIds = new Set(clubes.map(c => c.id));
-    const opcoes = Object.entries(TEAM_DATA)
-      .filter(([id,d]) => !jaTemIds.has(id))
-      .filter(([id,d]) => !filtro || id.includes(filtro) || (d.paisNome||'').toLowerCase().includes(filtro) || (d.abrev||'').toLowerCase().includes(filtro));
-    if (!opcoes.length) { el.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:24px;font-size:12px;">NENHUM CLUBE DISPONÍVEL</p>'; return; }
-    el.innerHTML = `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">${opcoes.map(([id,d]) => `
-      <button type="button" onclick="escolherClubeAdd('${id}')" style="background:rgba(255,255,255,0.03);border:1.5px solid ${_selNovoTime===id?'var(--purple)':'transparent'};border-radius:10px;padding:8px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;">
-        <div style="width:36px;height:36px;border-radius:8px;background:${d.fundo};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:${d.cor};border:1px solid rgba(255,255,255,0.1);">${d.abrev}</div>
-        <span style="font-size:9px;color:var(--text);font-weight:700;text-align:center;line-height:1.1;">${id.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase())}</span>
-      </button>`).join('')}</div>`;
-  } else {
+  if (!el) return;
+  {
     // Seleções: mostra todos países de PAISES_FIFA que não estão ainda em `selecoes`
     const jaTemNomes = new Set(selecoes.map(s => s.nome.toLowerCase()));
     const opcoes = PAISES_FIFA
@@ -4074,12 +4133,13 @@ window.escolherSelecaoAdd = (code, nome) => {
   _selNovoTime = code;
   window._selNovoTimeNome = nome;
   const formEl = document.getElementById('nt-form');
-  formEl.style.display = '';
-  document.getElementById('nt-preview').innerHTML = `
+  if (formEl) { formEl.style.display = ''; }
+  const prev = document.getElementById('nt-preview');
+  if (prev) prev.innerHTML = `
     <div style="width:44px;height:34px;border-radius:6px;overflow:hidden;flex-shrink:0;"><img src="https://flagcdn.com/w80/${code}.png" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'"></div>
     <div style="flex:1;"><div style="font-weight:800;font-size:15px;">${nome}</div><div style="font-size:11px;color:var(--text-muted);">Seleção</div></div>`;
-  document.getElementById('btn-salvar-time').disabled = false;
-  document.getElementById('btn-salvar-time').style.opacity = '1';
+  const btn = document.getElementById('btn-salvar-time-sel');
+  if (btn) { btn.disabled = false; btn.style.opacity = '1'; }
   renderListaAddTime();
 };
 
@@ -4087,32 +4147,45 @@ window.selTipoTime = tipo => {
   document.getElementById('nt-tipo').value = tipo;
   document.getElementById('nt-c').classList.toggle('sel', tipo==='clube');
   document.getElementById('nt-s').classList.toggle('sel', tipo==='selecao');
+  document.getElementById('nt-clube-section').style.display = tipo==='clube' ? 'flex' : 'none';
+  document.getElementById('nt-selecao-section').style.display = tipo==='selecao' ? 'flex' : 'none';
   _selNovoTime = null;
-  document.getElementById('nt-form').style.display = 'none';
-  document.getElementById('btn-salvar-time').disabled = true;
-  document.getElementById('btn-salvar-time').style.opacity = '0.4';
-  if (document.getElementById('nt-busca')) document.getElementById('nt-busca').value = '';
-  renderListaAddTime();
+  _eficienciaNT = null;
+  window._ntClubeCrest = null;
+  if (tipo === 'selecao') {
+    const nt = document.getElementById('nt-form');
+    if (nt) nt.style.display = 'none';
+    if (document.getElementById('nt-busca')) document.getElementById('nt-busca').value = '';
+    renderListaAddTime();
+  }
 };
 
 window.salvarNovoTime = async () => {
-  if (!_selNovoTime) { toast('SELECIONE UM TIME DA LISTA', 'erro'); return; }
-  const tipo = document.getElementById('nt-tipo').value;
-  const forca = parseInt(document.getElementById('nt-forca').value);
+  const paisEl = document.getElementById('nt-clube-pais');
+  const nomeEl = document.getElementById('nt-clube-nome');
+  const pais = paisEl?.value;
+  const nome = nomeEl?.value.trim();
+  if (!pais || !nome) { toast('PREENCHA PAÍS E NOME DO CLUBE', 'erro'); return; }
+  const opt = paisEl.options[paisEl.selectedIndex];
+  const paisNome = opt?.dataset?.nome || '';
   const eficiencia = _eficienciaNT || '';
-  let novoTime;
-  if (tipo === 'clube') {
-    const d = TEAM_DATA[_selNovoTime];
-    const nome = _selNovoTime.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
-    novoTime = { id:_selNovoTime, nome, tipo:'clube', bandeira:d.pais, paisNome:d.paisNome, liga:'', forca, eficiencia };
-  } else {
-    const nome = window._selNovoTimeNome || _selNovoTime;
-    const id = 'sel-' + _selNovoTime.replace(/-/g,'');
-    novoTime = { id, nome, tipo:'selecao', bandeira:_selNovoTime, paisNome:nome, liga:'', forca, eficiencia };
-    // Registra metadados na SELECAO_PAIS em runtime para badgeSel funcionar
-    SELECAO_PAIS[id] = { pais:_selNovoTime, paisNome:nome };
-  }
-  await setDoc(doc(db, 'times', novoTime.id), novoTime);
+  const crest = window._ntClubeCrest || '';
+  const id = 'clube-' + nome.toLowerCase().replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'') + '-' + Date.now();
+  const novoTime = { id, nome, tipo:'clube', bandeira:pais, paisNome, liga:'', forca:75, eficiencia, crest };
+  await setDoc(doc(db, 'times', id), novoTime);
+  await carregarTimes();
+  _selNovoTime = null; _eficienciaNT = null; window._ntClubeCrest = null;
+  fecharFullscreen(); renderTimesEdit();
+};
+
+window.salvarNovoTimeSel = async () => {
+  if (!_selNovoTime) { toast('SELECIONE UMA SELEÇÃO', 'erro'); return; }
+  const nome = window._selNovoTimeNome || _selNovoTime;
+  const eficiencia = _eficienciaNT || '';
+  const id = 'sel-' + _selNovoTime.replace(/-/g,'');
+  const novoTime = { id, nome, tipo:'selecao', bandeira:_selNovoTime, paisNome:nome, liga:'', forca:75, eficiencia };
+  SELECAO_PAIS[id] = { pais:_selNovoTime, paisNome:nome };
+  await setDoc(doc(db, 'times', id), novoTime);
   await carregarTimes();
   _selNovoTime = null; _eficienciaNT = null;
   fecharFullscreen(); renderTimesEdit();
