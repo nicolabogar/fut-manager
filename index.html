@@ -939,6 +939,18 @@ function badgeTime(timeId, nomeTime, tipo) {
 }
 window.badgeTime = badgeTime;
 
+/** Retorna só a bandeira inline para exibir antes do nome do time nos cards */
+function timeFlagInline(timeId, tipo) {
+  if (tipo === 'selecoes') {
+    const d = SELECAO_PAIS[timeId] || {};
+    if (!d.pais) return '';
+    return `<img src="https://flagcdn.com/w40/${d.pais}.png" loading="lazy" style="width:18px;height:13px;object-fit:cover;border-radius:2px;flex-shrink:0;vertical-align:middle;margin-right:4px;" onerror="this.style.display='none'">`;
+  }
+  const d = TEAM_DATA[timeId] || {};
+  if (!d.pais) return '';
+  return `<img src="https://flagcdn.com/w40/${d.pais}.png" loading="lazy" style="width:18px;height:13px;object-fit:cover;border-radius:2px;flex-shrink:0;vertical-align:middle;margin-right:4px;" onerror="this.style.display='none'">`;
+}
+
 // ─── ESTADO ─────────────────────────────────────────────────────────
 let usuario    = null;
 let jogadores  = [];
@@ -1756,9 +1768,8 @@ function cardAmistoso(a, compact=false) {
     ${compact ? `
     <div style="display:flex;align-items:center;gap:8px;">
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
-        <div style="font-weight:800;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;max-width:100%;">${a.time1?.nome || '?'}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:3px;font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;">${timeFlagInline(a.time1?.timeId,a.tipo)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.time1?.nome || '?'}</span></div>
         ${b1}
-        ${a.time1?.forca ? `<div style="margin-top:2px;">${forcaBadge(a.time1.forca)}</div>` : ''}
         ${(a.time1?.jogadores||[]).length ? `<div style="font-size:10px;color:var(--cyan);font-weight:700;">${(a.time1.jogadores).join(' · ')}</div>` : ''}
       </div>
       <div style="flex-shrink:0;text-align:center;">
@@ -1774,17 +1785,15 @@ function cardAmistoso(a, compact=false) {
             : `<div style="color:var(--text-muted);font-size:11px;font-weight:700;">EM<br>ANDAMENTO</div>`}
       </div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
-        <div style="font-weight:800;font-size:13px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:uppercase;max-width:100%;">${a.time2?.nome || '?'}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:3px;font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;">${timeFlagInline(a.time2?.timeId,a.tipo)}<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.time2?.nome || '?'}</span></div>
         ${b2}
-        ${a.time2?.forca ? `<div style="margin-top:2px;">${forcaBadge(a.time2.forca)}</div>` : ''}
         ${(a.time2?.jogadores||[]).length ? `<div style="font-size:10px;color:var(--cyan);font-weight:700;">${(a.time2.jogadores).join(' · ')}</div>` : ''}
       </div>
     </div>` : `
     <div style="display:flex;align-items:flex-start;gap:8px;">
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${a.time1?.nome || '?'}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${timeFlagInline(a.time1?.timeId,a.tipo)}${a.time1?.nome || '?'}</div>
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${b1}</div>
-        ${a.time1?.forca ? `<div style="margin:4px 0;">${forcaBadge(a.time1.forca)}</div>` : ''}
         ${(a.time1?.jogadores||[]).length
           ? `<div style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:2px;">${(a.time1.jogadores).map(n=>`<div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')}</div>`
           : ''}
@@ -1793,9 +1802,8 @@ function cardAmistoso(a, compact=false) {
         ${placarDireto}
       </div>
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${a.time2?.nome || '?'}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${timeFlagInline(a.time2?.timeId,a.tipo)}${a.time2?.nome || '?'}</div>
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${b2}</div>
-        ${a.time2?.forca ? `<div style="margin:4px 0;">${forcaBadge(a.time2.forca)}</div>` : ''}
         ${(a.time2?.jogadores||[]).length
           ? `<div style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:2px;">${(a.time2.jogadores).map(n=>`<div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')}</div>`
           : ''}
@@ -3111,18 +3119,16 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
     </div>
     <div style="display:flex;align-items:flex-start;gap:8px;">
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${m1.time?.nome||'?'}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${timeFlagInline(m1.time?.id,isSel?'selecoes':'clubes')}${m1.time?.nome||'?'}</div>
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${b1}</div>
-        ${forca1 ? `<div style="margin:4px 0;">${forcaBadge(forca1)}</div>` : ''}
         <div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin:0 auto;display:inline-block;">${m1.nome}</div>
       </div>
       <div style="text-align:center;min-width:70px;padding-top:20px;">
         ${placarArea}
       </div>
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${m2.time?.nome||'?'}</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:4px;font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${timeFlagInline(m2.time?.id,isSel?'selecoes':'clubes')}${m2.time?.nome||'?'}</div>
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${b2}</div>
-        ${forca2 ? `<div style="margin:4px 0;">${forcaBadge(forca2)}</div>` : ''}
         <div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin:0 auto;display:inline-block;">${m2.nome}</div>
       </div>
     </div>
