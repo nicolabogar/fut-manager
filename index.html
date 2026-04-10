@@ -2496,7 +2496,21 @@ window.confirmarInativarTimeSorteio = async (timeId, tipo) => {
   window.sortearAmistoso();
 };
 
+// Guard global anti-duplo-clique: bloqueia o elemento por 1s após o primeiro clique
+function _lockBtn(el, ms=1000) {
+  if (!el) return false;
+  if (el.dataset._locked) return true; // já bloqueado
+  el.dataset._locked = '1';
+  el.disabled = true;
+  const orig = el.textContent;
+  el.textContent = orig; // mantém texto
+  setTimeout(() => { delete el.dataset._locked; el.disabled = false; }, ms);
+  return false;
+}
+
 window.salvarAmistoso = async () => {
+  const btn = document.getElementById('btn-ami-salvar');
+  if (_lockBtn(btn)) return;
   if (!_sorteioAmi) return;
   const abertos = amistosos.filter(a => !a.resultado);
   if (abertos.length >= 5) {
@@ -2530,6 +2544,8 @@ window.abrirPlacar = id => {
     </div>`);
 };
 window.salvarPlacar = async id => {
+  const btn = document.querySelector('#modal-body .btn-primary');
+  if (_lockBtn(btn)) return;
   const g1 = parseInt(document.getElementById('pg1').value) || 0;
   const g2 = parseInt(document.getElementById('pg2').value) || 0;
   await updateDoc(doc(db, 'amistosos', id), { resultado: { g1, g2 } });
@@ -2706,6 +2722,7 @@ window.salvarEdicaoAmistoso = async (id) => {
 };
 
 window.salvarPlacarDireto = async (id, btn) => {
+  if (_lockBtn(btn)) return;
   // Busca os inputs relativos ao botão clicado (evita conflito de IDs duplicados entre home e view de amistosos)
   const container = btn ? btn.closest('.match-card') || btn.parentElement : null;
   const el1 = container ? container.querySelector('[data-pdc="1"]') : null;
