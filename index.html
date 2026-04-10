@@ -314,6 +314,23 @@
       width: 100%; justify-content: center; border-radius: 12px;
       padding: 10px 14px; font-size: 13px;
     }
+    /* Tags de eficiência */
+    .efic-tags { display:flex; gap:8px; flex-wrap:wrap; }
+    .efic-tag {
+      padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 800;
+      letter-spacing: 0.06em; cursor: pointer; border: 2px solid transparent;
+      transition: all 0.15s; text-transform: uppercase; user-select: none;
+    }
+    .efic-tag[data-efic="Péssimo"]  { background: rgba(239,68,68,0.12);  color: #ef4444; border-color: rgba(239,68,68,0.25); }
+    .efic-tag[data-efic="Ruim"]     { background: rgba(249,115,22,0.12); color: #f97316; border-color: rgba(249,115,22,0.25); }
+    .efic-tag[data-efic="Moderado"] { background: rgba(234,179,8,0.12);  color: #eab308; border-color: rgba(234,179,8,0.25); }
+    .efic-tag[data-efic="Bom"]      { background: rgba(34,197,94,0.12);  color: #22c55e; border-color: rgba(34,197,94,0.25); }
+    .efic-tag[data-efic="Ótimo"]    { background: rgba(6,182,212,0.12);  color: #06b6d4; border-color: rgba(6,182,212,0.25); }
+    .efic-tag.selecionado[data-efic="Péssimo"]  { background: rgba(239,68,68,0.3);  border-color: #ef4444; }
+    .efic-tag.selecionado[data-efic="Ruim"]     { background: rgba(249,115,22,0.3); border-color: #f97316; }
+    .efic-tag.selecionado[data-efic="Moderado"] { background: rgba(234,179,8,0.3);  border-color: #eab308; }
+    .efic-tag.selecionado[data-efic="Bom"]      { background: rgba(34,197,94,0.3);  border-color: #22c55e; }
+    .efic-tag.selecionado[data-efic="Ótimo"]    { background: rgba(6,182,212,0.3);  border-color: #06b6d4; }
   </style>
 </head>
 <body>
@@ -3818,6 +3835,16 @@ function abrirModalAddTime(tipoInicial) {
         </div>
       </div>
 
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIÊNCIA DO TIME</label>
+        <div class="efic-tags" id="nt-efic-tags">
+          <span class="efic-tag" data-efic="Péssimo"  onclick="selecionarEficienciaNT('Péssimo')">Péssimo</span>
+          <span class="efic-tag" data-efic="Ruim"     onclick="selecionarEficienciaNT('Ruim')">Ruim</span>
+          <span class="efic-tag" data-efic="Moderado" onclick="selecionarEficienciaNT('Moderado')">Moderado</span>
+          <span class="efic-tag" data-efic="Bom"      onclick="selecionarEficienciaNT('Bom')">Bom</span>
+          <span class="efic-tag" data-efic="Ótimo"    onclick="selecionarEficienciaNT('Ótimo')">Ótimo</span>
+        </div>
+      </div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
         <button id="btn-salvar-time" class="btn-primary" onclick="salvarNovoTime()" disabled style="opacity:0.4;font-size:16px;padding:16px;">CRIAR</button>
         <button class="btn-ghost" onclick="fecharFullscreen()" style="font-size:15px;padding:14px;">CANCELAR</button>
@@ -3827,6 +3854,25 @@ function abrirModalAddTime(tipoInicial) {
 }
 
 let _selNovoTime = null;
+let _eficienciaNT = null;
+
+window.selecionarEficienciaNT = (val) => {
+  _eficienciaNT = (_eficienciaNT === val) ? null : val;
+  document.querySelectorAll('#nt-efic-tags .efic-tag').forEach(el => {
+    el.classList.toggle('selecionado', el.dataset.efic === _eficienciaNT);
+  });
+};
+
+window.selecionarEficienciaET = (val) => {
+  const container = document.getElementById('et-efic-tags');
+  if (!container) return;
+  const atual = container.dataset.selected;
+  const novo = (atual === val) ? '' : val;
+  container.dataset.selected = novo;
+  container.querySelectorAll('.efic-tag').forEach(el => {
+    el.classList.toggle('selecionado', el.dataset.efic === novo && novo !== '');
+  });
+};
 
 window.renderListaAddTime = () => {
   const tipo = document.getElementById('nt-tipo').value;
@@ -3903,21 +3949,22 @@ window.salvarNovoTime = async () => {
   if (!_selNovoTime) { toast('SELECIONE UM TIME DA LISTA', 'erro'); return; }
   const tipo = document.getElementById('nt-tipo').value;
   const forca = parseInt(document.getElementById('nt-forca').value);
+  const eficiencia = _eficienciaNT || '';
   let novoTime;
   if (tipo === 'clube') {
     const d = TEAM_DATA[_selNovoTime];
     const nome = _selNovoTime.replace(/-/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
-    novoTime = { id:_selNovoTime, nome, tipo:'clube', bandeira:d.pais, paisNome:d.paisNome, liga:'', forca };
+    novoTime = { id:_selNovoTime, nome, tipo:'clube', bandeira:d.pais, paisNome:d.paisNome, liga:'', forca, eficiencia };
   } else {
     const nome = window._selNovoTimeNome || _selNovoTime;
     const id = 'sel-' + _selNovoTime.replace(/-/g,'');
-    novoTime = { id, nome, tipo:'selecao', bandeira:_selNovoTime, paisNome:nome, liga:'', forca };
+    novoTime = { id, nome, tipo:'selecao', bandeira:_selNovoTime, paisNome:nome, liga:'', forca, eficiencia };
     // Registra metadados na SELECAO_PAIS em runtime para badgeSel funcionar
     SELECAO_PAIS[id] = { pais:_selNovoTime, paisNome:nome };
   }
   await setDoc(doc(db, 'times', novoTime.id), novoTime);
   await carregarTimes();
-  _selNovoTime = null;
+  _selNovoTime = null; _eficienciaNT = null;
   fecharFullscreen(); renderTimesEdit();
 };
 
@@ -3939,15 +3986,24 @@ window.editarTime = (id) => {
           <span id="et-forca-val" style="font-size:18px;font-weight:900;color:var(--cyan);min-width:32px;text-align:center;">${t.forca||75}</span>
         </div>
       </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIÊNCIA DO TIME</label>
+        <div class="efic-tags" id="et-efic-tags">
+          ${['Péssimo','Ruim','Moderado','Bom','Ótimo'].map(e=>`<span class="efic-tag${t.eficiencia===e?' selecionado':''}" data-efic="${e}" onclick="selecionarEficienciaET('${e}')">${e}</span>`).join('')}
+        </div>
+      </div>
       <div style="display:flex;gap:10px;margin-top:8px;">
         <button class="btn-primary" onclick="salvarEdicaoTime('${id}')">SALVAR</button>
+        <button class="btn-ghost" onclick="fecharFullscreen()">CANCELAR</button>
       </div>
     </div>`);
 };
 
 window.salvarEdicaoTime = async (id) => {
   const forca = parseInt(document.getElementById('et-forca')?.value) || 75;
-  await updateDoc(doc(db, 'times', id), { forca });
+  const container = document.getElementById('et-efic-tags');
+  const eficiencia = container?.dataset.selected || '';
+  await updateDoc(doc(db, 'times', id), { forca, eficiencia });
   fecharFullscreen(); await carregarTimes(); renderTimesEdit();
 };
 
