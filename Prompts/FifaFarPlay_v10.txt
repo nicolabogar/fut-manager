@@ -1,0 +1,25 @@
+# FIFA FAR PLAY - Prompts de Features v10
+# FORMATO: Cada feature tem status: [ ] pendente | [x] concluído (hash: XXXXXXX)
+# O agente deve marcar o hash do commit ao concluir cada item.
+# Ao finalizar tudo, este arquivo é renomeado para FifaFarPlay_v10.txt e um novo é criado.
+
+## MELHORIAS ##
+
+- [x] Quando estou finalizando os amistosos o saldo de gols não esta sendo contabilizados e os jogos estão ficando empatados. (hash: e6b2449)
+- [x] Quando excluir qualquer jogador, amistoso, campeonato, sempre deve ser excluido o historico dos jogos relacionados no ranking do jogadores. (hash: 0d1511a)
+- [x] Quando realizar um sorteio de amistoso ou campeonato, quero ter a opção de inativar o time por ali mesmo, assim ele fica inativo no cadastro e não deve ser apresentado nas listagem de times para escolha e para sorteio aleatorio. (hash: 0d1511a)
+- [x] Preciso que você sincronize todos os cards, modal, paginas, botões, qualquer coisa que tenha ação de excluir para ter apenas um comportamento, quero que tenha um botão excluir e que abra um modal de confirmação se pretende excluir ou cancelar. (deixar o botão excluir sempre como uma tag em vermelho escito excluir e com um icone ou texto em x antes da palavra excluir. (hash: f6a2d37)
+- [x] Na pagina da home, temos o botão + Criar, quero que ele quando clicado tenha uma animação descendo as opção e automaticamente os cards da home acompanhar a expensão e se movimentar para baixo, e preciso que tenha um espaçamento maior entre as opções, pois em celular com tela pequena esta bem ruim de mexer. (hash: 7fb7591)
+- [x] Em todas paginas, exceto a pagina de home, deve ter uma barra de navegação, por exemplo, quando estiver em cadastro de jogador apresentar, Home > Jogadores, colocar em formato de botão utilizando o mesmo estilo dos botões do tema da aplicaçao. (hash: affb2c2)
+- [x] Para as paginas de cadasro, todos devem ter um botão no final para cancelar, e ao cancelar deve se voltar para a home, por exemplo, hoje no cadastro de jogadores tem o boltão salvar, logo abaixo dele deveria ter o botão cancelar. (hash: 97006a5)
+- [x] Quando clico no botão home que abre as opções de cadastro como, amistosos, torneios, jogadores e etc.. quero que você expanda ele para ir até o final da borda direita da tela, hoje ela abre até a metade da tela. (hash: 56aa749)
+- [x] Quero ter a opção de fazer autenticalção pelo apple, para isso, preciso alterar alguma coisa no firebase? caso sim, preciso fazer manual ou você pode acessar manualmente e fazer, ou até mesmo pelo codigo você consegue criar isso automaticamente no firebase? (hash: bab4923)
+- [x] Não pode permitir cadastro jogador com nome ou celular, ou email, já cadastrado. (hash: 44ad808)
+- [x] Para os sorteios aleatorios preciso que você mude o algoritimo para deixar jogos mais flexiveis, os jogos estão se repetindo muito, coloque o percentual de descrepancia do escore do time para 50% (hash: 66fdf1d)
+- [x] Quero também que ao cadastrar ou alterar o time ou seleção, que eu tenha a opção de colocar uma sinalizador de eficiencia para o time, podendo ser, Pessimo, Ruim, Moderado, Bom, Otimo. (hash: 215ba5a)
+- [x] Após a alteração anterior mencionada, para criação de amistosos e times, ter opção de selecionar as tags de eficiencia, Ruim, Pessimo, Moderado, Bom, Otimo, para inicio quero que venha todos selecionado, e ter opção de incluir e remover as tags, e para novos amistoso e torneios manter esse "cache" por usuario para ser que for criar um novo manter esse estado de configuração. (hash: f1b8cb2)
+- [x] Hoje o inativar time esta como um icone bem pequeno no icone do time, não esta legal, quero que ao clicar e segurar no icone do time você apresente um modal se deseja inativar o time, e ter a opção de cancelar também. (hash: d17e699)
+- [x] Quero que nos caerds de exibição dos times seja nessa sequencia: Icone do pais junto com a descrição do pais, logo abaixo o nome do time, logo abaixo o icone do brasão do time, remover o score e incluir as tags de eficiencia cadastrada no time. (hash: f1a6825)
+- [x] Na pagina de cadastro de amistoso, alterar a nomenclatura do boitao PROXIMO para: SORTEAR (hash: 73b72c0)
+- [x] Nos filtros de seleção de times, quando for seleção aparesentar do lado esquerdo o icone da bandeira do pais seguido por descriçao do pais, e no lado direito da linha colocar a tag de eficiencia. Qunado for time, colocar do lado esquerdo o icone da bandeira do pais seguindo do icone do brasão do time, descrição do nome do time, e do lado direito a tag de eficiencia. (hash: 39173b5)
+- [x] No cadastro de time, quando for colocado a tag de eficiencia, só pode permitir uma. (hash: 215ba5a)
