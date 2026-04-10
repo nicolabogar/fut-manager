@@ -2398,14 +2398,13 @@ function _renderSorteioBox(sorteio, eq, diff) {
   const j2 = t2.jogadores.map(n => ({ nome: n }));
   const box = document.getElementById('ami-sorteio');
   box.style.display = '';
-  // Badge clicável para inativar time no sorteio
+  // Badge clicável — abre edição rápida do time (eficiência + inativo) sem fechar o sorteio
   const badgeInativo = (timeId, timeNome, tipoT) =>
-    `<div onclick="inativarTimeSorteio('${timeId}','${timeNome.replace(/'/g,"\\'")}','${tipoT}')"
-      title="Clique para inativar ${timeNome}"
-      style="display:flex;justify-content:center;cursor:pointer;position:relative;transition:opacity 0.15s;"
+    `<div onclick="editarTimeRapido('${timeId}','${timeNome.replace(/'/g,"\\'")}','${tipoT}')"
+      title="Clique para editar ${timeNome}"
+      style="display:flex;justify-content:center;cursor:pointer;transition:opacity 0.15s;"
       onmouseenter="this.style.opacity='0.7'" onmouseleave="this.style.opacity='1'">
       ${badgeTime(timeId, timeNome, tipoT)}
-      <span style="position:absolute;top:-6px;right:-6px;background:rgba(239,68,68,0.9);color:#fff;font-size:9px;font-weight:900;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;line-height:1;box-shadow:0 1px 4px rgba(0,0,0,0.4);">✕</span>
     </div>`;
   box.innerHTML = `<div class="vs-card">
     <div style="text-align:center;margin-bottom:14px;"><span class="tag tag-green">TIMES SORTEADOS · ${eq}</span></div>
@@ -2436,6 +2435,49 @@ function _renderSorteioBox(sorteio, eq, diff) {
 }
 
 // F1: Inativar time clicando no logo durante o sorteio
+/** Edição rápida de time a partir do sorteio — mantém fullscreen aberto e ressorteia após salvar */
+window.editarTimeRapido = (timeId, timeNome, tipoT) => {
+  const pool = tipoT === 'selecoes' ? selecoes : clubes;
+  const t = pool.find(x => x.id === timeId) || { eficiencia:'Bom', inativo:false };
+  const inativo = t.inativo || false;
+  modal(`<p class="modal-title">${timeNome.toUpperCase()}</p>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIÊNCIA</label>
+      <div class="efic-tags" id="etr-efic-tags" data-selected="${t.eficiencia||''}">
+        ${['Ruim','Moderado','Bom'].map(e=>`<span class="efic-tag${(t.eficiencia||'')===e?' selecionado':''}" data-efic="${e}" onclick="selecionarEficienciaETR('${e}')">${e}</span>`).join('')}
+      </div>
+    </div>
+    <label class="check-row" style="margin-bottom:16px;">
+      <input type="checkbox" id="etr-inativo" ${inativo?'checked':''} style="width:18px;height:18px;accent-color:var(--purple);">
+      <div><div style="font-size:13px;font-weight:700;">INATIVO</div><div style="font-size:11px;color:var(--text-muted);">Não aparece nos sorteios</div></div>
+    </label>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-ghost" onclick="fecharModal()">CANCELAR</button>
+      <button class="btn-primary" onclick="salvarTimeRapido('${timeId}','${tipoT}')">SALVAR</button>
+    </div>`);
+};
+window.selecionarEficienciaETR = (val) => {
+  const c = document.getElementById('etr-efic-tags');
+  if (!c) return;
+  const atual = c.dataset.selected;
+  const novo = (atual === val) ? '' : val;
+  c.dataset.selected = novo;
+  c.querySelectorAll('.efic-tag').forEach(el => el.classList.toggle('selecionado', el.dataset.efic === novo && novo !== ''));
+};
+window.salvarTimeRapido = async (timeId, tipoT) => {
+  const eficiencia = document.getElementById('etr-efic-tags')?.dataset.selected || 'Bom';
+  const inativo = document.getElementById('etr-inativo')?.checked || false;
+  fecharModal();
+  try {
+    await setDoc(doc(db, 'times', timeId), { eficiencia, inativo }, { merge: true });
+  } catch(e) {
+    await setDoc(doc(db, 'times', timeId), { id: timeId, eficiencia, inativo }, { merge: true });
+  }
+  await carregarTimes();
+  // Ressortear automaticamente após editar o time
+  setTimeout(() => window.sortearAmistoso && window.sortearAmistoso(), 100);
+};
+
 window.inativarTimeSorteio = (timeId, timeNome, tipo) => {
   modal(`<p class="modal-title">INATIVAR TIME?</p>
     <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:12px;padding:12px 14px;margin-bottom:16px;">
