@@ -949,6 +949,47 @@ let selecoes   = [...SELECOES_DEFAULT];
 let abaTimesAtual = 'clubes';
 let _disponiveis  = []; // partidas disponíveis para registo em grupo
 
+// ─── FILTRO DE EFICIÊNCIA ─────────────────────────────────────────────
+const EFIC_TODAS = ['Péssimo','Ruim','Moderado','Bom','Ótimo'];
+function _eficKey() { return `efic_filtro_${usuario?.uid || 'default'}`; }
+function carregarEficFiltro() {
+  try {
+    const s = localStorage.getItem(_eficKey());
+    if (s) { const arr = JSON.parse(s); if (Array.isArray(arr)) return new Set(arr); }
+  } catch {}
+  return new Set([...EFIC_TODAS, '']); // default: todas selecionadas
+}
+function salvarEficFiltro(set) {
+  try { localStorage.setItem(_eficKey(), JSON.stringify([...set])); } catch {}
+}
+function filtrarPoolEfic(pool) {
+  const sel = carregarEficFiltro();
+  // Se todas selecionadas (inclui vazio), não filtra
+  if (EFIC_TODAS.every(e => sel.has(e)) && sel.has('')) return pool;
+  return pool.filter(t => sel.has(t.eficiencia || ''));
+}
+window.toggleEficFiltro = (val) => {
+  const sel = carregarEficFiltro();
+  if (sel.has(val)) { sel.delete(val); } else { sel.add(val); }
+  salvarEficFiltro(sel);
+  // Atualiza visual em ambos os containers possíveis
+  ['ami-efic-filtro','cc-efic-filtro'].forEach(cid => {
+    const c = document.getElementById(cid);
+    if (c) c.querySelectorAll('.efic-tag').forEach(el => {
+      el.classList.toggle('selecionado', sel.has(el.dataset.efic));
+    });
+  });
+};
+function htmlEficFiltro(containerId) {
+  const sel = carregarEficFiltro();
+  return `<div>
+    <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">FILTRAR POR EFICIÊNCIA</label>
+    <div class="efic-tags" id="${containerId}">
+      ${EFIC_TODAS.map(e=>`<span class="efic-tag${sel.has(e)?' selecionado':''}" data-efic="${e}" onclick="toggleEficFiltro('${e}')">${e}</span>`).join('')}
+    </div>
+  </div>`;
+}
+
 // ─── ALGORITMO DE BALANCEAMENTO ──────────────────────────────────────
 function forcaBadge(f) {
   // RG7: acima de 85 = verde, abaixo de 75 = vermelho, entre 75 e 85 = amarelo
@@ -2009,6 +2050,7 @@ function _htmlNovoAmistoso() {
     <div id="jc-tags" style="display:flex;flex-wrap:wrap;gap:6px;min-height:40px;padding:8px;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:12px;margin-bottom:16px;">
       <span style="color:var(--text-muted);font-size:12px;align-self:center;padding:4px 0;">NENHUM JOGADOR SELECIONADO</span>
     </div>
+    <div id="ami-efic-filtro-box">${htmlEficFiltro('ami-efic-filtro')}</div>
     <div id="ami-sorteio" style="display:none;margin-bottom:16px;"></div>
     <div style="display:flex;flex-direction:column;gap:8px;">
       <div style="display:flex;gap:10px;">
@@ -2280,7 +2322,7 @@ window.sortearAmistoso = () => {
     let escolhido = null;
     for (let tentativa = 0; tentativa < 20; tentativa++) {
       const candidato = opcoes[tentativa % 2];
-      const pool = candidato === 'selecoes' ? selecoes : clubes;
+      const pool = filtrarPoolEfic(candidato === 'selecoes' ? selecoes : clubes);
       const hist = historicoIds(candidato);
       const [ct1, ct2] = sortearBalanceado(pool, hist, candidato);
       const media = (ct1.forca + ct2.forca) / 2;
@@ -2288,7 +2330,7 @@ window.sortearAmistoso = () => {
       if (pctDiff <= 0.50) { tipo = candidato; escolhido = [ct1, ct2]; break; }
       if (tentativa === 19) {
         tipo = opcoes[0];
-        const pool2 = tipo === 'selecoes' ? selecoes : clubes;
+        const pool2 = filtrarPoolEfic(tipo === 'selecoes' ? selecoes : clubes);
         escolhido = sortearBalanceado(pool2, historicoIds(tipo), tipo);
       }
     }
@@ -2308,7 +2350,7 @@ window.sortearAmistoso = () => {
   }
   tipo = tiposDisponiveis[0] || 'clubes';
 
-  const pool = tipo === 'selecoes' ? selecoes : clubes;
+  const pool = filtrarPoolEfic(tipo === 'selecoes' ? selecoes : clubes);
   const hist = historicoIds(tipo);
   const [t1, t2] = sortearBalanceado(pool, hist, tipo);
   const jogs = shuffle([..._jcSel.entries()].map(([id, nome]) => ({ id, nome })));
@@ -2850,6 +2892,7 @@ function abrirModalCriarCamp() {
         <div id="manual-times-box" style="display:none;"></div>
       </div>
     </div>
+    <div id="cc-efic-filtro-box">${htmlEficFiltro('cc-efic-filtro')}</div>
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:20px;">
       <button class="btn-primary" onclick="criarCampeonato()" style="font-size:16px;padding:16px;">SALVAR</button>
       <button class="btn-ghost" onclick="fecharFullscreen()" style="font-size:15px;padding:14px;">CANCELAR</button>
@@ -2996,7 +3039,7 @@ window.criarCampeonato = async () => {
       return { ...p, time: { id: tm.timeId, nome: tm.nome, forca: tm.forca } };
     });
   } else {
-    const pool = meta.tipo === 'selecoes' ? selecoes : clubes;
+    const pool = filtrarPoolEfic(meta.tipo === 'selecoes' ? selecoes : clubes);
     distribuidos = distribuirTimesBalanceados(partic, pool, hist);
   }
   const grupos = gerarGrupos(distribuidos, tipo);
