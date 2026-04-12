@@ -868,6 +868,14 @@ const SVG_USER = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" st
 const SVG_USER_CHIP = `<span style="display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,rgba(139,92,246,0.25),rgba(6,182,212,0.25));color:#C7B8FF;flex-shrink:0;">${SVG_USER}</span>`;
 
 // ─── BADGE HELPERS ────────────────────────────────────────────────────
+function flagEmoji(code) {
+  if (!code) return '';
+  // Trata códigos compostos como "gb-eng" → usa "gb"
+  const c = (code.split('-')[0] || '').toUpperCase().slice(0, 2);
+  if (c.length !== 2) return '';
+  return String.fromCodePoint(...[...c].map(ch => 0x1F1E0 + ch.charCodeAt(0) - 65));
+}
+
 function flagImg(paisCode, w=20) {
   if (!paisCode) return '';
   // flagcdn suporta: 20, 40, 80, 160, 320, 640, 1280, 2560
@@ -4003,12 +4011,12 @@ function renderTimesEdit() {
   if (!isSel) {
     const paises = [...new Set(pool.map(t => {
       const d = TEAM_DATA[t.id] || {};
-      return d.paisNome || '';
-    }).filter(Boolean))].sort();
+      return d.paisNome ? { nome: d.paisNome, code: d.pais || '' } : null;
+    }).filter(Boolean).map(x => JSON.stringify(x)))].map(s => JSON.parse(s)).sort((a,b) => a.nome.localeCompare(b.nome));
     filtroEl.style.display = paises.length ? 'block' : 'none';
     filtroEl.innerHTML = `<select onchange="_setFiltroTimes(this.value)" style="width:100%;padding:10px 14px;border-radius:12px;border:1px solid var(--card-border);background:var(--card);color:var(--text);font-size:13px;font-weight:700;cursor:pointer;">
       <option value="">TODOS OS PAÍSES</option>
-      ${paises.map(p => `<option value="${p}" ${_paisFiltroTimes===p?'selected':''}>${p}</option>`).join('')}
+      ${paises.map(p => `<option value="${p.nome}" ${_paisFiltroTimes===p.nome?'selected':''}>${flagEmoji(p.code)} ${p.nome}</option>`).join('')}
     </select>`;
   } else {
     filtroEl.style.display = 'none';
@@ -4068,7 +4076,7 @@ document.getElementById('btn-add-time').addEventListener('click', () => {
 
 function abrirModalAddTime(tipoInicial) {
   _eficienciaNT = 'Bom';
-  const paisOptions = PAISES_FIFA.map(p => `<option value="${p.code}" data-nome="${p.nome}">${p.nome}</option>`).join('');
+  const paisOptions = PAISES_FIFA.map(p => `<option value="${p.code}" data-nome="${p.nome}">${flagEmoji(p.code)} ${p.nome}</option>`).join('');
   fullscreen('NOVO TIME', `
     <div style="display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto;">
       <div>
