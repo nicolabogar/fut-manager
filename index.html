@@ -897,13 +897,13 @@ function shieldClube(timeId, nomeTime, size=56) {
 function badgeTimeCompact(timeId, nomeTime, tipo) {
   if (tipo === 'selecoes') {
     const d = SELECAO_PAIS[timeId] || { pais:'', paisNome: nomeTime||'' };
-    return `<div style="width:36px;height:28px;border-radius:6px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.3);">
+    return `<div style="width:46px;height:34px;border-radius:7px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.3);">
       ${d.pais ? `<img src="https://flagcdn.com/w80/${d.pais}.png" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=\\'font-size:18px;\\'>🌍</span>'">` : '<span style="font-size:18px;">🌍</span>'}
     </div>`;
   }
   const d = TEAM_DATA[timeId] || { abrev:(nomeTime||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#AAAAAA' };
-  if (d.crest) return `<img src="${d.crest}" width="32" height="32" loading="lazy" style="object-fit:contain;flex-shrink:0;" onerror="this.outerHTML='<div style=\\'width:36px;height:36px;border-radius:9px;background:${d.fundo};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:${d.cor};flex-shrink:0;\\'>${d.abrev}</div>'">`;
-  return `<div style="width:36px;height:36px;border-radius:9px;background:${d.fundo};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:${d.cor};letter-spacing:-0.3px;flex-shrink:0;border:1px solid rgba(255,255,255,0.12);box-shadow:0 2px 6px rgba(0,0,0,0.3);">${d.abrev}</div>`;
+  if (d.crest) return `<img src="${d.crest}" width="38" height="38" loading="lazy" style="object-fit:contain;flex-shrink:0;" onerror="this.outerHTML='<div style=\\'width:44px;height:44px;border-radius:10px;background:${d.fundo};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:${d.cor};flex-shrink:0;\\'>${d.abrev}</div>'">`;
+  return `<div style="width:44px;height:44px;border-radius:10px;background:${d.fundo};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:${d.cor};letter-spacing:-0.3px;flex-shrink:0;border:1px solid rgba(255,255,255,0.12);box-shadow:0 2px 6px rgba(0,0,0,0.3);">${d.abrev}</div>`;
 }
 
 /** Badge de clube: quadrado colorido com abreviação + bandeira + nome do país */
@@ -2529,8 +2529,8 @@ window.editarTimeRapido = (timeId, timeNome, tipoT) => {
   modal(`<p class="modal-title">${timeNome.toUpperCase()}</p>
     <div style="margin-bottom:14px;">
       <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIÊNCIA</label>
-      <div class="efic-tags" id="etr-efic-tags" data-selected="${t.eficiencia||''}">
-        ${['Ruim','Moderado','Bom'].map(e=>`<span class="efic-tag${(t.eficiencia||'')===e?' selecionado':''}" data-efic="${e}" onclick="selecionarEficienciaETR('${e}')">${e}</span>`).join('')}
+      <div class="efic-tags" id="etr-efic-tags" data-selected="${t.eficiencia||'Bom'}">
+        ${['Ruim','Moderado','Bom'].map(e=>`<span class="efic-tag${(t.eficiencia||'Bom')===e?' selecionado':''}" data-efic="${e}" onclick="selecionarEficienciaETR('${e}')">${e}</span>`).join('')}
       </div>
     </div>
     <label class="check-row" style="margin-bottom:16px;">
@@ -2545,10 +2545,8 @@ window.editarTimeRapido = (timeId, timeNome, tipoT) => {
 window.selecionarEficienciaETR = (val) => {
   const c = document.getElementById('etr-efic-tags');
   if (!c) return;
-  const atual = c.dataset.selected;
-  const novo = (atual === val) ? '' : val;
-  c.dataset.selected = novo;
-  c.querySelectorAll('.efic-tag').forEach(el => el.classList.toggle('selecionado', el.dataset.efic === novo && novo !== ''));
+  c.dataset.selected = val;
+  c.querySelectorAll('.efic-tag').forEach(el => el.classList.toggle('selecionado', el.dataset.efic === val));
 };
 window.salvarTimeRapido = async (timeId, tipoT) => {
   const eficiencia = document.getElementById('etr-efic-tags')?.dataset.selected || 'Bom';
@@ -4002,8 +4000,9 @@ function renderTimesEdit() {
   el.innerHTML = items.map(t => {
     const inativo = t.inativo || false;
     const ativoStyle = inativo ? 'opacity:0.45;filter:grayscale(0.6);' : '';
+    const eficiencia = t.eficiencia || 'Bom';
     const tagInativo = inativo ? `<span class="tag tag-gray" style="font-size:9px;">INATIVO</span>` : '';
-    const eficTag = t.eficiencia ? `<span class="efic-tag selecionado" data-efic="${t.eficiencia}" style="cursor:default;pointer-events:none;font-size:10px;">${t.eficiencia}</span>` : '';
+    const eficTag = `<span class="efic-tag selecionado" data-efic="${eficiencia}" style="cursor:default;pointer-events:none;font-size:10px;">${eficiencia}</span>`;
     let icone, countryInfo;
     if (isSel) {
       const d = SELECAO_PAIS[t.id] || { pais:'', paisNome: t.nome };
@@ -4041,6 +4040,7 @@ document.getElementById('btn-add-time').addEventListener('click', () => {
 });
 
 function abrirModalAddTime(tipoInicial) {
+  _eficienciaNT = 'Bom';
   const paisOptions = PAISES_FIFA.map(p => `<option value="${p.code}" data-nome="${p.nome}">${p.nome}</option>`).join('');
   fullscreen('NOVO TIME', `
     <div style="display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto;">
@@ -4088,9 +4088,9 @@ function abrirModalAddTime(tipoInicial) {
         <div>
           <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIÊNCIA</label>
           <div class="efic-tags" id="nt-efic-tags">
-            <span class="efic-tag" data-efic="Ruim"     onclick="selecionarEficienciaNT('Ruim')">Ruim</span>
-            <span class="efic-tag" data-efic="Moderado" onclick="selecionarEficienciaNT('Moderado')">Moderado</span>
-            <span class="efic-tag" data-efic="Bom"      onclick="selecionarEficienciaNT('Bom')">Bom</span>
+            <span class="efic-tag${_eficienciaNT==='Ruim'?' selecionado':''}" data-efic="Ruim"     onclick="selecionarEficienciaNT('Ruim')">Ruim</span>
+            <span class="efic-tag${_eficienciaNT==='Moderado'?' selecionado':''}" data-efic="Moderado" onclick="selecionarEficienciaNT('Moderado')">Moderado</span>
+            <span class="efic-tag${_eficienciaNT==='Bom'?' selecionado':''}" data-efic="Bom"      onclick="selecionarEficienciaNT('Bom')">Bom</span>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
@@ -4115,9 +4115,9 @@ function abrirModalAddTime(tipoInicial) {
         <div>
           <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIÊNCIA</label>
           <div class="efic-tags" id="nt-efic-tags-sel">
-            <span class="efic-tag" data-efic="Ruim"     onclick="selecionarEficienciaNTSel('Ruim')">Ruim</span>
-            <span class="efic-tag" data-efic="Moderado" onclick="selecionarEficienciaNTSel('Moderado')">Moderado</span>
-            <span class="efic-tag" data-efic="Bom"      onclick="selecionarEficienciaNTSel('Bom')">Bom</span>
+            <span class="efic-tag${_eficienciaNT==='Ruim'?' selecionado':''}" data-efic="Ruim"     onclick="selecionarEficienciaNTSel('Ruim')">Ruim</span>
+            <span class="efic-tag${_eficienciaNT==='Moderado'?' selecionado':''}" data-efic="Moderado" onclick="selecionarEficienciaNTSel('Moderado')">Moderado</span>
+            <span class="efic-tag${_eficienciaNT==='Bom'?' selecionado':''}" data-efic="Bom"      onclick="selecionarEficienciaNTSel('Bom')">Bom</span>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
@@ -4133,14 +4133,14 @@ let _selNovoTime = null;
 let _eficienciaNT = null;
 
 window.selecionarEficienciaNT = (val) => {
-  _eficienciaNT = (_eficienciaNT === val) ? null : val;
+  _eficienciaNT = val;
   document.querySelectorAll('#nt-efic-tags .efic-tag').forEach(el => {
     el.classList.toggle('selecionado', el.dataset.efic === _eficienciaNT);
   });
 };
 
 window.selecionarEficienciaNTSel = (val) => {
-  _eficienciaNT = (_eficienciaNT === val) ? null : val;
+  _eficienciaNT = val;
   document.querySelectorAll('#nt-efic-tags-sel .efic-tag').forEach(el => {
     el.classList.toggle('selecionado', el.dataset.efic === _eficienciaNT);
   });
@@ -4172,11 +4172,9 @@ window._ntClubeCarregarCrest = (input) => {
 window.selecionarEficienciaET = (val) => {
   const container = document.getElementById('et-efic-tags');
   if (!container) return;
-  const atual = container.dataset.selected;
-  const novo = (atual === val) ? '' : val;
-  container.dataset.selected = novo;
+  container.dataset.selected = val;
   container.querySelectorAll('.efic-tag').forEach(el => {
-    el.classList.toggle('selecionado', el.dataset.efic === novo && novo !== '');
+    el.classList.toggle('selecionado', el.dataset.efic === val);
   });
 };
 
@@ -4288,8 +4286,8 @@ window.editarTime = (id) => {
       <div style="display:flex;justify-content:center;padding:16px 0;">${badgeHtml}</div>
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIÊNCIA DO TIME</label>
-        <div class="efic-tags" id="et-efic-tags" data-selected="${t.eficiencia||''}">
-          ${['Ruim','Moderado','Bom'].map(e=>`<span class="efic-tag${t.eficiencia===e?' selecionado':''}" data-efic="${e}" onclick="selecionarEficienciaET('${e}')">${e}</span>`).join('')}
+        <div class="efic-tags" id="et-efic-tags" data-selected="${t.eficiencia||'Bom'}">
+          ${['Ruim','Moderado','Bom'].map(e=>`<span class="efic-tag${(t.eficiencia||'Bom')===e?' selecionado':''}" data-efic="${e}" onclick="selecionarEficienciaET('${e}')">${e}</span>`).join('')}
         </div>
       </div>
       <label class="check-row">
@@ -4305,7 +4303,7 @@ window.editarTime = (id) => {
 
 window.salvarEdicaoTime = async (id) => {
   const container = document.getElementById('et-efic-tags');
-  const eficiencia = container?.dataset.selected || '';
+  const eficiencia = container?.dataset.selected || 'Bom';
   const inativo = document.getElementById('et-inativo')?.checked || false;
   try {
     await updateDoc(doc(db, 'times', id), { eficiencia, inativo });
