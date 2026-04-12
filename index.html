@@ -1013,7 +1013,9 @@ function htmlEficFiltro(containerId) {
 /** Badge de eficiência — substitui forcaBadge na UI */
 function eficBadge(efic) {
   const e = efic || 'Bom';
-  return `<span class="efic-tag selecionado" data-efic="${e}" style="cursor:default;pointer-events:none;font-size:11px;">${e}</span>`;
+  const cor = e==='Ruim'?'#ef4444':e==='Moderado'?'#eab308':'#22c55e';
+  const bg = e==='Ruim'?'rgba(239,68,68,0.15)':e==='Moderado'?'rgba(234,179,8,0.15)':'rgba(34,197,94,0.15)';
+  return `<span class="tag" style="background:${bg};color:${cor};border:1px solid ${cor}33;font-size:9px;">${e.toUpperCase()}</span>`;
 }
 window.eficBadge = eficBadge;
 
