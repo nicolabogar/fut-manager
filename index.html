@@ -196,7 +196,8 @@
 
     /* Player/Team card */
     .swipe-wrap { position: relative; overflow: hidden; border-radius: 18px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.06); }
-    .swipe-bg { position: absolute; left: 0; top: 0; bottom: 0; width: 80px; background: linear-gradient(270deg, transparent 20%, rgba(239,68,68,0.18) 65%, rgba(239,68,68,0.35)); display: flex; align-items: center; justify-content: flex-start; padding-left: 18px; border-radius: 18px; flex-direction: column; gap: 2px; justify-content: center; }
+    .swipe-bg { position: absolute; left: 0; top: 0; bottom: 0; width: 80px; background: linear-gradient(270deg, transparent 20%, rgba(239,68,68,0.18) 65%, rgba(239,68,68,0.35)); display: flex; align-items: center; justify-content: flex-start; padding-left: 18px; border-radius: 18px; flex-direction: column; gap: 2px; justify-content: center; opacity: 0; transition: opacity 0.15s; }
+    .swipe-wrap .swipe-bg.show { opacity: 1; }
     .swipe-bg svg { color: white; }
     .swipe-bg-label { font-size: 9px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 0.05em; }
     .entity-card { background: var(--card); border: 1px solid var(--card-border); border-radius: 18px; padding: 14px; display: flex; align-items: center; gap: 12px; transition: transform 0.25s ease; position: relative; z-index: 1; }
@@ -1493,6 +1494,7 @@ function _resetSwipeCard(card) {
   card.style.transition = 'transform 0.25s ease';
   card.style.transform = 'translateX(0)';
   card.classList.remove('swiping');
+  const bg = card.closest('.swipe-wrap')?.querySelector('.swipe-bg'); if (bg) bg.classList.remove('show');
 }
 window._resetSwipeCard = _resetSwipeCard;
 
@@ -1508,6 +1510,7 @@ function initSwipe(container, tipo) {
       if (e.target.closest('.placar-input') || e.target.closest('button') || e.target.closest('input')) return;
       startX = e.touches[0].clientX; isDragging = true;
       card.classList.add('swiping');
+      const bg = wrap.querySelector('.swipe-bg'); if (bg) bg.classList.add('show');
     }, {passive: true});
     card.addEventListener('touchmove', e => {
       if (!isDragging) return;
