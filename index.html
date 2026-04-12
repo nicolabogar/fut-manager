@@ -1167,6 +1167,30 @@ function distribuirTimesBalanceados(participantes, pool, usados = []) {
 
 function shuffle(arr) { return [...arr].sort(() => Math.random() - 0.5); }
 
+/**
+ * Abrevia nome de time longo para caber em espaços compactos.
+ * Ex: "BAYER MUNICH" → "BAYER M.", "MANCHESTER UNITED" → "MANCHESTER U."
+ * Se o nome couber em maxWords palavras, retorna sem mudança.
+ */
+function abreviarNome(nome, maxChars = 14) {
+  if (!nome || nome.length <= maxChars) return nome;
+  const partes = nome.trim().split(/\s+/);
+  if (partes.length <= 1) return nome.slice(0, maxChars - 1) + '.';
+  // Mantém a primeira parte inteira, abrevia as demais
+  let resultado = partes[0];
+  for (let i = 1; i < partes.length; i++) {
+    const candidato = resultado + ' ' + partes[i];
+    if (candidato.length <= maxChars) {
+      resultado = candidato;
+    } else {
+      resultado += ' ' + partes[i][0] + '.';
+      break;
+    }
+  }
+  return resultado;
+}
+window.abreviarNome = abreviarNome;
+
 // Coleta histórico de IDs de times usados nos amistosos
 function historicoIds(tipo) {
   return amistosos
@@ -1881,7 +1905,7 @@ function cardAmistoso(a, compact=false, readonly=false) {
     ${compact ? `
     <div style="display:flex;align-items:center;gap:8px;">
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
-        <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.time1?.nome || '?'}</div>
+        <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${abreviarNome(a.time1?.nome || '?')}</div>
         ${b1}
         ${(a.time1?.jogadores||[]).length ? `<div style="font-size:10px;color:var(--cyan);font-weight:700;">${(a.time1.jogadores).join(' · ')}</div>` : ''}
       </div>
@@ -1898,15 +1922,16 @@ function cardAmistoso(a, compact=false, readonly=false) {
             : `<div style="color:var(--text-muted);font-size:11px;font-weight:700;">EM<br>ANDAMENTO</div>`}
       </div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
-        <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${a.time2?.nome || '?'}</div>
+        <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${abreviarNome(a.time2?.nome || '?')}</div>
         ${b2}
         ${(a.time2?.jogadores||[]).length ? `<div style="font-size:10px;color:var(--cyan);font-weight:700;">${(a.time2.jogadores).join(' · ')}</div>` : ''}
       </div>
     </div>` : `
     <div style="display:flex;align-items:flex-start;gap:8px;">
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${a.time1?.nome || '?'}</div>
+        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(a.time1?.nome || '?')}</div>
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${b1}</div>
+        <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(a.time1?.eficiencia)}</div>
         ${(a.time1?.jogadores||[]).length
           ? `<div style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:2px;">${(a.time1.jogadores).map(n=>`<div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')}</div>`
           : ''}
@@ -1915,8 +1940,9 @@ function cardAmistoso(a, compact=false, readonly=false) {
         ${placarDireto}
       </div>
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${a.time2?.nome || '?'}</div>
+        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(a.time2?.nome || '?')}</div>
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${b2}</div>
+        <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(a.time2?.eficiencia)}</div>
         ${(a.time2?.jogadores||[]).length
           ? `<div style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:2px;">${(a.time2.jogadores).map(n=>`<div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')}</div>`
           : ''}
@@ -2529,14 +2555,14 @@ function _renderSorteioBox(sorteio, eq, diff) {
     <div style="display:flex;align-items:flex-start;gap:8px;">
       <div style="flex:1;text-align:center;">
         <div style="display:flex;justify-content:center;margin-bottom:8px;">${badgeInativo(t1.timeId, t1.nome, tipo)}</div>
-        <div class="vs-team">${t1.nome}</div>
+        <div class="vs-team">${abreviarNome(t1.nome)}</div>
         <div style="margin:4px 0;">${eficBadge(t1.eficiencia)}</div>
         ${j1.map(j => `<div class="vs-label" style="margin-top:3px;">${j.nome}</div>`).join('')}
       </div>
       <div class="vs-divider" style="padding-top:28px;"><span class="vs-text">VS</span></div>
       <div style="flex:1;text-align:center;">
         <div style="display:flex;justify-content:center;margin-bottom:8px;">${badgeInativo(t2.timeId, t2.nome, tipo)}</div>
-        <div class="vs-team">${t2.nome}</div>
+        <div class="vs-team">${abreviarNome(t2.nome)}</div>
         <div style="margin:4px 0;">${eficBadge(t2.eficiencia)}</div>
         ${j2.map(j => `<div class="vs-label" style="margin-top:3px;">${j.nome}</div>`).join('')}
       </div>
@@ -2742,12 +2768,14 @@ window.editarAmistoso = (id) => {
           <div style="text-align:center;flex:1;">
             <div style="display:flex;justify-content:center;margin-bottom:8px;">${b1}</div>
             <div style="font-weight:800;font-size:14px;">${a.time1?.nome||'?'}</div>
+            <div style="margin-top:4px;">${eficBadge(a.time1?.eficiencia)}</div>
             <div style="font-size:11px;color:var(--cyan);margin-top:4px;">${(a.time1?.jogadores||[]).join(', ')}</div>
           </div>
           <div style="font-size:18px;font-weight:900;color:var(--text-muted);flex-shrink:0;">VS</div>
           <div style="text-align:center;flex:1;">
             <div style="display:flex;justify-content:center;margin-bottom:8px;">${b2}</div>
             <div style="font-weight:800;font-size:14px;">${a.time2?.nome||'?'}</div>
+            <div style="margin-top:4px;">${eficBadge(a.time2?.eficiencia)}</div>
             <div style="font-size:11px;color:var(--cyan);margin-top:4px;">${(a.time2?.jogadores||[]).join(', ')}</div>
           </div>
         </div>
@@ -3314,16 +3342,18 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
     </div>
     <div style="display:flex;align-items:flex-start;gap:8px;">
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${m1.time?.nome||'?'}</div>
+        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(m1.time?.nome||'?')}</div>
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${b1}</div>
+        <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(m1.time?.eficiencia)}</div>
         <div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin:0 auto;display:inline-block;">${m1.nome}</div>
       </div>
       <div style="text-align:center;min-width:70px;padding-top:20px;">
         ${placarArea}
       </div>
       <div style="flex:1;text-align:center;">
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${m2.time?.nome||'?'}</div>
+        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(m2.time?.nome||'?')}</div>
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${b2}</div>
+        <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(m2.time?.eficiencia)}</div>
         <div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin:0 auto;display:inline-block;">${m2.nome}</div>
       </div>
     </div>
