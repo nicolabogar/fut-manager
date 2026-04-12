@@ -153,7 +153,9 @@ Modal de confirmação. Ao excluir um amistoso finalizado, avisa que o ranking s
    | Brasileirão | Clubes | Todos contra todos (pontos corridos) |
    | Paulistão | Clubes | 4 grupos + quartas/semi/final |
    | Copa do Brasil | Clubes | Eliminatório direto |
-   | Copa do Mundo | Clubes | Fase de grupos + eliminatórias |
+   | Copa do Mundo | Clubes* | Fase de grupos + eliminatórias |
+
+   *\*Copa do Mundo: configurado como tipo "Clubes" no sistema, mas pode ser jogado com times ou seleções.*
 
 2. **Nome do torneio** — auto-preenchido com base no formato selecionado
 3. **Seleção de participantes** — busca com autocomplete e tags
