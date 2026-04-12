@@ -629,6 +629,8 @@
     <nav id="fullscreen-breadcrumb" class="breadcrumb">
       <span class="breadcrumb-item" onclick="irParaHome()">HOME</span>
       <span class="breadcrumb-sep">›</span>
+      <span id="fullscreen-mid" class="breadcrumb-item" style="display:none;cursor:pointer;"></span>
+      <span id="fullscreen-mid-sep" class="breadcrumb-sep" style="display:none;">›</span>
       <span id="fullscreen-title" class="breadcrumb-item active" style="font-weight:900;font-size:14px;" ></span>
     </nav>
   </div>
@@ -1235,7 +1237,27 @@ function fecharModal() { document.getElementById('modal-overlay').classList.remo
 window.fecharModal = fecharModal;
 document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target.id === 'modal-overlay') fecharModal(); });
 
-function fullscreen(title, html) {
+const _viewLabels = {jogadores:'JOGADORES',amistosos:'AMISTOSOS',campeonatos:'TORNEIOS',ranking:'RANKING',times:'TIMES'};
+function fullscreen(title, html, secao, secaoView) {
+  const mid = document.getElementById('fullscreen-mid');
+  const midSep = document.getElementById('fullscreen-mid-sep');
+  // Auto-detect section from active view if not provided
+  if (!secao) {
+    const activeView = document.querySelector('.view.active');
+    if (activeView) {
+      const viewId = activeView.id.replace('view-','');
+      if (viewId !== 'home' && _viewLabels[viewId]) { secao = _viewLabels[viewId]; secaoView = viewId; }
+    }
+  }
+  if (secao) {
+    mid.textContent = secao;
+    mid.style.display = '';
+    midSep.style.display = '';
+    mid.onclick = () => { fecharFullscreen(); if (secaoView) irPara(secaoView); };
+  } else {
+    mid.style.display = 'none';
+    midSep.style.display = 'none';
+  }
   document.getElementById('fullscreen-title').textContent = title;
   document.getElementById('fullscreen-body').innerHTML = html;
   document.getElementById('fullscreen-overlay').style.display = 'block';
@@ -1610,7 +1632,7 @@ window.editarJogador = (id) => {
   if (!j) return;
   const podeMudarMaster = temPermissao();
   const masterVal = j.master ? '1' : '0';
-  fullscreen('EDITAR JOGADOR', `
+  fullscreen('EDIÇÃO', `
     <div style="display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto;">
       <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:8px;">
         <div id="prev-avatar" style="width:88px;height:88px;border-radius:22px;overflow:hidden;cursor:pointer;background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(6,182,212,0.3));display:flex;align-items:center;justify-content:center;" onclick="document.getElementById('i-foto-edit').click()">
@@ -1743,7 +1765,7 @@ document.getElementById('btn-add-jog').addEventListener('click', () => {
   if (!temPermissao()) { toast('APENAS O USUARIO MASTER PODE ADICIONAR JOGADORES','erro'); return; }
   const master = getMaster();
   const podeDefinirMaster = !master || temPermissao();
-  fullscreen('NOVO JOGADOR', `
+  fullscreen('NOVO', `
     <div style="display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto;">
       <div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:8px;">
         <div id="prev-avatar" style="width:88px;height:88px;border-radius:22px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(6,182,212,0.3));overflow:hidden;cursor:pointer;" onclick="document.getElementById('i-foto').click()">
@@ -1855,7 +1877,8 @@ window.salvarJogador = async () => {
 
 window.abrirCriarJogador = () => {
   if (!temPermissao()) { toast('APENAS O USUARIO MASTER PODE ADICIONAR JOGADORES','erro'); return; }
-  document.getElementById('btn-add-jog').click();
+  irPara('jogadores');
+  setTimeout(() => document.getElementById('btn-add-jog').click(), 50);
 };
 
 // ─── AMISTOSOS ───────────────────────────────────────────────────────
@@ -2234,7 +2257,7 @@ document.getElementById('btn-criar-ami').addEventListener('click', () => {
   if (jogadores.length < 2) { toast('CADASTRE PELO MENOS 2 JOGADORES', 'erro'); return; }
   _jcSel.clear();
   _amiTiposSel.clear(); _amiTiposSel.add('clubes'); _amiTiposSel.add('selecoes');
-  fullscreen('NOVO AMISTOSO', _htmlNovoAmistoso());
+  fullscreen('NOVO', _htmlNovoAmistoso());
   _preencherUltimoJogo();
   setTimeout(() => {
     document.getElementById('fullscreen-body')?.addEventListener('click', e => {
@@ -2251,7 +2274,7 @@ window.iniciarPartida = () => {
   if (jogadores.length < 2) { toast('CADASTRE PELO MENOS 2 JOGADORES', 'erro'); return; }
   _jcSel.clear();
   _amiTiposSel.clear(); _amiTiposSel.add('clubes'); _amiTiposSel.add('selecoes');
-  fullscreen('NOVO AMISTOSO', _htmlNovoAmistoso());
+  fullscreen('NOVO', _htmlNovoAmistoso(), 'AMISTOSOS', 'amistosos');
   _preencherUltimoJogo();
   setTimeout(() => {
     document.getElementById('fullscreen-body')?.addEventListener('click', e => {
@@ -2724,7 +2747,7 @@ window.verAmistoso = (id) => {
         <input type="number" value="${g2}" disabled style="width:70px;text-align:center;font-size:36px;font-weight:900;padding:10px 4px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:var(--text-muted);opacity:0.7;">
       </div>`
     : `<div style="color:var(--text-muted);font-size:13px;font-weight:700;text-align:center;padding:12px;">EM ANDAMENTO</div>`;
-  fullscreen('AMISTOSO', `
+  fullscreen('DETALHES', `
     <div style="display:flex;flex-direction:column;gap:20px;max-width:400px;margin:0 auto;">
       <div style="display:flex;align-items:center;justify-content:space-around;gap:8px;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:16px;padding:16px;">
         <div style="text-align:center;flex:1;">
@@ -2763,7 +2786,7 @@ window.editarAmistoso = (id) => {
     const b2 = badgeTimeCompact(a.time2?.timeId, a.time2?.nome, a.tipo);
     const g1 = a.resultado?.g1 ?? 0;
     const g2 = a.resultado?.g2 ?? 0;
-    fullscreen('EDITAR AMISTOSO', `
+    fullscreen('EDIÇÃO', `
       <div style="display:flex;flex-direction:column;gap:20px;max-width:400px;margin:0 auto;">
         <div style="display:flex;align-items:center;justify-content:space-around;gap:8px;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:16px;padding:16px;">
           <div style="text-align:center;flex:1;">
@@ -2816,7 +2839,7 @@ window.editarAmistoso = (id) => {
     time2: { ...a.time2 },
   };
 
-  fullscreen('EDITAR AMISTOSO', _htmlNovoAmistoso());
+  fullscreen('EDIÇÃO', _htmlNovoAmistoso(), 'AMISTOSOS', 'amistosos');
 
   // Após renderizar, configurar os campos com os dados existentes
   setTimeout(() => {
@@ -3075,11 +3098,11 @@ window.removerJogCC = (id) => {
   if (document.getElementById('manual-times')?.checked) _renderTimesManualCC();
 };
 
-function abrirModalCriarCamp() {
+function abrirModalCriarCamp(secao, secaoView) {
   if (jogadores.length < 2) { toast('CADASTRE PELO MENOS 2 JOGADORES', 'erro'); return; }
   _ccSel.clear();
   _ccManualSel.clear();
-  fullscreen('NOVO TORNEIO', `
+  fullscreen('NOVO', `
     <div style="display:flex;flex-direction:column;gap:14px;">
       <div>
         <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">FORMATO</label>
@@ -3125,7 +3148,7 @@ function abrirModalCriarCamp() {
     <div style="display:flex;flex-direction:column;gap:8px;margin-top:20px;">
       <button class="btn-primary" onclick="criarCampeonato()">SALVAR</button>
       <button class="btn-ghost" onclick="fecharFullscreen()">CANCELAR</button>
-    </div>`);
+    </div>`, secao, secaoView);
   setTimeout(() => {
     selCampTipo('champions', document.querySelector('[data-ct="champions"]'));
     // Fecha dropdown ao clicar fora
@@ -3138,7 +3161,7 @@ function abrirModalCriarCamp() {
   }, 30);
 }
 document.getElementById('btn-criar-camp').addEventListener('click', abrirModalCriarCamp);
-window.iniciarCampeonato = abrirModalCriarCamp;
+window.iniciarCampeonato = () => abrirModalCriarCamp('TORNEIOS', 'campeonatos');
 
 window.toggleSelManual = () => {
   const box = document.getElementById('manual-times-box');
@@ -3477,7 +3500,7 @@ window.abrirCampeonato = (id) => {
 
     <p class="sec-title" style="margin-bottom:10px;">GRUPOS</p>
     ${gruposHTML}
-  `);
+  `, 'TORNEIOS', 'campeonatos');
 };
 
 // Salva partida diretamente dos inputs no card (sem modal)
@@ -3557,7 +3580,7 @@ window.ressortearCampeonato = (id) => {
   if (!c) return;
   const meta = CAMP_META[c.tipo] || { emoji:'🏆', nome: c.tipo };
   const selecionados = new Set((c.participantes||[]).map(p=>p.jogadorId));
-  fullscreen('RESSORTEAR TIMES', `
+  fullscreen('RESSORTEAR', `
     <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">SELECIONE OS PARTICIPANTES E SORTEAREMOS OS TIMES NOVAMENTE PARA <strong>${c.nome.toUpperCase()}</strong></p>
     <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">PARTICIPANTES</label>
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
@@ -3747,7 +3770,7 @@ window.abrirHistoricoJogador = (jogadorId, nome) => {
   const allJogos = _coletarJogosJogador(jogadorId);
   const advs = [...new Set(allJogos.map(j => j.advTime).filter(Boolean))].sort();
 
-  fullscreen(`HISTORICO · ${nome.toUpperCase()}`, `
+  fullscreen(`${nome.toUpperCase()}`, `
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
       <button class="filtro-btn ativo" id="hf-todos" onclick="_hFiltro('tipo','todos')">TODOS</button>
       <button class="filtro-btn" id="hf-amistoso" onclick="_hFiltro('tipo','AMISTOSO')">AMISTOSO</button>
@@ -4110,7 +4133,7 @@ document.getElementById('btn-add-time').addEventListener('click', () => {
 function abrirModalAddTime(tipoInicial) {
   _eficienciaNT = 'Bom';
   const paisOptions = PAISES_FIFA.map(p => `<option value="${p.code}" data-nome="${p.nome}">${flagEmoji(p.code)} ${p.nome}</option>`).join('');
-  fullscreen('NOVO TIME', `
+  fullscreen('NOVO', `
     <div style="display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto;">
       <div>
         <h2 style="font-size:22px;font-weight:900;margin-bottom:16px;" class="grad">NOVO TIME</h2>
