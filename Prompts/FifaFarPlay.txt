@@ -11,7 +11,7 @@
 4 - [x] Quando clico e seguro os cards de jogos o estilo de remover que pedi para você excluir anteriormente esta voltando, quero que remova de vez esse efeito e o botão excluir. (hash: 4766735)
 5 - [x] Quero que todas as tags da aploção tenham o mesmo estilo, fonte, tamanho etc.. (hash: c636fd6)
 6 - [x] Quando pe listado os times e faço o swipe para remover o cadastro de um time o botão cancelar não esta sendo apresentado. (hash: 28b45b5)
-7 - Na listagem de times, o icone do clube ou seleção esta pequeno, quero que aumente uns 30% a mais.
+7 - [x] Na listagem de times, o icone do clube ou seleção esta pequeno, quero que aumente uns 30% a mais. (hash: 2f90391)
 8 - No Ranking, existe uma tag de "VITÓRIA T1", quero que altere o texto para VITORIA e o nome do jogador que venceu. Exemplo: VITÓRIA: NICOLA BOGAR
 
 

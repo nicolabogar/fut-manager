@@ -1909,8 +1909,8 @@ function cardAmistoso(a, compact=false, readonly=false) {
       </div>
       ${temRes ? (() => {
         const g1 = a.resultado.g1, g2 = a.resultado.g2;
-        if (g1 > g2) return `<span class="tag tag-green">VITÓRIA T1</span>`;
-        if (g2 > g1) return `<span class="tag tag-green">VITÓRIA T2</span>`;
+        if (g1 > g2) return `<span class="tag tag-green">VITÓRIA: ${(a.time1?.jogadores||[]).join(', ') || 'T1'}</span>`;
+        if (g2 > g1) return `<span class="tag tag-green">VITÓRIA: ${(a.time2?.jogadores||[]).join(', ') || 'T2'}</span>`;
         return `<span class="tag tag-yellow">EMPATE</span>`;
       })() : `<span class="tag tag-cyan">EM ANDAMENTO</span>`}
     </div>
@@ -3359,8 +3359,8 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
       ${temRes
         ? (() => {
             const g1 = m1.resultado, g2 = m2.resultado;
-            if (g1 > g2) return `<span class="tag tag-green">VITÓRIA T1</span>`;
-            if (g2 > g1) return `<span class="tag tag-green">VITÓRIA T2</span>`;
+            if (g1 > g2) return `<span class="tag tag-green">VITÓRIA: ${m1.nome}</span>`;
+            if (g2 > g1) return `<span class="tag tag-green">VITÓRIA: ${m2.nome}</span>`;
             return `<span class="tag tag-yellow">EMPATE</span>`;
           })()
         : `<span class="tag tag-cyan">EM ANDAMENTO</span>`}
