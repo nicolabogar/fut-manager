@@ -3144,22 +3144,23 @@ function _preencherUltimoJogo() {
   // Preenche jogadores do último amistoso criado (mais recente)
   if (!amistosos.length) return;
   const ultimo = amistosos[0]; // já ordenado por criadoEm desc
+  const maxPerTime = _maxJogsPerTime();
   const ids1 = ultimo.time1?.jogadoresIds || [];
   const ids2 = ultimo.time2?.jogadoresIds || [];
   ids1.forEach(jid => {
     const j = jogadores.find(x => x.id === jid);
     if (j && !_jcT1.has(jid) && !_jcT2.has(jid)) {
       const nome = _nomeExibicao(j);
-      if (_jcT1.size < 1) _jcT1.set(jid, nome);
-      else if (_jcT2.size < 1) _jcT2.set(jid, nome);
+      if (_jcT1.size < maxPerTime) _jcT1.set(jid, nome);
+      else if (_jcT2.size < maxPerTime) _jcT2.set(jid, nome);
     }
   });
   ids2.forEach(jid => {
     const j = jogadores.find(x => x.id === jid);
     if (j && !_jcT1.has(jid) && !_jcT2.has(jid)) {
       const nome = _nomeExibicao(j);
-      if (_jcT2.size < 1) _jcT2.set(jid, nome);
-      else if (_jcT1.size < 1) _jcT1.set(jid, nome);
+      if (_jcT2.size < maxPerTime) _jcT2.set(jid, nome);
+      else if (_jcT1.size < maxPerTime) _jcT1.set(jid, nome);
     }
   });
   _syncJcMaps();
@@ -4182,11 +4183,14 @@ window._criarNovoJogoMesmosParams = () => {
 
   const ids1 = a.time1?.jogadoresIds || [];
   const ids2 = a.time2?.jogadoresIds || [];
+  const maxPerTime = a.modoDupla ? 2 : 1;
   ids1.forEach(jid => {
+    if (_jcT1.size >= maxPerTime) return;
     const j = jogadores.find(x => x.id === jid);
     if (j && !_jcT1.has(jid)) _jcT1.set(jid, _nomeExibicao(j));
   });
   ids2.forEach(jid => {
+    if (_jcT2.size >= maxPerTime) return;
     const j = jogadores.find(x => x.id === jid);
     if (j && !_jcT2.has(jid)) _jcT2.set(jid, _nomeExibicao(j));
   });
