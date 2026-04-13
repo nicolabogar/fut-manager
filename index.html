@@ -2560,8 +2560,8 @@ function cardAmistoso(a, compact=false, readonly=false) {
     ${compact ? `
     <div style="display:flex;align-items:center;gap:8px;">
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
-        <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${abreviarNome(a.time1?.nome || '?')}</div>
         ${b1}
+        <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${abreviarNome(a.time1?.nome || '?')}</div>
         ${_nomesTime(a.time1).length ? `<div style="font-size:10px;color:var(--cyan);font-weight:700;">${_nomesTime(a.time1).join(' · ')}</div>` : ''}
       </div>
       <div style="flex-shrink:0;text-align:center;">
@@ -2582,8 +2582,8 @@ function cardAmistoso(a, compact=false, readonly=false) {
               </div>`}
       </div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
-        <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${abreviarNome(a.time2?.nome || '?')}</div>
         ${b2}
+        <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${abreviarNome(a.time2?.nome || '?')}</div>
         ${_nomesTime(a.time2).length ? `<div style="font-size:10px;color:var(--cyan);font-weight:700;">${_nomesTime(a.time2).join(' · ')}</div>` : ''}
       </div>
     </div>` : `
@@ -4248,8 +4248,8 @@ window.abrirCampeonato = (id) => {
         const tipo = isSel ? 'selecoes' : 'clubes';
         const jogNome = _nomeJogPorId(p.jogadorId, p.nome);
         return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px;text-align:center;">
-          <div style="font-weight:900;font-size:14px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${abreviarNome(p.time?.nome||'?')}</div>
           ${badgeTimeCountryInfo(p.time?.id, p.time?.nome, tipo)}
+          <div style="font-weight:900;font-size:14px;line-height:1.2;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${abreviarNome(p.time?.nome||'?')}</div>
           <div style="display:flex;flex-direction:column;align-items:center;margin-top:8px;">
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${badgeTimeIcon(p.time?.id, p.time?.nome, tipo)}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(p.time?.id))}</div>
@@ -4735,15 +4735,13 @@ function _renderHistorico() {
       </div>
       <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;row-gap:8px;">
         <div style="text-align:center;">
-          ${!isSel ? ci1 : ''}
-          <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(j.meuTime)}</div>
-          ${isSel ? ci1 : ''}
+          ${ci1}
+          <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${abreviarNome(j.meuTime)}</div>
         </div>
         <div></div>
         <div style="text-align:center;">
-          ${!isSel ? ci2 : ''}
-          <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(nomeAdvTime)}</div>
-          ${isSel ? ci2 : ''}
+          ${ci2}
+          <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${abreviarNome(nomeAdvTime)}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;">
           <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon1}</div>
