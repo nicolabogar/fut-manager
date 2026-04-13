@@ -1781,9 +1781,7 @@ window.salvarEdicaoJogador = async (id) => {
   try {
     let fotoUrl = jogadores.find(x=>x.id===id)?.fotoUrl || '';
     if (_croppedBlob) {
-      const sRef = storageRef(storage, `avatars/${Date.now()}_avatar.jpg`);
-      const snap = await uploadBytes(sRef, _croppedBlob);
-      fotoUrl = await getDownloadURL(snap.ref);
+      fotoUrl = _croppedBlob;
       _croppedBlob = null;
     }
     if (isMaster) {
@@ -2078,15 +2076,13 @@ window.confirmarCrop = () => {
   const srcH = st.areaSize / st.scale;
   const imgEl = document.getElementById('cropper-img');
   ctx.drawImage(imgEl, srcX, srcY, srcW, srcH, 0, 0, outSize, outSize);
-  canvas.toBlob(blob => {
-    _croppedBlob = blob;
-    // Update preview avatar
-    const url = URL.createObjectURL(blob);
-    const prev = document.getElementById('prev-avatar');
-    if (prev) prev.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
-    document.getElementById('cropper-overlay').classList.remove('open');
-    _cropperState = null;
-  }, 'image/jpeg', 0.85);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+  _croppedBlob = dataUrl;
+  // Update preview avatar
+  const prev = document.getElementById('prev-avatar');
+  if (prev) prev.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+  document.getElementById('cropper-overlay').classList.remove('open');
+  _cropperState = null;
 };
 
 // Compacta imagem via Canvas (max 200x200, JPEG 0.7)
@@ -2144,9 +2140,7 @@ window.salvarJogador = async () => {
   try {
     let fotoUrl = '';
     if (_croppedBlob) {
-      const sRef = storageRef(storage, `avatars/${Date.now()}_avatar.jpg`);
-      const snap = await uploadBytes(sRef, _croppedBlob);
-      fotoUrl = await getDownloadURL(snap.ref);
+      fotoUrl = _croppedBlob;
       _croppedBlob = null;
     }
     if (isMaster) {
