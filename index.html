@@ -4084,7 +4084,7 @@ function abrirModalCriarCamp(secao, secaoView) {
     }, { capture: true });
   }, 30);
 }
-document.getElementById('btn-criar-camp').addEventListener('click', abrirModalCriarCamp);
+document.getElementById('btn-criar-camp').addEventListener('click', () => abrirModalCriarCamp('TORNEIOS', 'campeonatos'));
 window.iniciarCampeonato = () => abrirModalCriarCamp('TORNEIOS', 'campeonatos');
 
 window.toggleSelManual = () => {
@@ -4410,23 +4410,6 @@ window.abrirCampeonato = (id) => {
       <p style="color:var(--text-muted);font-size:13px;line-height:1.6;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:12px;padding:12px;">${meta.desc}</p>
     </div>` : ''}
 
-    <p class="sec-title" style="margin-bottom:10px;">TIMES SORTEADOS</p>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
-      ${(c.participantes||[]).map(p=>{
-        const tipo = isSel ? 'selecoes' : 'clubes';
-        const jogNome = _nomeJogPorId(p.jogadorId, p.nome);
-        return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px;text-align:center;">
-          ${badgeTimeCountryInfo(p.time?.id, p.time?.nome, tipo)}
-          <div style="font-weight:900;font-size:14px;line-height:1.2;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${abreviarNome(p.time?.nome||'?')}</div>
-          <div style="display:flex;flex-direction:column;align-items:center;margin-top:8px;">
-            <div style="display:flex;justify-content:center;margin-bottom:4px;">${badgeTimeIcon(p.time?.id, p.time?.nome, tipo)}</div>
-            <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(p.time?.id))}</div>
-            ${jogNome ? `<div style="margin-top:2px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span class="tag tag-cyan" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${jogNome.toUpperCase()}</span></div>` : ''}
-          </div>
-        </div>`;
-      }).join('')}
-    </div>
-
     ${podeMudar ? `<label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">NOME DO TORNEIO</label><span style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:6px;">TITULO OFICIAL QUE IDENTIFICARA O TORNEIO</span><input id="torneio-nome-inline-${c.id}" class="input" value="${c.nome.toUpperCase().replace(/"/g,'&quot;')}" style="text-transform:uppercase;margin-bottom:8px;width:100%;box-sizing:border-box;" autocomplete="off" oninput="this.value=this.value.toUpperCase()" onblur="_autoSalvarNomeTorneio('${c.id}',this.value)">` : ''}
     ${podeMudar ? `
       <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">FORMATO</label>
@@ -4446,6 +4429,23 @@ window.abrirCampeonato = (id) => {
     : ''}
     ${podeMudar ? `<button onclick="reiniciarTorneio('${c.id}')" style="width:100%;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.35);color:#FCD34D;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;">REINICIAR TORNEIO</button>` : ''}
     ${naoIniciado && podeMudar ? `<button onclick="excluirCampeonato('${c.id}')" style="width:100%;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.35);color:#EF4444;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;">EXCLUIR TORNEIO</button>` : ''}
+
+    <p class="sec-title" style="margin-bottom:10px;">TIMES SORTEADOS</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+      ${(c.participantes||[]).map(p=>{
+        const tipo = isSel ? 'selecoes' : 'clubes';
+        const jogNome = _nomeJogPorId(p.jogadorId, p.nome);
+        return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px;text-align:center;">
+          ${badgeTimeCountryInfo(p.time?.id, p.time?.nome, tipo)}
+          <div style="font-weight:900;font-size:14px;line-height:1.2;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${abreviarNome(p.time?.nome||'?')}</div>
+          <div style="display:flex;flex-direction:column;align-items:center;margin-top:8px;">
+            <div style="display:flex;justify-content:center;margin-bottom:4px;">${badgeTimeIcon(p.time?.id, p.time?.nome, tipo)}</div>
+            <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(p.time?.id))}</div>
+            ${jogNome ? `<div style="margin-top:2px;display:flex;flex-direction:column;align-items:center;gap:2px;"><span class="tag tag-cyan" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${jogNome.toUpperCase()}</span></div>` : ''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
 
     <p class="sec-title" style="margin-bottom:10px;">GRUPOS</p>
     ${gruposHTML}
