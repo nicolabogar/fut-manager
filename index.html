@@ -3417,8 +3417,8 @@ window.sortearAmistoso = () => {
     const eq = diff <= 2 ? 'EQUILIBRADO' : diff <= 5 ? 'LEVEMENTE DESIGUAL' : 'DESIGUAL';
     _sorteioAmi = {
       tipo,
-      modoDupla: modoDupla || false,
-      maxPartidaDupla: maxDupla || 0,
+      modoDupla,
+      maxPartidaDupla: maxDupla,
       time1: { nome: t1data.nome, timeId: t1data.timeId, forca: t1data.forca, eficiencia: t1data.eficiencia||'Bom', jogadores: j1.map(j=>_nomeExibicao(j)), jogadoresIds: j1.map(j=>j.id) },
       time2: { nome: t2data.nome, timeId: t2data.timeId, forca: t2data.forca, eficiencia: t2data.eficiencia||'Bom', jogadores: j2.map(j=>_nomeExibicao(j)), jogadoresIds: j2.map(j=>j.id) },
     };
@@ -3454,8 +3454,8 @@ window.sortearAmistoso = () => {
     const eq = diff <= 2 ? 'EQUILIBRADO' : diff <= 5 ? 'LEVEMENTE DESIGUAL' : 'DESIGUAL';
     _sorteioAmi = {
       tipo,
-      modoDupla: modoDupla || false,
-      maxPartidaDupla: maxDupla || 0,
+      modoDupla,
+      maxPartidaDupla: maxDupla,
       time1: { nome: t1.nome, timeId: t1.id, forca: t1.forca, eficiencia: t1.eficiencia||'Bom', jogadores: j1.map(j => j.nome), jogadoresIds: j1.map(j => j.id) },
       time2: { nome: t2.nome, timeId: t2.id, forca: t2.forca, eficiencia: t2.eficiencia||'Bom', jogadores: j2.map(j => j.nome), jogadoresIds: j2.map(j => j.id) },
     };
@@ -3475,8 +3475,8 @@ window.sortearAmistoso = () => {
 
   _sorteioAmi = {
     tipo,
-    modoDupla: modoDupla || false,
-    maxPartidaDupla: maxDupla || 0,
+    modoDupla,
+    maxPartidaDupla: maxDupla,
     time1: { nome: t1.nome, timeId: t1.id, forca: t1.forca, eficiencia: t1.eficiencia||'Bom', jogadores: j1.map(j => j.nome), jogadoresIds: j1.map(j => j.id) },
     time2: { nome: t2.nome, timeId: t2.id, forca: t2.forca, eficiencia: t2.eficiencia||'Bom', jogadores: j2.map(j => j.nome), jogadoresIds: j2.map(j => j.id) },
   };
