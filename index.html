@@ -1936,6 +1936,14 @@ function cardAmistoso(a, compact=false, readonly=false) {
   const diff = temRes ? Math.abs(a.resultado.g1 - a.resultado.g2) : null;
   const b1 = compact ? badgeTimeCompact(a.time1?.timeId, a.time1?.nome, a.tipo) : badgeTime(a.time1?.timeId, a.time1?.nome, a.tipo);
   const b2 = compact ? badgeTimeCompact(a.time2?.timeId, a.time2?.nome, a.tipo) : badgeTime(a.time2?.timeId, a.time2?.nome, a.tipo);
+  const t1nom = (a.time1?.nome||'').replace(/'/g,"\\'");
+  const t2nom = (a.time2?.nome||'').replace(/'/g,"\\'");
+  const lpBadge1 = (!temRes && master && !compact)
+    ? `<div style="display:flex;justify-content:center;margin-bottom:4px;cursor:pointer;user-select:none;" title="Segure para editar o time" onpointerdown="_lpAmiStart('${a.id}','${a.time1?.timeId}','${t1nom}','${a.tipo}','time1')" onpointerup="_lpAmiEnd()" onpointercancel="_lpAmiEnd()" onclick="if(window._lpAmiTriggered){window._lpAmiTriggered=false;event.stopPropagation();}">${b1}</div>`
+    : `<div style="display:flex;justify-content:center;margin-bottom:4px;">${b1}</div>`;
+  const lpBadge2 = (!temRes && master && !compact)
+    ? `<div style="display:flex;justify-content:center;margin-bottom:4px;cursor:pointer;user-select:none;" title="Segure para editar o time" onpointerdown="_lpAmiStart('${a.id}','${a.time2?.timeId}','${t2nom}','${a.tipo}','time2')" onpointerup="_lpAmiEnd()" onpointercancel="_lpAmiEnd()" onclick="if(window._lpAmiTriggered){window._lpAmiTriggered=false;event.stopPropagation();}">${b2}</div>`
+    : `<div style="display:flex;justify-content:center;margin-bottom:4px;">${b2}</div>`;
   // RG7b: não-master vê placar somente-leitura; master vê inputs de edição
   const placarDireto = temRes
     ? `<div style="font-size:29px;font-weight:900;letter-spacing:1px;color:var(--yellow);">${a.resultado.g1}<span style="color:var(--text-muted);font-size:13px;"> × </span>${a.resultado.g2}</div>`
@@ -1996,7 +2004,7 @@ function cardAmistoso(a, compact=false, readonly=false) {
     <div style="display:flex;align-items:flex-start;gap:8px;">
       <div style="flex:1;text-align:center;">
         <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(a.time1?.nome || '?')}</div>
-        <div style="display:flex;justify-content:center;margin-bottom:4px;">${b1}</div>
+        ${lpBadge1}
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(a.time1?.timeId))}</div>
         ${(a.time1?.jogadores||[]).length
           ? `<div style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:2px;">${(a.time1.jogadores).map(n=>`<div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')}</div>`
@@ -2007,7 +2015,7 @@ function cardAmistoso(a, compact=false, readonly=false) {
       </div>
       <div style="flex:1;text-align:center;">
         <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(a.time2?.nome || '?')}</div>
-        <div style="display:flex;justify-content:center;margin-bottom:4px;">${b2}</div>
+        ${lpBadge2}
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(a.time2?.timeId))}</div>
         ${(a.time2?.jogadores||[]).length
           ? `<div style="margin-top:8px;display:flex;flex-direction:column;align-items:center;gap:2px;">${(a.time2.jogadores).map(n=>`<div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')}</div>`
@@ -2715,6 +2723,74 @@ window.confirmarInativarTimeSorteio = async (timeId, tipo) => {
   await toggleInativoTime(timeId, true);
   // Ressortear automaticamente
   window.sortearAmistoso();
+};
+
+// ─── LONG PRESS NO LOGO DO TIME NO CARD DE ANDAMENTO ─────────────────
+let _lpAmiTimer = null;
+window._lpAmiTriggered = false;
+window._lpAmiStart = (amiId, timeId, timeNome, tipoT, qual) => {
+  _lpAmiTimer = setTimeout(() => {
+    _lpAmiTimer = null;
+    window._lpAmiTriggered = true;
+    editarTimeAmistoso(amiId, timeId, timeNome, tipoT, qual);
+  }, 600);
+};
+window._lpAmiEnd = () => {
+  if (_lpAmiTimer) { clearTimeout(_lpAmiTimer); _lpAmiTimer = null; }
+};
+window.editarTimeAmistoso = (amiId, timeId, timeNome, tipoT, qual) => {
+  const pool = tipoT === 'selecoes' ? selecoes : clubes;
+  const t = pool.find(x => x.id === timeId) || { eficiencia:'Bom', inativo:false };
+  modal(`<p class="modal-title">${timeNome.toUpperCase()}</p>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIENCIA</label>
+      <div class="efic-tags" id="etami-efic-tags" data-selected="${t.eficiencia||'Bom'}">
+        ${['Ruim','Moderado','Bom'].map(e=>`<span class="efic-tag${(t.eficiencia||'Bom')===e?' selecionado':''}" data-efic="${e}" onclick="selecionarEficienciaETAmi('${e}')">${e}</span>`).join('')}
+      </div>
+    </div>
+    <label class="check-row" style="margin-bottom:16px;">
+      <input type="checkbox" id="etami-inativo" ${t.inativo?'checked':''} style="width:18px;height:18px;accent-color:var(--purple);">
+      <div><div style="font-size:13px;font-weight:700;">INATIVO</div><div style="font-size:11px;color:var(--text-muted);">NAO APARECE NOS SORTEIOS</div></div>
+    </label>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-ghost" onclick="fecharModal()">CANCELAR</button>
+      <button class="btn-primary" onclick="salvarTimeAmistoso('${amiId}','${timeId}','${tipoT}','${qual}')">SALVAR</button>
+    </div>`);
+};
+window.selecionarEficienciaETAmi = (val) => {
+  const c = document.getElementById('etami-efic-tags');
+  if (!c) return;
+  c.dataset.selected = val;
+  c.querySelectorAll('.efic-tag').forEach(el => el.classList.toggle('selecionado', el.dataset.efic === val));
+};
+window.salvarTimeAmistoso = async (amiId, timeId, tipoT, qual) => {
+  const eficiencia = document.getElementById('etami-efic-tags')?.dataset.selected || 'Bom';
+  const inativo = document.getElementById('etami-inativo')?.checked || false;
+  const pool = tipoT === 'selecoes' ? selecoes : clubes;
+  const tOrig = pool.find(x => x.id === timeId);
+  const houveMudanca = inativo !== (tOrig?.inativo || false) || eficiencia !== (tOrig?.eficiencia || 'Bom');
+  fecharModal();
+  try {
+    await setDoc(doc(db, 'times', timeId), { eficiencia, inativo }, { merge: true });
+  } catch(e) {
+    await setDoc(doc(db, 'times', timeId), { id: timeId, eficiencia, inativo }, { merge: true });
+  }
+  await carregarTimes();
+  if (houveMudanca) {
+    const a = amistosos.find(x => x.id === amiId);
+    if (a && !a.resultado) {
+      const poolFiltrado = filtrarPoolEfic(tipoT === 'selecoes' ? selecoes : clubes);
+      const hist = historicoIds(tipoT);
+      const [nt1, nt2] = sortearBalanceado(poolFiltrado, hist, tipoT);
+      const novoTime1 = { ...a.time1, nome: nt1.nome, timeId: nt1.id, forca: nt1.forca, eficiencia: nt1.eficiencia || 'Bom' };
+      const novoTime2 = { ...a.time2, nome: nt2.nome, timeId: nt2.id, forca: nt2.forca, eficiencia: nt2.eficiencia || 'Bom' };
+      await updateDoc(doc(db, 'amistosos', amiId), { time1: novoTime1, time2: novoTime2 });
+      await carregarAmistosos();
+      toast('NOVO SORTEIO REALIZADO!', 'sucesso');
+    }
+  }
+  renderAmistosos();
+  atualizarDash();
 };
 
 // Guard global anti-duplo-clique: bloqueia o elemento por 1s após o primeiro clique
