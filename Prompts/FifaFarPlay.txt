@@ -5,4 +5,4 @@
 
 ## MELHORIAS ##
 
-- [ ] No cadastro de torneio, remover o botao de editar nome do torneio e substituir por campo de texto inline; ao sair do campo (blur), auto persistir se o valor foi alterado
+- [x] No cadastro de torneio, remover o botao de editar nome do torneio e substituir por campo de texto inline; ao sair do campo (blur), auto persistir se o valor foi alterado (hash: 795597f)
