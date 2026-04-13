@@ -3735,12 +3735,78 @@ window.salvarPlacarDireto = async (id, btn) => {
   const el1 = container ? container.querySelector('[data-pdc="1"]') : null;
   const el2 = container ? container.querySelector('[data-pdc="2"]') : null;
   if (!el1 || !el2) { _unlockBtn(btn); return; }
+  const amiSnapshot = amistosos.find(x => x.id === id);
   try {
     const g1 = parseInt(el1.value) ?? 0;
     const g2 = parseInt(el2.value) ?? 0;
     await updateDoc(doc(db, 'amistosos', id), { resultado: { g1: isNaN(g1)?0:g1, g2: isNaN(g2)?0:g2 } });
     await carregarAmistosos(); atualizarDash();
+    if (amiSnapshot) _perguntarNovoJogo(amiSnapshot);
   } catch(e) { toast('ERRO AO SALVAR', 'erro'); } finally { _unlockBtn(btn); }
+};
+
+let _pendingNovoJogoAmi = null;
+let _dropdownOutsideHandler = null;
+
+function _perguntarNovoJogo(a) {
+  _pendingNovoJogoAmi = a;
+  modal(`<p class="modal-title">NOVO JOGO?</p>
+    <p style="color:var(--text-muted);font-size:13px;line-height:1.5;margin-bottom:20px;">DESEJA CRIAR UM NOVO JOGO COM OS MESMOS PARAMETROS?</p>
+    <div style="display:flex;gap:10px;">
+      <button class="btn-ghost" onclick="fecharModal()">NAO</button>
+      <button class="btn-primary" onclick="fecharModal();_criarNovoJogoMesmosParams()">SIM</button>
+    </div>`);
+}
+
+window._criarNovoJogoMesmosParams = () => {
+  const a = _pendingNovoJogoAmi;
+  _pendingNovoJogoAmi = null;
+  if (!a) return;
+  if (jogadores.length < 2) { toast('CADASTRE PELO MENOS 2 JOGADORES', 'erro'); return; }
+
+  _jcSel.clear();
+  _amiTiposSel.clear();
+  if (a.tipo === 'clubes') _amiTiposSel.add('clubes');
+  else if (a.tipo === 'selecoes') _amiTiposSel.add('selecoes');
+  else { _amiTiposSel.add('clubes'); _amiTiposSel.add('selecoes'); }
+
+  const ids1 = a.time1?.jogadoresIds || [];
+  const ids2 = a.time2?.jogadoresIds || [];
+  [...ids1, ...ids2].forEach(jid => {
+    const j = jogadores.find(x => x.id === jid);
+    if (j && !_jcSel.has(jid)) _jcSel.set(jid, _nomeExibicao(j));
+  });
+
+  fullscreen('NOVO', _htmlNovoAmistoso());
+
+  setTimeout(() => {
+    selTipoAmi(a.tipo || 'clubes');
+
+    const duplaCb = document.getElementById('ami-dupla');
+    if (duplaCb && a.modoDupla) {
+      duplaCb.checked = true;
+      toggleModoDupla(true);
+    }
+
+    _renderTagsJC();
+
+    const sorteioAuto = document.getElementById('ami-sorteio-auto');
+    if (sorteioAuto?.checked && _jcSel.size >= 2) {
+      window.sortearAmistoso && window.sortearAmistoso();
+    }
+
+    const body = document.getElementById('fullscreen-body');
+    if (body) {
+      if (_dropdownOutsideHandler) body.removeEventListener('click', _dropdownOutsideHandler, true);
+      _dropdownOutsideHandler = e => {
+        if (!e.target.closest('#jc-search') && !e.target.closest('#jc-dropdown')) {
+          const d = document.getElementById('jc-dropdown');
+          if (d) d.style.display = 'none';
+        }
+      };
+      body.addEventListener('click', _dropdownOutsideHandler, true);
+    }
+  }, 50);
 };
 
 // ─── CAMPEONATOS ─────────────────────────────────────────────────────
