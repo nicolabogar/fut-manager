@@ -4552,7 +4552,7 @@ function _renderTimesManualCC() {
     // Modo dupla: agrupar por pares, um time por dupla
     const escolherDuplas = document.getElementById('camp-escolher-duplas')?.checked || false;
     let pares;
-    if (escolherDuplas && _ccParesManual.length === jogsList.length / 2 && _ccParesManual.every(p => p.j1Id && p.j2Id)) {
+    if (escolherDuplas && _ccParesManual.length === Math.floor(jogsList.length / 2) && _ccParesManual.every(p => p.j1Id && p.j2Id)) {
       pares = _ccParesManual;
     } else {
       pares = [];
@@ -4580,7 +4580,7 @@ function _renderTimesManualCC() {
       return `
       <div style="margin-bottom:10px;background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.25);border-radius:12px;padding:10px;">
         <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px;">DUPLA ${pidx+1}</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">${par.j1Nome} &amp; ${par.j2Nome}</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">${par.j1Nome.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')} &amp; ${par.j2Nome.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
         ${inputsHtml}
       </div>`;
     }).join('');
