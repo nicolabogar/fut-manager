@@ -4391,10 +4391,16 @@ function _coletarJogosJogador(jogadorId) {
     const res = meuGol > advGol ? 'V' : meuGol < advGol ? 'D' : 'E';
     const ts = c.criadoEm?.seconds ? c.criadoEm.seconds * 1000 : null;
     const advNome = isJ1 ? p.j2Nome : p.j1Nome;
+    const advJogadorId = isJ1 ? p.j2Id : p.j1Id;
+    const mAdv = g.membros.find(mb => mb.jogadorId === advJogadorId);
     jogos.push({
       tipo:'TORNEIO', tipoTime: CAMP_META[c.tipo]?.tipo==='selecoes'?'SELECAO':'CLUBE',
       meuTime: m.time?.nome||'?',
+      meuTimeId: m.time?.id||'',
+      meuJogadorId: jogadorId,
       advTime: advNome,
+      advTimeNome: mAdv?.time?.nome||'',
+      advTimeId: mAdv?.time?.id||'',
       advJogadores: advNome ? [advNome] : [],
       meuGol, advGol, res, ts, torneio: c.nome
     });
@@ -4541,30 +4547,59 @@ function _renderHistorico() {
   }
 
   lista.innerHTML = slice.map(j => {
-    // Para amistosos, usa o cardAmistoso real (readonly — sem ação de clique)
+    // Para amistosos, usa o cardAmistoso real igual ao de finalizados (não-compact, readonly)
     if (j.tipo === 'AMISTOSO' && j.amiId) {
       const ami = amistosos.find(a => a.id === j.amiId);
-      if (ami) return cardAmistoso(ami, true, true);
+      if (ami) return cardAmistoso(ami, false, true);
     }
-    // Para torneios, usa card resumido
+    // Para torneios, usa card igual ao cardJogoTorneio (finalizados) com tags extras do ranking
     const cor = j.res==='V'?'tag-green':j.res==='D'?'tag-red':'tag-gray';
+    const corTxt = j.res==='V'?'VITORIA':j.res==='D'?'DERROTA':'EMPATE';
     const data = j.ts ? new Date(j.ts).toLocaleDateString('pt-BR') : '';
-    return `<div style="background:var(--card);border:1px solid var(--card-border);border-radius:14px;padding:12px;margin-bottom:8px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div style="display:flex;gap:5px;">
-          <span class="tag tag-yellow">TORNEIO</span>
-          <span class="tag tag-gray">${j.tipoTime}</span>
-          ${j.torneio?`<span class="tag tag-purple" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${j.torneio.toUpperCase()}</span>`:''}
+    const isSel = j.tipoTime === 'SELECAO';
+    const tipo = isSel ? 'selecoes' : 'clubes';
+    const ci1 = badgeTimeCountryInfo(j.meuTimeId, j.meuTime, tipo, 'center');
+    const ci2 = badgeTimeCountryInfo(j.advTimeId, j.advTimeNome, tipo, 'center');
+    const icon1 = badgeTimeIcon(j.meuTimeId, j.meuTime, tipo);
+    const icon2 = badgeTimeIcon(j.advTimeId, j.advTimeNome, tipo);
+    const nome1 = _nomeJogPorId(j.meuJogadorId, '');
+    const nome2 = j.advTime || '';
+    const nomeAdvTime = j.advTimeNome || j.advTime || '?';
+    return `<div class="match-card" style="margin-bottom:10px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span class="tag tag-purple">TORNEIO</span>
+          <span class="tag tag-gray">${isSel ? 'SELECOES' : 'CLUBES'}</span>
+          ${j.torneio?`<span class="tag tag-yellow" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${j.torneio.toUpperCase()}</span>`:''}
         </div>
         <div style="display:flex;gap:5px;align-items:center;">
-          <span class="tag ${cor}">${j.res==='V'?'VITORIA':j.res==='D'?'DERROTA':'EMPATE'}</span>
+          <span class="tag ${cor}">${corTxt}</span>
           ${data?`<span style="font-size:10px;color:var(--text-muted);">${data}</span>`:''}
         </div>
       </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-        <span style="font-weight:800;font-size:13px;flex:1;">${j.meuTime}</span>
-        <span style="font-weight:900;font-size:18px;flex-shrink:0;">${j.meuGol} <span style="color:var(--text-muted);font-size:12px;">x</span> ${j.advGol}</span>
-        <span style="font-weight:800;font-size:13px;flex:1;text-align:right;">${j.advTime}</span>
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;row-gap:8px;">
+        <div style="text-align:center;">
+          <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(j.meuTime)}</div>
+          ${ci1}
+        </div>
+        <div></div>
+        <div style="text-align:center;">
+          <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(nomeAdvTime)}</div>
+          ${ci2}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon1}</div>
+          <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.meuTimeId))}</div>
+          ${nome1?`<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome1}</div></div>`:''}
+        </div>
+        <div style="text-align:center;min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <div style="font-size:29px;font-weight:900;letter-spacing:1px;color:var(--yellow);">${j.meuGol}<span style="color:var(--text-muted);font-size:13px;"> × </span>${j.advGol}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon2}</div>
+          <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.advTimeId))}</div>
+          ${nome2?`<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome2}</div></div>`:''}
+        </div>
       </div>
     </div>`;
   }).join('');
