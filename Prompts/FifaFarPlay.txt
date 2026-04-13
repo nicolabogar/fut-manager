@@ -7,5 +7,6 @@
 
 - [x] No card de torneio, exibir tipo do campeonato e quantidade de jogadores como tags separadas (em vez de texto) (hash: 2097f56)
 - [x] Na home, onde eh mostrado os amistosos, torneios em andamento e o ranking, adicionar accordions de abrir e fechar iguais aos das telas de amistosos; na home os accordions devem sempre iniciar abertos e conforme o usuario clicar manter a acao escolhida (aberto ou fechado) (hash: 98366a5)
+- [ ] A substituicao em toda aplicacao para apresentar o apelido do jogador ao inves do nome quando existir apelido nao estava funcionando em alguns cards (jogo em andamento, sorteio, detalhes, edicao, historico e compartilhamento WhatsApp) — revisado e corrigido em todos os lugares. Na lista de cadastro de jogadores o nome completo e exibido com o campo apelido aparecendo abaixo quando existir
 - [ ] [Descreva aqui a próxima melhoria desejada]
 
