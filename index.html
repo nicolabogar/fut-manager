@@ -3073,6 +3073,8 @@ function _renderSorteioBox(sorteio, eq, diff) {
   const tipo = sorteio.tipo;
   const n1 = _nomesTime(t1);
   const n2 = _nomesTime(t2);
+  const j1 = n1.map(n => ({ nome: n }));
+  const j2 = n2.map(n => ({ nome: n }));
   const box = document.getElementById('ami-sorteio');
   box.style.display = '';
   // Badge clicável — abre edição rápida do time (eficiência + inativo) sem fechar o sorteio
