@@ -6,4 +6,5 @@
 ## MELHORIAS ##
 
 - [x] Quando remover o jogador, deve ser excluído os amistosos, torneios e rankings que ele estiver (hash: dfce579)
+- [ ] Criar um botão sincronizar ranking na página de ranking, só o usuário jogador com login master poderá visualizar essa função
 
