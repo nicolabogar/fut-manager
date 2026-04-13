@@ -1057,7 +1057,9 @@ window.badgeTime = badgeTime;
 /** Renderiza apenas a info de país do time (bandeira pequena + nome do país) */
 function badgeTimeCountryInfo(timeId, nomeTime, tipo, align='center') {
   if (tipo === 'selecoes') {
-    return '';
+    const ds = SELECAO_PAIS[timeId] || { pais:'', paisNome: nomeTime||'' };
+    if (!ds.pais) return '';
+    return `<div style="display:flex;align-items:center;justify-content:${align};gap:3px;white-space:nowrap;">${flagImg(ds.pais, 20)}<span style="font-size:9px;color:var(--text-muted);font-weight:600;">${ds.paisNome}</span></div>`;
   }
   const d = TEAM_DATA[timeId] || { pais:'eu', paisNome:'' };
   return `<div style="display:flex;align-items:center;justify-content:${align};gap:3px;white-space:nowrap;">${flagImg(d.pais, 20)}<span style="font-size:9px;color:var(--text-muted);font-weight:600;">${d.paisNome}</span></div>`;
@@ -2477,15 +2479,13 @@ function cardAmistoso(a, compact=false, readonly=false) {
     </div>` : `
     <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;row-gap:8px;">
       <div style="text-align:center;">
-        ${a.tipo !== 'selecoes' ? ci1 : ''}
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(a.time1?.nome || '?')}</div>
-        ${a.tipo === 'selecoes' ? ci1 : ''}
+        ${ci1}
+        <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${abreviarNome(a.time1?.nome || '?')}</div>
       </div>
       <div></div>
       <div style="text-align:center;">
-        ${a.tipo !== 'selecoes' ? ci2 : ''}
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(a.time2?.nome || '?')}</div>
-        ${a.tipo === 'selecoes' ? ci2 : ''}
+        ${ci2}
+        <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${abreviarNome(a.time2?.nome || '?')}</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:center;">
         ${lpIcon1}
@@ -4022,15 +4022,13 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
     </div>
     <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;row-gap:8px;">
       <div style="text-align:center;">
-        ${!isSel ? badgeTimeCountryInfo(m1.time?.id||'', m1.time?.nome||'', tipo, 'center') : ''}
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(m1.time?.nome||'?')}</div>
-        ${isSel ? badgeTimeCountryInfo(m1.time?.id||'', m1.time?.nome||'', tipo, 'center') : ''}
+        ${badgeTimeCountryInfo(m1.time?.id||'', m1.time?.nome||'', tipo, 'center')}
+        <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${abreviarNome(m1.time?.nome||'?')}</div>
       </div>
       <div></div>
       <div style="text-align:center;">
-        ${!isSel ? badgeTimeCountryInfo(m2.time?.id||'', m2.time?.nome||'', tipo, 'center') : ''}
-        <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(m2.time?.nome||'?')}</div>
-        ${isSel ? badgeTimeCountryInfo(m2.time?.id||'', m2.time?.nome||'', tipo, 'center') : ''}
+        ${badgeTimeCountryInfo(m2.time?.id||'', m2.time?.nome||'', tipo, 'center')}
+        <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${abreviarNome(m2.time?.nome||'?')}</div>
       </div>
       <div style="display:flex;flex-direction:column;align-items:center;">
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${badgeTimeIcon(m1.time?.id||'', m1.time?.nome||'', tipo)}</div>
@@ -4140,8 +4138,8 @@ window.abrirCampeonato = (id) => {
         const tipo = isSel ? 'selecoes' : 'clubes';
         const jogNome = _nomeJogPorId(p.jogadorId, p.nome);
         return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px;text-align:center;">
-          <div style="font-weight:900;font-size:14px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${abreviarNome(p.time?.nome||'?')}</div>
           ${badgeTimeCountryInfo(p.time?.id, p.time?.nome, tipo)}
+          <div style="font-weight:900;font-size:14px;line-height:1.2;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${abreviarNome(p.time?.nome||'?')}</div>
           <div style="display:flex;flex-direction:column;align-items:center;margin-top:8px;">
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${badgeTimeIcon(p.time?.id, p.time?.nome, tipo)}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(p.time?.id))}</div>
@@ -4627,15 +4625,13 @@ function _renderHistorico() {
       </div>
       <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;row-gap:8px;">
         <div style="text-align:center;">
-          ${!isSel ? ci1 : ''}
-          <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(j.meuTime)}</div>
-          ${isSel ? ci1 : ''}
+          ${ci1}
+          <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${abreviarNome(j.meuTime)}</div>
         </div>
         <div></div>
         <div style="text-align:center;">
-          ${!isSel ? ci2 : ''}
-          <div style="font-weight:900;font-size:16px;line-height:1.2;margin-bottom:6px;text-transform:uppercase;">${abreviarNome(nomeAdvTime)}</div>
-          ${isSel ? ci2 : ''}
+          ${ci2}
+          <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${abreviarNome(nomeAdvTime)}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;">
           <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon1}</div>
