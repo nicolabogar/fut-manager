@@ -1788,9 +1788,9 @@ window.salvarEdicaoJogador = async (id) => {
   const isProprioJogador = usuario?.email && j?.email && j.email.toLowerCase() === usuario.email.toLowerCase();
   if (!isMasterUser && !isProprioJogador) { toast('SEM PERMISSAO','erro'); return; }
   const nome  = (document.getElementById('i-nome-edit')?.value.trim() || '').toUpperCase();
-  const email = isMasterUser ? document.getElementById('i-email-edit')?.value.trim().toLowerCase() : (j?.email || '');
+  const email = isMasterUser ? document.getElementById('i-email-edit')?.value.trim().toLowerCase() : (j.email || '');
   const celular = document.getElementById('i-celular-edit')?.value.trim() || '';
-  const isMasterCheck = isMasterUser ? (document.getElementById('i-master-edit')?.checked || false) : (j?.master || false);
+  const isMasterCheck = isMasterUser ? (document.getElementById('i-master-edit')?.checked || false) : j.master;
   if (!nome) { toast('DIGITE O NOME','erro'); return; }
   const btn = document.getElementById('btn-salvar-edit');
   if (btn) { btn.textContent = 'SALVANDO...'; btn.disabled = true; }
