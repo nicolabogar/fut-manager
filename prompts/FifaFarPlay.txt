@@ -1,12 +1,8 @@
-# FIFA FAR PLAY - Prompts de Features v26
+# FIFA FAR PLAY - Prompts de Features v27
 # FORMATO: Cada feature tem status: [ ] pendente | [x] concluído (hash: XXXXXXX)
 # O agente deve marcar o hash do commit ao concluir cada item.
-# Ao finalizar tudo, este arquivo é renomeado para FifaFarPlay_v26.txt e um novo é criado.
+# Ao finalizar tudo, este arquivo é renomeado para FifaFarPlay_v27.txt e um novo é criado.
 
 ## MELHORIAS ##
 
-- [x] Nas tags de jogadores, sempre deve ser pego nome e sobrenome, ignorando tudo que vier depois disso (hash: 8fc3abb)
-- [x] o card de jogos na página de ranking deve ser igual os cards de jogos finalizados, altera apenas algumas tags que no ranking tem a mais (hash: a59e49d)
-- [x] Na pagina de torneio, onde eh apresentado os times, deixar o mesmo layout do card de amistosos em andamento, porem so a parte das informacoes do times e do jogador (hash: 2ed732b)
-
-
+- [ ] [Descreva aqui a próxima melhoria desejada]
