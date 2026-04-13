@@ -4049,6 +4049,7 @@ window.salvarPartida = async (cid, gi) => {
 function calcularRankingAmistosos() {
   const s = {};
   jogadores.forEach(j => { s[j.id]={id:j.id,nome:nomeExibicao(j),fotoUrl:j.fotoUrl||'',vit:0,emp:0,der:0,gp:0,gc:0,pts:0,j:0}; });
+  amistosos.forEach(a => {
     if (!a.resultado) return;
     const {g1,g2}=a.resultado;
     const add=(ids,gf,gc)=>ids?.forEach(id=>{if(!s[id])return;s[id].gp+=gf;s[id].gc+=gc;s[id].j++;s[id].vit+=gf>gc?1:0;s[id].emp+=gf===gc?1:0;s[id].der+=gf<gc?1:0;s[id].pts+=gf>gc?3:gf===gc?1:0;});

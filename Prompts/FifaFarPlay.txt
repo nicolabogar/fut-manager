@@ -5,6 +5,6 @@
 
 ## MELHORIAS ##
 
-- [ ] [Descreva aqui a próxima melhoria desejada]
+- [x] Criar um campo apelido no cadastro de jogadores, e quando informado esse apelido, apresentar o apelido ao invés do nome em todas as informações do aplicativo, por exemplo o card em andamento dos amistosos (hash: 
 
 
