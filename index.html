@@ -1085,11 +1085,7 @@ window.badgeTime = badgeTime;
 
 /** Renderiza apenas a info de país do time (bandeira pequena + nome do país) */
 function badgeTimeCountryInfo(timeId, nomeTime, tipo, align='center') {
-  if (tipo === 'selecoes') {
-    const d = SELECAO_PAIS[timeId] || { pais:'', paisNome: nomeTime||'' };
-    if (!d.pais) return '';
-    return `<div style="display:flex;align-items:center;justify-content:${align};gap:3px;white-space:nowrap;">${flagImg(d.pais, 20)}<span style="font-size:9px;color:var(--text-muted);font-weight:600;">${d.paisNome}</span></div>`;
-  }
+  if (tipo === 'selecoes') return '';
   const d = TEAM_DATA[timeId] || { pais:'eu', paisNome:'' };
   return `<div style="display:flex;align-items:center;justify-content:${align};gap:3px;white-space:nowrap;">${flagImg(d.pais, 20)}<span style="font-size:9px;color:var(--text-muted);font-weight:600;">${d.paisNome}</span></div>`;
 }
