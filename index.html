@@ -16,23 +16,31 @@
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <script>
+    // Cache de login: se usuario estava logado, oculta tela de login e mostra loading
+    if (localStorage.getItem('ffp_logged_in')) {
+      document.documentElement.classList.add('user-cached');
+    }
     // Safety: apenas se erro ANTES do app ficar pronto (inicialização falhou)
     window.addEventListener('error', (ev) => {
       if (window.__AUTH_READY) return; // app já rodando — ignora erros pontuais
       // Ignora erros de carregamento de imagens (comuns e não-fatais)
       if (ev.target && (ev.target.tagName === 'IMG' || ev.target.tagName === 'LINK')) return;
+      document.documentElement.classList.remove('user-cached');
       const loginScreen = document.getElementById('login-screen');
+      const loadingScreen = document.getElementById('loading-screen');
       const app = document.getElementById('app');
       if (loginScreen) loginScreen.style.display = 'flex';
+      if (loadingScreen) loadingScreen.style.display = 'none';
       if (app) app.style.display = 'none';
     }, true);
     // Timeout fallback: se script não terminar em 5s, mostra login
     setTimeout(() => {
       if (!window.__AUTH_READY) {
+        document.documentElement.classList.remove('user-cached');
         const loginScreen = document.getElementById('login-screen');
-        if (loginScreen && loginScreen.style.display === '') {
-          loginScreen.style.display = 'flex';
-        }
+        const loadingScreen = document.getElementById('loading-screen');
+        if (loadingScreen) loadingScreen.style.display = 'none';
+        if (loginScreen) loginScreen.style.display = 'flex';
       }
     }, 5000);
   </script>
@@ -270,6 +278,12 @@
 
     /* Login screen */
     #login-screen { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; background: radial-gradient(ellipse at 50% -20%, rgba(139,92,246,0.25) 0%, transparent 65%), var(--bg); }
+    .user-cached #login-screen { display: none !important; }
+    /* Loading screen (cache de login) */
+    #loading-screen { display: none; min-height: 100dvh; flex-direction: column; align-items: center; justify-content: center; gap: 20px; background: var(--bg); }
+    .user-cached #loading-screen { display: flex !important; }
+    #loading-screen .load-spinner { width: 40px; height: 40px; border: 3px solid rgba(139,92,246,0.25); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    #loading-screen .load-text { color: var(--text-muted); font-size: 14px; font-weight: 600; letter-spacing: 1px; }
 
     /* Orb decorations */
     .orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
@@ -368,6 +382,14 @@
 
   <p id="login-erro" style="color:#FCA5A5; font-size:13px; margin-top:16px; display:none; text-align:center;"></p>
   <p style="color: var(--text-muted); font-size: 12px; margin-top: 32px; text-align:center;">Acesso exclusivo · Dados protegidos</p>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     LOADING SCREEN (cache de login)
+═══════════════════════════════════════════ -->
+<div id="loading-screen">
+  <div class="load-spinner"></div>
+  <p class="load-text">ENTRANDO...</p>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1408,7 +1430,10 @@ getRedirectResult(auth).catch(e => { mostraErro(e.message || 'Erro ao realizar l
 
 onAuthStateChanged(auth, async u => {
   window.__AUTH_READY = true;
+  document.documentElement.classList.remove('user-cached');
+  document.getElementById('loading-screen').style.display = 'none';
   if (u) {
+    localStorage.setItem('ffp_logged_in', '1');
     usuario = u;
     document.getElementById('login-screen').style.display = 'none';
     const app = document.getElementById('app');
@@ -1422,6 +1447,7 @@ onAuthStateChanged(auth, async u => {
     // RG5: aplicar controle de acesso na UI
     _aplicarControleAcesso();
   } else {
+    localStorage.removeItem('ffp_logged_in');
     usuario = null;
     _pararListeners();
     document.getElementById('login-screen').style.display = 'flex';
