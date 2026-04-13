@@ -4079,7 +4079,7 @@ window.abrirCampeonato = (id) => {
     </div>` : ''}
 
     <p class="sec-title" style="margin-bottom:10px;">TIMES SORTEADOS</p>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px;">
+    <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:14px;">
       ${(c.participantes||[]).map(p=>{
         const timeIcon = isSel
           ? `<div style="width:48px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.4);">
@@ -4089,18 +4089,21 @@ window.abrirCampeonato = (id) => {
               <span class="crest-fallback">${(TEAM_DATA[p.time?.id]?.abrev||'?').slice(0,3)}</span>
               ${TEAM_DATA[p.time?.id]?.crest ? `<img src="${TEAM_DATA[p.time?.id].crest}" alt="" loading="eager" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;object-fit:contain;display:none;" onload="this.style.display='';this.previousElementSibling.style.display='none';this.parentElement.style.background='transparent';this.parentElement.style.border='none';" onerror="window._crestError(this)">` : ''}
             </div>`;
+        const jogNome = _nomeJogPorId(p.jogadorId, p.nome);
         return `<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px;">
-          ${timeIcon}
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;">
+            ${timeIcon}
+            ${eficBadge(eficienciaAtual(p.time?.id))}
+          </div>
           <div style="min-width:0;flex:1;">
+            ${jogNome ? `<div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;display:inline-block;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px;">${jogNome}</div>` : ''}
             <div style="font-weight:900;font-size:13px;line-height:1.2;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.time?.nome||'?'}</div>
-            <div style="margin-top:3px;">${eficBadge(eficienciaAtual(p.time?.id))}</div>
-            <div style="font-size:11px;color:var(--purple);font-weight:700;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${_nomeJogPorId(p.jogadorId, p.nome)}</div>
           </div>
         </div>`;
       }).join('')}
     </div>
 
-    ${podeMudar ? `<button onclick="editarNomeTorneio('${c.id}')" style="width:100%;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.35);color:#C4B5FD;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:8px;">EDITAR NOME DO TORNEIO</button>` : ''}
+    ${podeMudar ? `<input id="torneio-nome-inline-${c.id}" class="input" value="${c.nome.toUpperCase().replace(/"/g,'&quot;')}" style="text-transform:uppercase;margin-bottom:8px;width:100%;box-sizing:border-box;" autocomplete="off" oninput="this.value=this.value.toUpperCase()" onblur="_autoSalvarNomeTorneio('${c.id}',this.value)">` : ''}
     ${podeMudar ? (naoIniciado
       ? `<button onclick="ressortearCampeonato('${c.id}')" style="width:100%;background:linear-gradient(135deg,rgba(139,92,246,0.2),rgba(6,182,212,0.2));border:1px solid rgba(139,92,246,0.4);color:#C4B5FD;border-radius:12px;padding:10px;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:16px;">SORTEAR TIMES / ADICIONAR JOGADORES</button>`
       : `<div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:10px 12px;margin-bottom:16px;display:flex;align-items:center;gap:8px;"><span style="font-size:16px;">⚠️</span><span style="font-size:12px;color:#FCD34D;font-weight:700;">TORNEIO EM ANDAMENTO — NÃO É POSSÍVEL SORTEAR OU ADICIONAR JOGADORES</span></div>`)
@@ -4185,26 +4188,15 @@ window.confirmarExcluirCamp = async (id) => {
   fecharModal(); fecharFullscreen(); await carregarCampeonatos(); atualizarDash();
 };
 
-window.editarNomeTorneio = (id) => {
+window._autoSalvarNomeTorneio = async (id, valor) => {
+  const novoNome = (valor || '').trim().toUpperCase();
   const c = campeonatos.find(x => x.id === id);
   if (!c) return;
-  modal(`<p class="modal-title">EDITAR NOME DO TORNEIO</p>
-    <input class="input" id="novo-nome-torneio" value="${c.nome.toUpperCase()}" style="text-transform:uppercase;margin-bottom:16px;" autocomplete="off" oninput="this.value=this.value.toUpperCase()">
-    <div style="display:flex;gap:10px;">
-      <button class="btn-ghost" onclick="fecharModal()">CANCELAR</button>
-      <button class="btn-primary" onclick="confirmarEditarNomeTorneio('${id}')">SALVAR</button>
-    </div>`);
-  setTimeout(() => { const inp = document.getElementById('novo-nome-torneio'); if (inp) { inp.focus(); inp.select(); } }, 100);
-};
-
-window.confirmarEditarNomeTorneio = async (id) => {
-  const c = campeonatos.find(x => x.id === id);
-  if (!c) return;
-  const novoNome = document.getElementById('novo-nome-torneio')?.value.trim().toUpperCase();
-  if (!novoNome) { toast('DIGITE O NOME DO TORNEIO', 'erro'); return; }
-  if (campeonatos.some(x => x.id !== id && x.nome.trim().toUpperCase() === novoNome)) { toast('JA EXISTE UM TORNEIO COM ESSE NOME', 'erro'); return; }
+  if (!novoNome) { toast('NOME NAO PODE SER VAZIO', 'erro'); abrirCampeonato(id); return; }
+  if (novoNome === c.nome.trim().toUpperCase()) return;
+  if (campeonatos.some(x => x.id !== id && x.nome.trim().toUpperCase() === novoNome)) { toast('JA EXISTE UM TORNEIO COM ESSE NOME', 'erro'); abrirCampeonato(id); return; }
   await updateDoc(doc(db, 'campeonatos', id), { nome: novoNome });
-  fecharModal(); await carregarCampeonatos(); atualizarDash(); abrirCampeonato(id);
+  await carregarCampeonatos(); atualizarDash(); abrirCampeonato(id);
 };
 
 window.ressortearCampeonato = (id) => {
