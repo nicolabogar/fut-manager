@@ -954,16 +954,31 @@ function flagImg(paisCode, w=20) {
 window._escSQ = function(s) { return String(s).replace(/'/g,"\\'"); };
 /** Escapa caracteres HTML para uso seguro em innerHTML/SVG */
 window._escHtml = function(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); };
-/** Retry de crest — tenta recarregar até 2x; em caso de falha permanente mostra o fallback */
+/** Retorna dados do TEAM_DATA ou gera fallback visual com cores distintas por time */
+function _teamDataOuFallback(timeId, nomeTime) {
+  if (TEAM_DATA[timeId]) return TEAM_DATA[timeId];
+  const s = nomeTime || timeId || '?';
+  let h = 0; for (let i = 0; i < s.length; i++) h = ((h << 5) - h) + s.charCodeAt(i);
+  h = Math.abs(h);
+  const hue = h % 360;
+  return { abrev: (nomeTime || '?').slice(0, 3).toUpperCase(), fundo: `hsl(${hue},40%,18%)`, cor: `hsl(${(hue + 180) % 360},60%,80%)`, pais: '', paisNome: '', crest: '' };
+}
+/** Retry de crest — tenta recarregar até 3x com cache-bust; em caso de falha permanente mostra o fallback */
 window._crestError = function(img) {
   if (img._retrying) return;
   var retries = (img._retries || 0) + 1;
   img._retries = retries;
-  if (retries <= 2) {
+  if (retries <= 3) {
     img._retrying = true;
-    var src = img.getAttribute('src');
+    var src = img.getAttribute('data-original-src') || img.getAttribute('src');
+    if (!img.getAttribute('data-original-src')) img.setAttribute('data-original-src', src);
     img.removeAttribute('src');
-    setTimeout(function() { img._retrying = false; img.setAttribute('src', src); }, retries * 1500);
+    setTimeout(function() {
+      img._retrying = false;
+      // Adiciona cache-bust para evitar cache de erros
+      var bust = src + (src.indexOf('?') >= 0 ? '&' : '?') + '_r=' + retries + '_' + Date.now();
+      img.setAttribute('src', bust);
+    }, retries * 1500);
   } else {
     img.style.display = 'none';
     var fb = img.previousElementSibling;
@@ -975,7 +990,7 @@ window._crestError = function(img) {
 
 /** Brasão do clube — usa logo real do CDN com fallback para escudo SVG */
 function shieldClube(timeId, nomeTime, size=56) {
-  const d = TEAM_DATA[timeId] || { abrev:(nomeTime||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#AAAAAA' };
+  const d = _teamDataOuFallback(timeId, nomeTime);
   const h = Math.round(size * 1.15);
   const fs = size > 50 ? 15 : 11;
   const svgFallback = `<svg width="${size}" height="${h}" viewBox="0 0 56 64" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 3px 8px rgba(0,0,0,0.4));display:block;"><path d="M28 2 L54 11 L54 40 Q54 56 28 63 Q2 56 2 40 L2 11 Z" fill="${_escHtml(d.fundo)}" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/><text x="28" y="${Math.round(h*0.58)}" text-anchor="middle" dominant-baseline="middle" fill="${_escHtml(d.cor)}" font-weight="900" font-size="${fs}" font-family="system-ui">${_escHtml(d.abrev)}</text></svg>`;
@@ -1000,7 +1015,7 @@ function badgeTimeCompact(timeId, nomeTime, tipo) {
       ${d.pais ? `<img src="https://flagcdn.com/w80/${d.pais}.png" alt="" loading="lazy" decoding="async" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=\\'font-size:18px;\\'>🌍</span>'">` : '<span style="font-size:18px;">🌍</span>'}
     </div>`;
   }
-  const d = TEAM_DATA[timeId] || { abrev:(nomeTime||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#AAAAAA' };
+  const d = _teamDataOuFallback(timeId, nomeTime);
   if (d.crest) {
     return `<div style="position:relative;width:44px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0;background:${d.fundo};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:${d.cor};letter-spacing:-0.3px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 2px 6px rgba(0,0,0,0.3);">
       <span class="crest-fallback">${d.abrev}</span>
@@ -1012,7 +1027,7 @@ function badgeTimeCompact(timeId, nomeTime, tipo) {
 
 /** Badge de clube: quadrado colorido com abreviação + bandeira + nome do país */
 function badgeClube(timeId, nomeTime) {
-  const d = TEAM_DATA[timeId] || { abrev:(nomeTime||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#AAAAAA', pais:'eu', paisNome:'' };
+  const d = _teamDataOuFallback(timeId, nomeTime);
   return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
     <div style="display:flex;align-items:center;gap:3px;white-space:nowrap;">
       ${flagImg(d.pais, 20)}
@@ -1525,7 +1540,7 @@ onAuthStateChanged(auth, async u => {
     app.style.display = 'flex';
     if (u.photoURL) { document.getElementById('user-foto').src = u.photoURL; document.getElementById('user-foto').style.display = ''; }
     document.getElementById('ham-user-name').textContent = (u.displayName || u.email || 'USUARIO').toUpperCase();
-    await carregarTimes();
+    try { await carregarTimes(); } catch(e) { console.warn('carregarTimes falhou:', e); }
     await carregarDados();
     // RG4: auto-cadastro de jogador no primeiro login
     await _autoCadastrarJogador(u);
@@ -1667,7 +1682,8 @@ async function carregarTimes() {
       SELECAO_PAIS[t.id] = { pais: t.bandeira, paisNome: t.paisNome || t.nome };
     }
     if (t.tipo === 'clube' && !TEAM_DATA[t.id]) {
-      TEAM_DATA[t.id] = { abrev:(t.nome||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#FFFFFF', pais:t.bandeira||'eu', paisNome:t.paisNome||'', crest:t.crest||'' };
+      const fb = _teamDataOuFallback(t.id, t.nome);
+      TEAM_DATA[t.id] = { ...fb, pais:t.bandeira||fb.pais||'eu', paisNome:t.paisNome||fb.paisNome||'', crest:t.crest||'' };
     } else if (t.tipo === 'clube' && TEAM_DATA[t.id] && t.crest) {
       TEAM_DATA[t.id] = { ...TEAM_DATA[t.id], crest: t.crest };
     }
@@ -2928,9 +2944,10 @@ window._abrirDropdownManualJog = (jogId) => {
   if (!filtrado.length) { drop.style.display='none'; return; }
   drop.innerHTML = filtrado.slice(0,30).map(t=>{
     const isSel = t._tipo==='selecoes';
-    const paisCode = isSel ? (SELECAO_PAIS[t.id]?.pais||'') : (TEAM_DATA[t.id]?.pais||'');
+    const _td = !isSel ? _teamDataOuFallback(t.id, t.nome) : null;
+    const paisCode = isSel ? (SELECAO_PAIS[t.id]?.pais||'') : (_td?.pais||'');
     const flagEl = paisCode ? `<img src="https://flagcdn.com/w40/${paisCode}.png" alt="" loading="lazy" style="width:22px;height:16px;object-fit:cover;border-radius:2px;flex-shrink:0;" onerror="this.style.display='none'">` : '';
-    const shieldEl = !isSel ? `<div style="width:22px;height:22px;border-radius:5px;background:${TEAM_DATA[t.id]?.fundo||'#1E1E35'};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:${TEAM_DATA[t.id]?.cor||'#AAA'};flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">${TEAM_DATA[t.id]?.abrev||t.nome.slice(0,3).toUpperCase()}</div>` : '';
+    const shieldEl = !isSel ? `<div style="width:22px;height:22px;border-radius:5px;background:${_td.fundo};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:${_td.cor};flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">${_td.abrev}</div>` : '';
     const eficEl = t.eficiencia ? eficBadge(t.eficiencia) : '';
     return `<div onclick="selecionarTimeManualJog('${jogId}','${t.id}','${t.nome.replace(/'/g,"\\'")}',${t.forca},'${t._tipo}')"
       style="padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:600;font-size:12px;display:flex;align-items:center;gap:8px;">
@@ -3807,9 +3824,10 @@ window._abrirDropdownManualCC = (jogId) => {
   if (!filtrado.length) { drop.style.display='none'; return; }
   const isSel = meta?.tipo === 'selecoes';
   drop.innerHTML = filtrado.slice(0,30).map(t=>{
-    const paisCode = isSel ? (SELECAO_PAIS[t.id]?.pais||'') : (TEAM_DATA[t.id]?.pais||'');
+    const _td = !isSel ? _teamDataOuFallback(t.id, t.nome) : null;
+    const paisCode = isSel ? (SELECAO_PAIS[t.id]?.pais||'') : (_td?.pais||'');
     const flagEl = paisCode ? `<img src="https://flagcdn.com/w40/${paisCode}.png" alt="" loading="lazy" style="width:22px;height:16px;object-fit:cover;border-radius:2px;flex-shrink:0;" onerror="this.style.display='none'">` : '';
-    const shieldEl = !isSel ? `<div style="width:22px;height:22px;border-radius:5px;background:${TEAM_DATA[t.id]?.fundo||'#1E1E35'};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:${TEAM_DATA[t.id]?.cor||'#AAA'};flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">${TEAM_DATA[t.id]?.abrev||t.nome.slice(0,3).toUpperCase()}</div>` : '';
+    const shieldEl = !isSel ? `<div style="width:22px;height:22px;border-radius:5px;background:${_td.fundo};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:${_td.cor};flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">${_td.abrev}</div>` : '';
     const eficEl = t.eficiencia ? eficBadge(t.eficiencia) : '';
     return `<div onclick="selecionarTimeManualCC('${jogId}','${t.id}','${t.nome.replace(/'/g,"\\'")}',${t.forca},'${isSel?'selecoes':'clubes'}')"
       style="padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:600;font-size:12px;display:flex;align-items:center;gap:8px;">
@@ -4083,10 +4101,13 @@ window.abrirCampeonato = (id) => {
           ? `<div style="width:48px;height:36px;border-radius:8px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.4);">
               <img src="https://flagcdn.com/w80/${(SELECAO_PAIS[p.time?.id]||{pais:''}).pais}.png" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'">
             </div>`
-          : `<div style="position:relative;width:44px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0;background:${TEAM_DATA[p.time?.id]?.fundo||'#1E1E35'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:${TEAM_DATA[p.time?.id]?.cor||'#fff'};">
-              <span class="crest-fallback">${(TEAM_DATA[p.time?.id]?.abrev||'?').slice(0,3)}</span>
-              ${TEAM_DATA[p.time?.id]?.crest ? `<img src="${TEAM_DATA[p.time?.id].crest}" alt="" loading="eager" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;object-fit:contain;display:none;" onload="this.style.display='';this.previousElementSibling.style.display='none';this.parentElement.style.background='transparent';this.parentElement.style.border='none';" onerror="window._crestError(this)">` : ''}
+          : (() => {
+              const _td = _teamDataOuFallback(p.time?.id, p.time?.nome);
+              return `<div style="position:relative;width:44px;height:44px;border-radius:10px;overflow:hidden;flex-shrink:0;background:${_td.fundo};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:${_td.cor};">
+              <span class="crest-fallback">${(_td.abrev||'?').slice(0,3)}</span>
+              ${_td.crest ? `<img src="${_td.crest}" alt="" loading="eager" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;object-fit:contain;display:none;" onload="this.style.display='';this.previousElementSibling.style.display='none';this.parentElement.style.background='transparent';this.parentElement.style.border='none';" onerror="window._crestError(this)">` : ''}
             </div>`;
+            })();
         const jogNome = _nomeJogPorId(p.jogadorId, p.nome);
         return `<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:12px;">
           <div style="display:flex;align-items:center;flex-shrink:0;">
@@ -4773,7 +4794,7 @@ function renderTimesEdit() {
       icone = `<div style="width:52px;height:39px;border-radius:7px;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.3);">${d.pais?`<img src="https://flagcdn.com/w80/${d.pais}.png" loading="lazy" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=\\'font-size:22px;\\'>🌍</span>'">`: '<span style="font-size:22px;">🌍</span>'}</div>`;
       countryInfo = `<span style="font-size:10px;color:var(--text-muted);font-weight:600;">${d.paisNome||''}</span>`;
     } else {
-      const d = TEAM_DATA[t.id] || { abrev:(t.nome||'?').slice(0,3).toUpperCase(), fundo:'#1E1E35', cor:'#AAAAAA', pais:'', paisNome:'' };
+      const d = _teamDataOuFallback(t.id, t.nome);
       const crestHtml = d.crest
         ? `<div style="position:relative;width:57px;height:57px;border-radius:12px;overflow:hidden;flex-shrink:0;background:${d.fundo};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:${d.cor};letter-spacing:-0.3px;border:1px solid rgba(255,255,255,0.12);box-shadow:0 2px 6px rgba(0,0,0,0.3);">
             <span class="crest-fallback">${d.abrev}</span>
