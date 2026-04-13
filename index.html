@@ -1431,7 +1431,8 @@ getRedirectResult(auth).catch(e => { mostraErro(e.message || 'Erro ao realizar l
 onAuthStateChanged(auth, async u => {
   window.__AUTH_READY = true;
   document.documentElement.classList.remove('user-cached');
-  document.getElementById('loading-screen').style.display = 'none';
+  const loadingScreen = document.getElementById('loading-screen');
+  if (loadingScreen) loadingScreen.style.display = 'none';
   if (u) {
     localStorage.setItem('ffp_logged_in', '1');
     usuario = u;
