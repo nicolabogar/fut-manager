@@ -2230,7 +2230,7 @@ function cardAmistoso(a, compact=false, readonly=false) {
   const lpBadge2 = (!temRes && master && !compact)
     ? `<div style="display:flex;justify-content:center;margin-bottom:4px;cursor:pointer;user-select:none;" title="Segure para editar o time" onpointerdown="_lpAmiStart('${a.id}','${a.time2?.timeId}','${t2nom}','${a.tipo}')" onpointerup="_lpAmiEnd()" onpointercancel="_lpAmiEnd()" onclick="if(window._lpAmiTriggered){window._lpAmiTriggered=false;event.stopPropagation();}">${b2}</div>`
     : `<div style="display:flex;justify-content:center;margin-bottom:4px;">${b2}</div>`;
-  // RG7b: não-master vê placar somente-leitura; master vê inputs de edição
+  // RG7b: não-master vê placar desabilitado; master vê inputs de edição
   const placarDireto = temRes
     ? `<div style="font-size:29px;font-weight:900;letter-spacing:1px;color:var(--yellow);">${a.resultado.g1}<span style="color:var(--text-muted);font-size:13px;"> × </span>${a.resultado.g2}</div>`
     : master
@@ -2240,7 +2240,12 @@ function cardAmistoso(a, compact=false, readonly=false) {
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="2" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
         </div>
         <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}',this)" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>`
-      : `<div style="color:var(--text-muted);font-size:13px;font-weight:700;">EM ANDAMENTO</div>`;
+      : `<div style="display:flex;align-items:center;gap:4px;opacity:0.4;">
+          <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="1" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
+          <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
+          <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="2" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
+        </div>
+        <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:not-allowed;opacity:0.4;">FIM</button>`;
   const cardId = `ami-card-${a.id}`;
   const swipeOuter = master
     ? `<div class="swipe-wrap" data-swipe-id="${a.id}" data-swipe-nome="Amistoso">`
@@ -2279,7 +2284,12 @@ function cardAmistoso(a, compact=false, readonly=false) {
                 <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="2" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
                 <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}',this)" style="margin-left:4px;padding:4px 8px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:6px;cursor:pointer;">OK</button>
               </div>`
-            : `<div style="color:var(--text-muted);font-size:11px;font-weight:700;">EM<br>ANDAMENTO</div>`}
+            : `<div style="display:flex;align-items:center;gap:3px;opacity:0.4;">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="1" class="placar-input" disabled onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
+                <span style="color:var(--text-muted);font-size:11px;font-weight:900;">×</span>
+                <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="2" class="placar-input" disabled onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
+                <button disabled onclick="event.stopPropagation()" style="margin-left:4px;padding:4px 8px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:6px;cursor:not-allowed;opacity:1;">OK</button>
+              </div>`}
       </div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
         <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${abreviarNome(a.time2?.nome || '?')}</div>
