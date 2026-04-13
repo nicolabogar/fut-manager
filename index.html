@@ -489,6 +489,16 @@
           TIMES
         </button>
         <div style="height:1px;background:rgba(255,255,255,0.07);margin:6px 0;"></div>
+        <!-- RG-SIM: seção de simulação de visão — apenas para masters reais -->
+        <div id="ham-sim-section" style="display:none;">
+          <div style="padding:8px 10px 4px;font-size:10px;font-weight:800;color:var(--text-muted);letter-spacing:0.08em;">SIMULAR VISAO</div>
+          <div style="padding:0 10px 8px;">
+            <select id="sim-usuario-select" onchange="simularUsuario(this.value)" style="width:100%;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.35);color:var(--text);border-radius:10px;padding:8px 10px;font-size:12px;font-weight:700;text-transform:uppercase;cursor:pointer;outline:none;">
+              <option value="">NENHUM (MINHA VISAO)</option>
+            </select>
+          </div>
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.07);margin:6px 0;"></div>
         <button id="btn-sair" class="ham-menu-btn" style="color:#FCA5A5;">
           <span class="ham-menu-ico" style="background:rgba(239,68,68,0.15);color:#FCA5A5;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
@@ -498,6 +508,14 @@
       </div>
     </div>
   </header>
+  <!-- RG-SIM: banner de simulação de visão -->
+  <div id="banner-simulacao" style="display:none;background:linear-gradient(135deg,rgba(245,158,11,0.25),rgba(239,68,68,0.2));border-bottom:1px solid rgba(245,158,11,0.4);padding:6px 16px;align-items:center;justify-content:space-between;gap:8px;">
+    <div style="display:flex;align-items:center;gap:8px;min-width:0;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FCD34D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      <span id="banner-sim-nome" style="font-size:11px;font-weight:800;color:#FCD34D;text-transform:uppercase;letter-spacing:0.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></span>
+    </div>
+    <button onclick="simularUsuario('')" style="background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.4);color:#FCD34D;border-radius:8px;padding:3px 8px;font-size:10px;font-weight:800;cursor:pointer;white-space:nowrap;flex-shrink:0;">SAIR</button>
+  </div>
 
   <!-- CONTEÚDO -->
   <main style="flex:1; overflow-y:auto;" id="main">
@@ -1112,6 +1130,7 @@ function timeFlagInline(timeId, tipo) {
 // ─── ESTADO ─────────────────────────────────────────────────────────
 let usuario    = null;
 let jogadores  = [];
+let _simulandoJogadorId = null; // RG-SIM: id do jogador que o master está simulando (null = visão própria)
 
 // ─── HELPERS DE NOME ────────────────────────────────────────────────
 function _nomeExibicao(j) { return (j && (j.apelido || j.nome)) || ''; }
@@ -1686,6 +1705,7 @@ onAuthStateChanged(auth, async u => {
   } else {
     localStorage.removeItem('ffp_logged_in');
     usuario = null;
+    _simulandoJogadorId = null; // RG-SIM: reset simulação ao sair
     _pararListeners();
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
@@ -1695,6 +1715,7 @@ onAuthStateChanged(auth, async u => {
 // RG5: controle de acesso — oculta funcionalidades de master para usuários normais
 function _aplicarControleAcesso() {
   const master = temPermissao();
+  const masterReal = _isMasterReal();
   // Botão + CRIAR na home: apenas para master (oculta o wrapper inteiro para não deixar espaço em branco)
   const wrapBtnCriarHome = document.getElementById('wrap-btn-criar-home');
   if (wrapBtnCriarHome) wrapBtnCriarHome.style.display = master ? '' : 'none';
@@ -1710,9 +1731,54 @@ function _aplicarControleAcesso() {
   // Botão sincronizar ranking: apenas para master
   const btnSyncRanking = document.getElementById('btn-sync-ranking');
   if (btnSyncRanking) btnSyncRanking.style.display = master ? '' : 'none';
+  // RG-SIM: seção de simulação no menu hamburger — apenas para masters reais
+  const hamSimSection = document.getElementById('ham-sim-section');
+  if (hamSimSection) {
+    hamSimSection.style.display = masterReal ? '' : 'none';
+    if (masterReal) _popularSelectSimulacao();
+  }
+  // Atualizar banner de simulação
+  _atualizarBannerSimulacao();
   // Itens do menu hamburger para não-master: apenas home e ranking visíveis
   // (mantém acesso de leitura; criação bloqueada via botões)
 }
+
+// RG-SIM: popula o select com jogadores não-master
+function _popularSelectSimulacao() {
+  const sel = document.getElementById('sim-usuario-select');
+  if (!sel) return;
+  const naoMasters = jogadores.filter(j => !j.master);
+  const html = `<option value="">NENHUM (MINHA VISAO)</option>` +
+    naoMasters.map(j => {
+      const nome = _escHtml((j.apelido || j.nome || '').toUpperCase());
+      const sel_ = j.id === _simulandoJogadorId ? ' selected' : '';
+      return `<option value="${j.id}"${sel_}>${nome}</option>`;
+    }).join('');
+  sel.innerHTML = html;
+}
+
+// RG-SIM: atualiza o banner de simulação no topo
+function _atualizarBannerSimulacao() {
+  const banner = document.getElementById('banner-simulacao');
+  if (!banner) return;
+  if (_simulandoJogadorId) {
+    const j = jogadores.find(x => x.id === _simulandoJogadorId);
+    const nomeEl = document.getElementById('banner-sim-nome');
+    if (nomeEl) nomeEl.textContent = 'SIMULANDO: ' + ((j?.apelido || j?.nome || 'JOGADOR')).toUpperCase();
+    banner.style.display = 'flex';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+// RG-SIM: ativa/desativa simulação de visão de outro jogador
+window.simularUsuario = function(id) {
+  _simulandoJogadorId = id || null;
+  fecharHamburger();
+  _aplicarControleAcesso();
+  atualizarDash();
+  renderJogadores();
+};
 
 function _normalizarNome(s) { return String(s||'').trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().replace(/[^A-Z0-9 ]/g,'').trim() || 'JOGADOR'; }
 function _escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -1847,6 +1913,8 @@ function carregarJogadores() {
       snap => {
         jogadores = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderJogadores();
+        // RG-SIM: atualiza o select de simulação ao recarregar jogadores
+        if (_isMasterReal()) _popularSelectSimulacao();
         resolve();
       },
       err => { console.error('jogadores onSnapshot:', err); resolve(); }
@@ -1878,10 +1946,24 @@ async function _migrarMasterInicial() {
   }
 }
 
-function temPermissao() {
+function _isMasterReal() {
   const masters = getMasters();
-  if (!masters.length) return true; // sem master definido → todos podem
+  if (!masters.length) return true;
   return usuario?.email && masters.some(m => m.email && usuario.email.toLowerCase() === m.email.toLowerCase());
+}
+
+// RG-SIM: email efetivo para filtros de participação (usa jogador simulado se ativo)
+function _emailEfetivo() {
+  if (_simulandoJogadorId) {
+    const j = jogadores.find(x => x.id === _simulandoJogadorId);
+    return j?.email || null;
+  }
+  return usuario?.email || null;
+}
+
+function temPermissao() {
+  if (_simulandoJogadorId) return false; // RG-SIM: master simulando outro usuário age como não-master
+  return _isMasterReal();
 }
 
 // ─── SWIPE-TO-DELETE (iOS style) ──────────────────────────────────────
@@ -1987,8 +2069,9 @@ function renderJogadores() {
   const master = getMaster();
   const podeMudar = temPermissao();
   // RG5b: não-master pode editar apenas o próprio cadastro
-  const meuJogadorId = !podeMudar && usuario?.email
-    ? (jogadores.find(j => j.email && j.email.toLowerCase() === usuario.email.toLowerCase())?.id || null)
+  const _effEmail = _emailEfetivo();
+  const meuJogadorId = !podeMudar && _effEmail
+    ? (jogadores.find(j => j.email && j.email.toLowerCase() === _effEmail.toLowerCase())?.id || null)
     : null;
   const sorted = [...jogadores].sort((a, b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR', { sensitivity: 'base' }));
   c.innerHTML = sorted.map(j => {
@@ -2036,7 +2119,7 @@ window.editarJogador = (id) => {
   if (!j) return;
   const isMasterUser = temPermissao();
   // RG5b: não-master só pode editar o próprio cadastro
-  const isProprioJogador = usuario?.email && j.email && j.email.toLowerCase() === usuario.email.toLowerCase();
+  const isProprioJogador = _emailEfetivo() && j.email && j.email.toLowerCase() === _emailEfetivo().toLowerCase();
   if (!isMasterUser && !isProprioJogador) return;
   const masterVal = j.master ? '1' : '0';
   fullscreen('EDIÇÃO', `
@@ -2092,7 +2175,7 @@ window.salvarEdicaoJogador = async (id) => {
   const isMasterUser = temPermissao();
   const j = jogadores.find(x => x.id === id);
   // RG5b: não-master só pode editar o próprio cadastro
-  const isProprioJogador = usuario?.email && j?.email && j.email.toLowerCase() === usuario.email.toLowerCase();
+  const isProprioJogador = _emailEfetivo() && j?.email && j.email.toLowerCase() === _emailEfetivo().toLowerCase();
   if (!isMasterUser && !isProprioJogador) { toast('SEM PERMISSAO','erro'); return; }
   const nome  = (document.getElementById('i-nome-edit')?.value.trim() || '').toUpperCase();
   const apelido = (document.getElementById('i-apelido-edit')?.value.trim() || '').toUpperCase();
@@ -4794,7 +4877,8 @@ function atualizarDash() {
 
   // RG6: filtrar por participação para usuários não-master
   const isMaster = temPermissao();
-  const jogadorAtual = !isMaster ? jogadores.find(j => j.email && usuario?.email && j.email.toLowerCase() === usuario.email.toLowerCase()) : null;
+  const _effEmail = _emailEfetivo();
+  const jogadorAtual = !isMaster ? jogadores.find(j => j.email && _effEmail && j.email.toLowerCase() === _effEmail.toLowerCase()) : null;
   const jogAtualId = jogadorAtual?.id || null;
 
   // Amistosos em andamento na home
