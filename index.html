@@ -4522,6 +4522,9 @@ function cardCampHome(c, modoLista=false) {
 
   const podeMudar = temPermissao();
   const cardHtml = `<div ${idAttr}class="match-card" style="margin-bottom:${modoLista?'0':'10px'};padding:12px;cursor:pointer;" onclick="abrirCampeonato('${c.id}')">
+    <div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.07);">
+      <div style="font-weight:900;font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:0.02em;">${c.nome}</div>
+    </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="tag tag-purple">TORNEIO</span>
@@ -4529,8 +4532,7 @@ function cardCampHome(c, modoLista=false) {
         <span class="tag tag-gray">${isSel?'SELECOES':'CLUBES'}</span>
       </div>
     </div>
-    <div style="font-weight:800;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.nome}</div>
-    <div style="font-size:11px;color:var(--text-muted);margin-top:2px;text-transform:uppercase;">${meta.nome} · ${c.participantes?.length||0} JOGADORES</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:-4px;margin-bottom:4px;text-transform:uppercase;">${meta.nome} · ${c.participantes?.length||0} JOGADORES</div>
     ${!finalizado ? `<div style="margin-top:6px;display:flex;align-items:center;gap:6px;">
       <div style="flex:1;height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;">
         <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--yellow),var(--green));border-radius:2px;"></div>
