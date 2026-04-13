@@ -1295,13 +1295,12 @@ async function fazerLogin(provider, btnId) {
         btn.style.pointerEvents = '';
         mostraErro(e2.message || 'Erro ao realizar login. Tente novamente.');
       }
-    } else if (e.code === 'auth/cancelled-popup-request') {
-      btn.style.opacity = '1';
-      btn.style.pointerEvents = '';
     } else {
       btn.style.opacity = '1';
       btn.style.pointerEvents = '';
-      mostraErro(e.message || 'Erro ao realizar login. Tente novamente.');
+      if (e.code !== 'auth/cancelled-popup-request') {
+        mostraErro(e.message || 'Erro ao realizar login. Tente novamente.');
+      }
     }
   }
 }
