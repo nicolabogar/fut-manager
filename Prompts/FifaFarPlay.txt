@@ -1,11 +1,9 @@
-# FIFA FAR PLAY - Prompts de Features v21
+# FIFA FAR PLAY - Prompts de Features v22
 # FORMATO: Cada feature tem status: [ ] pendente | [x] concluído (hash: XXXXXXX)
 # O agente deve marcar o hash do commit ao concluir cada item.
-# Ao finalizar tudo, este arquivo é renomeado para FifaFarPlay_v21.txt e um novo é criado.
+# Ao finalizar tudo, este arquivo é renomeado para FifaFarPlay_v22.txt e um novo é criado.
 
 ## MELHORIAS ##
 
-- [x] Ao criar amistosos e torneios, o sorteio sempre analisa as tags de eficiência dos times: se uma única tag estiver selecionada, apenas times com essa tag participam do sorteio; sempre deve haver pelo menos uma tag selecionada; a regra de paridade é bom x bom, bom x moderado, moderado x moderado, moderado x ruim, ruim x ruim. (hash: f770d48)
-- [x] O título dos torneios tem mais destaque nos cards: título maior (18px, gradiente purple→cyan) em div própria no topo do card, separado por linha divisória das tags. (hash: f088748)
-- [ ] Quando clico no card de amistoso em andamento, quero que tenha a opção de excluir o amistoso dentro da tela de edição
+- [ ] [Descreva aqui a próxima melhoria desejada]
 
