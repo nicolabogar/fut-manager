@@ -1678,6 +1678,7 @@ onAuthStateChanged(auth, async u => {
     document.getElementById('ham-user-name').textContent = (u.displayName || u.email || 'USUARIO').toUpperCase();
     try { await carregarTimes(); } catch(e) { console.warn('carregarTimes falhou:', e); }
     await carregarDados();
+    await _migrarMasterInicial();
     // RG4: auto-cadastro de jogador no primeiro login
     await _autoCadastrarJogador(u);
     // RG5: aplicar controle de acesso na UI
@@ -1864,6 +1865,19 @@ window.avatarSvg = avatarSvg;
 
 function getMaster() { return jogadores.find(j => j.master); }
 function getMasters() { return jogadores.filter(j => j.master); }
+
+// Migracao inicial: promove nicolabogar@gmail.com a master se nenhum master existir
+async function _migrarMasterInicial() {
+  if (getMasters().length) return;
+  const jogador = jogadores.find(j => j.email && j.email.toLowerCase() === 'nicolabogar@gmail.com');
+  if (!jogador) return;
+  try {
+    await updateDoc(doc(db, 'jogadores', jogador.id), { master: true });
+  } catch (e) {
+    console.warn('_migrarMasterInicial:', e);
+  }
+}
+
 function temPermissao() {
   const masters = getMasters();
   if (!masters.length) return true; // sem master definido → todos podem
