@@ -4174,10 +4174,12 @@ function _coletarJogosJogador(jogadorId) {
     const advGol = isT1 ? a.resultado.g2 : a.resultado.g1;
     const res = meuGol > advGol ? 'V' : meuGol < advGol ? 'D' : 'E';
     const ts = a.criadoEm?.seconds ? a.criadoEm.seconds * 1000 : null;
+    const advJogadores = isT1 ? (a.time2?.jogadores||[]) : (a.time1?.jogadores||[]);
     jogos.push({
       tipo:'AMISTOSO', tipoTime: a.tipo==='selecoes'?'SELECAO':'CLUBE',
       meuTime: isT1?a.time1?.nome:a.time2?.nome,
       advTime: isT1?a.time2?.nome:a.time1?.nome,
+      advJogadores,
       meuGol, advGol, res, ts, torneio: null, amiId: a.id
     });
   });
@@ -4191,10 +4193,12 @@ function _coletarJogosJogador(jogadorId) {
     const advGol = isJ1 ? p.g2 : p.g1;
     const res = meuGol > advGol ? 'V' : meuGol < advGol ? 'D' : 'E';
     const ts = c.criadoEm?.seconds ? c.criadoEm.seconds * 1000 : null;
+    const advNome = isJ1 ? p.j2Nome : p.j1Nome;
     jogos.push({
       tipo:'TORNEIO', tipoTime: CAMP_META[c.tipo]?.tipo==='selecoes'?'SELECAO':'CLUBE',
       meuTime: m.time?.nome||'?',
-      advTime: isJ1 ? p.j2Nome : p.j1Nome,
+      advTime: advNome,
+      advJogadores: advNome ? [advNome] : [],
       meuGol, advGol, res, ts, torneio: c.nome
     });
   })));
@@ -4212,7 +4216,7 @@ window.abrirHistoricoJogador = (jogadorId, nome) => {
   _histState.pag = 0;
 
   const allJogos = _coletarJogosJogador(jogadorId);
-  const advs = [...new Set(allJogos.map(j => j.advTime).filter(Boolean))].sort();
+  const advs = [...new Set(allJogos.flatMap(j => j.advJogadores||[]).filter(Boolean))].sort();
 
   fullscreen(`${nome.toUpperCase()}`, `
     <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;">
@@ -4297,7 +4301,7 @@ function _renderHistorico() {
   else if (_histState.filtroTipo === 'CLUBE' || _histState.filtroTipo === 'SELECAO')
     jogos = jogos.filter(j => j.tipoTime === _histState.filtroTipo);
 
-  if (_histState.filtroAdv) jogos = jogos.filter(j => j.advTime === _histState.filtroAdv);
+  if (_histState.filtroAdv) jogos = jogos.filter(j => (j.advJogadores||[]).includes(_histState.filtroAdv));
   if (_histState.dataIni) { const d = new Date(_histState.dataIni).getTime(); jogos = jogos.filter(j => j.ts && j.ts >= d); }
   if (_histState.dataFim) { const d = new Date(_histState.dataFim).getTime() + 86399999; jogos = jogos.filter(j => j.ts && j.ts <= d); }
 
