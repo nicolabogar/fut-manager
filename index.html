@@ -4235,7 +4235,7 @@ window.criarCampeonato = async () => {
   }
   const grupos = gerarGrupos(distribuidos, tipo);
   try {
-    const docRef = await addDoc(collection(db, 'campeonatos'), { nome, tipo, modoDupla: modoDupla || false, participantes: distribuidos, grupos, fase:'grupos', status:'ativo', criadoEm: serverTimestamp() });
+    const docRef = await addDoc(collection(db, 'campeonatos'), { nome, tipo, modoDupla, participantes: distribuidos, grupos, fase:'grupos', status:'ativo', criadoEm: serverTimestamp() });
     fecharFullscreen(); await carregarCampeonatos(); atualizarDash();
     abrirCampeonato(docRef.id);
   } catch(e) { toast('ERRO AO SALVAR', 'erro'); } finally { _unlockBtn(btn); }
