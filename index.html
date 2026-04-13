@@ -1078,8 +1078,8 @@ function _nomeJogPorId(id, fallback) { const j = jogadores.find(x => x.id === id
 function _nomesTime(time) {
   const ids = time?.jogadoresIds || [];
   const nomes = time?.jogadores || [];
-  if (ids.length) return ids.map((id, i) => _nomeJogPorId(id, nomes[i] || ''));
-  return nomes;
+  if (ids.length) return ids.map((id, i) => _nomeTag(_nomeJogPorId(id, nomes[i] || '')));
+  return nomes.map(n => _nomeTag(n));
 }
 let amistosos  = [];
 let campeonatos= [];
