@@ -5,6 +5,6 @@
 
 ## MELHORIAS ##
 
-- [ ] [Descreva aqui a próxima melhoria desejada]
+- [ ] Sincronizacao em tempo real: quando um amistoso ou jogo de torneio for finalizado (placar salvo), todos os dispositivos conectados devem ser atualizados automaticamente sem precisar recarregar o app. Usar onSnapshot do Firestore para as colecoes amistosos, campeonatos e jogadores.
 
 
