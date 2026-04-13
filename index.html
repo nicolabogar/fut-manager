@@ -3746,6 +3746,7 @@ window.salvarPlacarDireto = async (id, btn) => {
 };
 
 let _pendingNovoJogoAmi = null;
+let _dropdownOutsideHandler = null;
 
 function _perguntarNovoJogo(a) {
   _pendingNovoJogoAmi = a;
@@ -3794,12 +3795,17 @@ window._criarNovoJogoMesmosParams = () => {
       window.sortearAmistoso && window.sortearAmistoso();
     }
 
-    document.getElementById('fullscreen-body')?.addEventListener('click', e => {
-      if (!e.target.closest('#jc-search') && !e.target.closest('#jc-dropdown')) {
-        const d = document.getElementById('jc-dropdown');
-        if (d) d.style.display = 'none';
-      }
-    }, { capture: true });
+    const body = document.getElementById('fullscreen-body');
+    if (body) {
+      if (_dropdownOutsideHandler) body.removeEventListener('click', _dropdownOutsideHandler, { capture: true });
+      _dropdownOutsideHandler = e => {
+        if (!e.target.closest('#jc-search') && !e.target.closest('#jc-dropdown')) {
+          const d = document.getElementById('jc-dropdown');
+          if (d) d.style.display = 'none';
+        }
+      };
+      body.addEventListener('click', _dropdownOutsideHandler, { capture: true });
+    }
   }, 50);
 };
 
