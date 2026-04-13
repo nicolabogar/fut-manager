@@ -2419,6 +2419,7 @@ window.confirmarExcluirAmistoso = (id, onCancel) => {
 
 window.confirmarExcluirAmi = async (id) => {
   fecharModal();
+  fecharFullscreen();
   await deleteDoc(doc(db, 'amistosos', id));
   await carregarAmistosos();
   const rankAmi = calcularRankingAmistosos();
@@ -3367,6 +3368,17 @@ window.editarAmistoso = (id) => {
       btnSalvar.style.display = '';
       btnSalvar.textContent = 'SALVAR';
       btnSalvar.onclick = () => salvarEdicaoAmistoso(id);
+    }
+
+    // Adicionar botão de exclusão do amistoso em andamento
+    const btnCancelar = document.querySelector('#fullscreen-body .btn-ghost');
+    if (btnCancelar) {
+      const btnExcluir = document.createElement('button');
+      btnExcluir.className = 'btn-ghost';
+      btnExcluir.style.cssText = 'color:#EF4444;border-color:rgba(239,68,68,0.3);';
+      btnExcluir.textContent = 'EXCLUIR AMISTOSO';
+      btnExcluir.onclick = () => confirmarExcluirAmistoso(id);
+      btnCancelar.parentElement.insertBefore(btnExcluir, btnCancelar);
     }
 
     // Event listener para fechar dropdown ao clicar fora
