@@ -667,7 +667,7 @@
 ═══════════════════════════════════════════ -->
 <script type="module">
 import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, setDoc, getDoc }
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, orderBy, serverTimestamp, setDoc, getDoc, onSnapshot }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import { getAuth, signInWithPopup, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
@@ -987,6 +987,17 @@ let abaTimesAtual = 'clubes';
 let _paisFiltroTimes = '';
 let _nomeFiltroTimes = '';
 let _disponiveis  = []; // partidas disponíveis para registo em grupo
+
+// ─── LISTENERS TEMPO REAL ────────────────────────────────────────────
+let _unsubJogadores   = null;
+let _unsubAmistosos   = null;
+let _unsubCampeonatos = null;
+
+function _pararListeners() {
+  if (_unsubJogadores)   { _unsubJogadores();   _unsubJogadores   = null; }
+  if (_unsubAmistosos)   { _unsubAmistosos();   _unsubAmistosos   = null; }
+  if (_unsubCampeonatos) { _unsubCampeonatos(); _unsubCampeonatos = null; }
+}
 
 // ─── FILTRO DE EFICIÊNCIA ─────────────────────────────────────────────
 const EFIC_TODAS = ['Ruim','Moderado','Bom'];
@@ -1412,6 +1423,7 @@ onAuthStateChanged(auth, async u => {
     _aplicarControleAcesso();
   } else {
     usuario = null;
+    _pararListeners();
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
   }
@@ -1560,10 +1572,19 @@ async function carregarDados() {
 }
 
 // ─── JOGADORES ───────────────────────────────────────────────────────
-async function carregarJogadores() {
-  const snap = await getDocs(query(collection(db, 'jogadores'), orderBy('nome')));
-  jogadores = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderJogadores();
+function carregarJogadores() {
+  if (_unsubJogadores) { return Promise.resolve(); }
+  return new Promise((resolve) => {
+    _unsubJogadores = onSnapshot(
+      query(collection(db, 'jogadores'), orderBy('nome')),
+      snap => {
+        jogadores = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderJogadores();
+        resolve();
+      },
+      err => { console.error('jogadores onSnapshot:', err); resolve(); }
+    );
+  });
 }
 
 function avatarJogador(j, size=46) {
@@ -2163,10 +2184,20 @@ window.abrirCriarJogador = () => {
 };
 
 // ─── AMISTOSOS ───────────────────────────────────────────────────────
-async function carregarAmistosos() {
-  const snap = await getDocs(query(collection(db, 'amistosos'), orderBy('criadoEm', 'desc')));
-  amistosos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderAmistosos();
+function carregarAmistosos() {
+  if (_unsubAmistosos) { return Promise.resolve(); }
+  return new Promise((resolve) => {
+    _unsubAmistosos = onSnapshot(
+      query(collection(db, 'amistosos'), orderBy('criadoEm', 'desc')),
+      snap => {
+        amistosos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderAmistosos();
+        atualizarDash();
+        resolve();
+      },
+      err => { console.error('amistosos onSnapshot:', err); resolve(); }
+    );
+  });
 }
 
 function cardAmistoso(a, compact=false, readonly=false) {
@@ -3283,10 +3314,20 @@ window.salvarPlacarDireto = async (id, btn) => {
 };
 
 // ─── CAMPEONATOS ─────────────────────────────────────────────────────
-async function carregarCampeonatos() {
-  const snap = await getDocs(query(collection(db, 'campeonatos'), orderBy('criadoEm', 'desc')));
-  campeonatos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-  renderCampeonatos();
+function carregarCampeonatos() {
+  if (_unsubCampeonatos) { return Promise.resolve(); }
+  return new Promise((resolve) => {
+    _unsubCampeonatos = onSnapshot(
+      query(collection(db, 'campeonatos'), orderBy('criadoEm', 'desc')),
+      snap => {
+        campeonatos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderCampeonatos();
+        atualizarDash();
+        resolve();
+      },
+      err => { console.error('campeonatos onSnapshot:', err); resolve(); }
+    );
+  });
 }
 
 const _campState = { filtroTipo: 'todos', filtroTipoTime: 'todos', filtroJog: '', pag: 0 };
