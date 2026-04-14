@@ -693,7 +693,21 @@
 
   </main>
 
-  <!-- NAV removido - navegacao via hamburger menu -->
+  <!-- NAV: visivel na pagina de times -->
+  <nav id="nav" style="display:none;">
+    <button class="nav-btn" data-view="home" onclick="irParaHome()">
+      <span class="nav-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </span>
+      <span class="nav-lbl">HOME</span>
+    </button>
+    <button class="nav-btn ativo" data-view="times" onclick="irPara('times')">
+      <span class="nav-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l-8 2.5v6c0 5 3.5 9.4 8 10.5 4.5-1.1 8-5.5 8-10.5V5z"/></svg>
+      </span>
+      <span class="nav-lbl">TIMES</span>
+    </button>
+  </nav>
 </div>
 
 <!-- ═══════════════════════════════════════════
@@ -1644,6 +1658,12 @@ function irPara(view) {
   document.querySelectorAll('.nav-btn').forEach(b => {
     b.classList.toggle('ativo', b.dataset.view === view);
   });
+  const nav = document.getElementById('nav');
+  if (nav) {
+    const showNav = view === 'times';
+    nav.style.display = showNav ? 'flex' : 'none';
+    document.getElementById('main').style.paddingBottom = showNav ? '72px' : '';
+  }
   if (view === 'times') renderTimesEdit();
   if (view === 'ranking') { renderRankingAmistosos(calcularRankingAmistosos()); renderRankingTorneios(calcularRankingTorneios()); }
 }
@@ -1657,7 +1677,7 @@ function irParaHome() {
 }
 window.irParaHome = irParaHome;
 
-// nav removido - navegacao via hamburger
+// navegacao via hamburger e nav de times
 
 function modal(html) {
   document.getElementById('modal-body').innerHTML = html;
