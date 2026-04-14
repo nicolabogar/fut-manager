@@ -1401,7 +1401,7 @@ function _escolherTipoAmbos() {
   const nSel  = rec.filter(t => t === 'selecoes').length;
   if (nClub >= 4) return 'selecoes';
   if (nSel  >= 4) return 'clubes';
-  // Aleatório 50/50 com Fisher-Yates sobre dois itens
+  // Aleatório 50/50
   return Math.random() < 0.5 ? 'clubes' : 'selecoes';
 }
 
@@ -1461,8 +1461,9 @@ function sortearBalanceado(pool, historicoIds = [], tipo = '') {
     const painel = novos.length > 0 ? novos : pares;
     // Ordena por menor diferença percentual
     painel.sort((a, b) => a.pct - b.pct);
-    // Escolhe aleatoriamente entre os top 30% (mínimo 1, máximo 10)
-    const topN = Math.min(10, Math.max(1, Math.ceil(painel.length * 0.30)));
+    // Escolhe aleatoriamente entre os top 30% (mínimo 1, máximo MAX_TOP_PAIRS)
+    const MAX_TOP_PAIRS = 10;
+    const topN = Math.min(MAX_TOP_PAIRS, Math.max(1, Math.ceil(painel.length * 0.30)));
     return painel[Math.floor(Math.random() * topN)];
   };
 
