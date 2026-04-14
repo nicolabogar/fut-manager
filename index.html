@@ -3474,7 +3474,7 @@ window._abrirModalEscolherTimeDupla = (duplaNum) => {
       const flagEl = paisCode ? `<img src="https://flagcdn.com/w40/${paisCode}.png" alt="" loading="lazy" style="width:22px;height:16px;object-fit:cover;border-radius:2px;flex-shrink:0;" onerror="this.style.display='none'">` : '';
       const shieldEl = !isSel ? `<div style="width:22px;height:22px;border-radius:5px;background:${_td.fundo};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:${_td.cor};flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">${_td.abrev}</div>` : '';
       const eficEl = t.eficiencia ? eficBadge(t.eficiencia) : '';
-      return `<div onclick="selecionarTimeManualDupla(${duplaNum},'${t.id}','${t.nome.replace(/'/g,"\\'")}',${t.forca},'${t._tipo}')"
+      return `<div onclick="selecionarTimeManualDupla(${duplaNum},'${t.id}','${t.nome.replace(/'/g,"\\'")}',${t.forca},'${t._tipo}','${(t.eficiencia||'Bom').replace(/'/g,"\\'")}')"
         style="padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:600;font-size:12px;display:flex;align-items:center;gap:8px;">
         ${flagEl}${shieldEl}
         <span style="text-transform:uppercase;flex:1;">${t.nome}</span>
@@ -3524,7 +3524,7 @@ window._renderModalTimeDuplaLista = (duplaNum, q) => {
     const flagEl = paisCode ? `<img src="https://flagcdn.com/w40/${paisCode}.png" alt="" loading="lazy" style="width:22px;height:16px;object-fit:cover;border-radius:2px;flex-shrink:0;" onerror="this.style.display='none'">` : '';
     const shieldEl = !isSel ? `<div style="width:22px;height:22px;border-radius:5px;background:${_td.fundo};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:${_td.cor};flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">${_td.abrev}</div>` : '';
     const eficEl = t.eficiencia ? eficBadge(t.eficiencia) : '';
-    return `<div onclick="selecionarTimeManualDupla(${duplaNum},'${t.id}','${t.nome.replace(/'/g,"\\'")}',${t.forca},'${t._tipo}')"
+    return `<div onclick="selecionarTimeManualDupla(${duplaNum},'${t.id}','${t.nome.replace(/'/g,"\\'")}',${t.forca},'${t._tipo}','${(t.eficiencia||'Bom').replace(/'/g,"\\'")}')"
       style="padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:600;font-size:12px;display:flex;align-items:center;gap:8px;">
       ${flagEl}${shieldEl}
       <span style="text-transform:uppercase;flex:1;">${t.nome}</span>
@@ -3533,8 +3533,8 @@ window._renderModalTimeDuplaLista = (duplaNum, q) => {
   }).join('');
 };
 
-window.selecionarTimeManualDupla = (duplaNum, timeId, timeNome, forca, tipo) => {
-  _amiDuplaTimeSel.set(duplaNum, {timeId, nome: timeNome, forca, _tipo: tipo});
+window.selecionarTimeManualDupla = (duplaNum, timeId, timeNome, forca, tipo, eficiencia) => {
+  _amiDuplaTimeSel.set(duplaNum, {timeId, nome: timeNome, forca, _tipo: tipo, eficiencia: eficiencia || 'Bom'});
   fecharModal();
   _renderDuplaPanel(1);
   _renderDuplaPanel(2);
@@ -3880,7 +3880,7 @@ window.sortearAmistoso = () => {
     }
     const t1data = _amiDuplaTimeSel.get(1);
     const t2data = _amiDuplaTimeSel.get(2);
-    const tipo = t1data._tipo === 'selecoes' ? 'selecoes' : 'clubes';
+    const tipo = (t1data._tipo === 'selecoes' && t2data._tipo === 'selecoes') ? 'selecoes' : 'clubes';
     const diff = Math.abs(t1data.forca - t2data.forca);
     const eq = diff <= 2 ? 'EQUILIBRADO' : diff <= 5 ? 'LEVEMENTE DESIGUAL' : 'DESIGUAL';
     _sorteioAmi = {
