@@ -3228,11 +3228,12 @@ window.toggleModoDupla = (ativo) => {
   const autoSection = document.getElementById('ami-jogadores-auto-section');
   const resultPanel = document.getElementById('ami-dupla-result-panel');
   if (ativo) {
-    // Ao ativar modo dupla: começar no modo manual (checkbox desmarcado)
+    // Ao ativar modo dupla: começar no modo sortear (checkbox marcado)
     const sortearAuto = document.getElementById('ami-sortear-dup-auto');
-    if (sortearAuto) sortearAuto.checked = false;
-    if (manualBox) manualBox.style.display = '';
-    if (autoSection) autoSection.style.display = 'none';
+    if (sortearAuto) sortearAuto.checked = true;
+    if (manualBox) manualBox.style.display = 'none';
+    if (autoSection) autoSection.style.display = '';
+    if (resultPanel) { resultPanel.style.display = 'none'; resultPanel.innerHTML = ''; }
   } else {
     // Ao desativar modo dupla: resetar tudo
     const sortearAuto = document.getElementById('ami-sortear-dup-auto');
