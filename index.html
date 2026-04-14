@@ -6460,16 +6460,24 @@ window.editarTime = (id) => {
   } else {
     const d = _teamDataOuFallback(t.id, t.nome);
     badgeHtml = `<div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
-      ${d.pais ? `<img src="https://flagcdn.com/w40/${d.pais}.png" alt="${d.paisNome||''}" loading="lazy" decoding="async" style="width:24px;height:18px;object-fit:cover;border-radius:3px;box-shadow:0 1px 4px rgba(0,0,0,0.3);" onerror="this.style.display='none'">` : ''}
+      ${shieldClube(t.id, t.nome, 72)}
       <span style="font-weight:900;font-size:16px;text-transform:uppercase;">${t.nome}</span>
-      ${shieldClube(t.id, t.nome, 48)}
+      <div style="display:flex;align-items:center;gap:3px;">
+        ${d.pais ? `<img src="https://flagcdn.com/w40/${d.pais}.png" alt="${d.paisNome||''}" loading="lazy" decoding="async" style="width:16px;height:12px;object-fit:cover;border-radius:2px;box-shadow:0 1px 4px rgba(0,0,0,0.3);" onerror="this.style.display='none'">` : ''}
+        ${d.paisNome ? `<span style="font-size:10px;color:var(--text-muted);font-weight:600;">${d.paisNome}</span>` : ''}
+      </div>
     </div>`;
   }
   const inativoAtual = t.inativo || false;
   const nomeAbreviadoAtual = t.nomeAbreviado || '';
+  const descricaoAtual = t.descricao || '';
   fullscreen(t.nome.toUpperCase(), `
     <div style="display:flex;flex-direction:column;gap:16px;max-width:400px;margin:0 auto;">
       <div style="display:flex;justify-content:center;padding:16px 0;">${badgeHtml}</div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">DESCRICAO DO TIME (OPCIONAL)</label>
+        <input class="input" id="et-descricao" placeholder="Ex: CLUBE MAIS TITULADO DA EUROPA" autocomplete="off" style="text-transform:uppercase;" value="${descricaoAtual.replace(/"/g,'&quot;')}">
+      </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">NOME ABREVIADO (OPCIONAL)</label>
         <input class="input" id="et-nomeAbreviado" placeholder="Ex: MAN. UTD" autocomplete="off" style="text-transform:uppercase;" value="${nomeAbreviadoAtual.replace(/"/g,'&quot;')}">
@@ -6496,11 +6504,12 @@ window.salvarEdicaoTime = async (id) => {
   const container = document.getElementById('et-efic-tags');
   const eficiencia = container?.dataset.selected || 'Bom';
   const inativo = document.getElementById('et-inativo')?.checked || false;
-  const nomeAbreviado = document.getElementById('et-nomeAbreviado')?.value.trim() || '';
+  const nomeAbreviado = document.getElementById('et-nomeAbreviado')?.value.trim().toUpperCase() || '';
+  const descricao = document.getElementById('et-descricao')?.value.trim().toUpperCase() || '';
   try {
-    await updateDoc(doc(db, 'times', id), { eficiencia, inativo, nomeAbreviado });
+    await updateDoc(doc(db, 'times', id), { eficiencia, inativo, nomeAbreviado, descricao });
   } catch {
-    await setDoc(doc(db, 'times', id), { id, eficiencia, inativo, nomeAbreviado }, { merge: true });
+    await setDoc(doc(db, 'times', id), { id, eficiencia, inativo, nomeAbreviado, descricao }, { merge: true });
   }
   fecharFullscreen(); await carregarTimes(); renderTimesEdit(); renderAmistosos();
 };
