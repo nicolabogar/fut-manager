@@ -7551,6 +7551,7 @@ window._ntClubePreview = () => {
   if (crest) {
     shieldHtml = `<div style="width:48px;height:55px;flex-shrink:0;display:flex;align-items:center;justify-content:center;"><img src="${crest}" alt="" style="max-width:48px;max-height:55px;object-fit:contain;filter:drop-shadow(0 3px 8px rgba(0,0,0,0.4));"></div>`;
   } else {
+    // Simple DJB2 string hash for generating deterministic HSL color from team name
     const hash = (nomeDisplay || 'X').split('').reduce((a,c)=>((a<<5)-a)+c.charCodeAt(0),0);
     const hue = Math.abs(hash) % 360;
     const fundo = `hsl(${hue},40%,25%)`;
@@ -7601,17 +7602,19 @@ window._ntFiltrarPaises = () => {
   if (!opcoes.length) { lista.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:16px;font-size:12px;">NENHUM PAÍS ENCONTRADO</p>'; return; }
   const paisSel = document.getElementById('nt-clube-pais')?.value || '';
   lista.innerHTML = opcoes.map(p => `
-    <button type="button" onclick="_ntSelecionarPais('${p.code}','${p.nome.replace(/'/g,"")}')" style="background:${paisSel===p.code?'rgba(139,92,246,0.2)':'rgba(255,255,255,0.03)'};border:1.5px solid ${paisSel===p.code?'var(--purple)':'transparent'};border-radius:10px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;">
+    <button type="button" onclick="_ntSelecionarPais('${p.code}')" style="background:${paisSel===p.code?'rgba(139,92,246,0.2)':'rgba(255,255,255,0.03)'};border:1.5px solid ${paisSel===p.code?'var(--purple)':'transparent'};border-radius:10px;padding:8px 12px;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;">
       <img src="https://flagcdn.com/w40/${p.code}.png" alt="" style="width:30px;height:22px;object-fit:cover;border-radius:4px;flex-shrink:0;" onerror="this.style.display='none'">
-      <span style="font-size:13px;font-weight:700;color:var(--text);flex:1;">${p.nome}</span>
+      <span style="font-size:13px;font-weight:700;color:var(--text);flex:1;">${_escHtml(p.nome)}</span>
     </button>`).join('');
 };
 
-window._ntSelecionarPais = (code, nome) => {
+window._ntSelecionarPais = (code) => {
+  const paisObj = PAISES_FIFA.find(p => p.code === code);
+  const nome = paisObj?.nome || code;
   const hidden = document.getElementById('nt-clube-pais');
   if (hidden) hidden.value = code;
   const label = document.getElementById('nt-clube-pais-label');
-  if (label) label.innerHTML = `<img src="https://flagcdn.com/w40/${code}.png" alt="" style="width:24px;height:18px;object-fit:cover;border-radius:3px;vertical-align:middle;"> <span style="font-weight:700;font-size:14px;">${nome}</span>`;
+  if (label) label.innerHTML = `<img src="https://flagcdn.com/w40/${code}.png" alt="" style="width:24px;height:18px;object-fit:cover;border-radius:3px;vertical-align:middle;"> <span style="font-weight:700;font-size:14px;">${_escHtml(nome)}</span>`;
   const dd = document.getElementById('nt-clube-pais-dropdown');
   if (dd) dd.style.display = 'none';
   _ntClubePreview();
