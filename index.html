@@ -171,6 +171,7 @@
     .rank-mdrop-header { display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;text-transform:uppercase;user-select:none;transition:border-radius 0.15s; }
     .rank-mdrop-header.open { border-radius:10px 10px 0 0; }
     .rank-mdrop-arrow { font-size:10px;transition:transform 0.2s;flex-shrink:0;margin-left:8px;line-height:1; }
+    .rank-mdrop-arrow.open { transform:rotate(180deg); }
     .rank-mdrop-list { background:var(--card);border:1px solid var(--card-border);border-top:none;border-radius:0 0 10px 10px;overflow:hidden; }
     .rank-mdrop-item { display:flex;align-items:center;gap:8px;padding:8px 12px;font-size:12px;font-weight:700;text-transform:uppercase;cursor:pointer;color:var(--text);transition:background 0.1s; }
     .rank-mdrop-item:hover { background:rgba(255,255,255,0.05); }
@@ -6722,13 +6723,13 @@ function _renderRankFiltros() {
     const open = isOpen(id);
     const itemsHtml = items.map(i => `
       <label class="rank-mdrop-item" onclick="${onToggleFn}('${i.value.replace(/'/g,"\\'")}')">
-        <input type="checkbox" ${selSet.has(i.value)?'checked':''} style="accent-color:#8B5CF6;width:15px;height:15px;flex-shrink:0;cursor:pointer;pointer-events:none;">
+        <input type="checkbox" ${selSet.has(i.value)?'checked':''}>
         <span>${i.label}</span>
       </label>`).join('');
     return `<div class="rank-mdrop-wrap">
       <div id="rank-mdrop-header-${id}" class="rank-mdrop-header${open?' open':''}" style="${bgStyle}${borderStyle}${colorStyle}" onclick="_rankDropToggle('${id}')">
         <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${label}</span>
-        <span style="font-size:10px;margin-left:8px;transition:transform 0.2s;${open?'transform:rotate(180deg)':''}">▾</span>
+        <span class="rank-mdrop-arrow${open?' open':''}">▾</span>
       </div>
       <div id="rank-mdrop-list-${id}" class="rank-mdrop-list" style="display:${open?'block':'none'};">
         ${itemsHtml}
