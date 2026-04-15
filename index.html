@@ -1816,6 +1816,18 @@ document.addEventListener('focus', (e) => {
   }
 }, true);
 
+// F3: Enter no campo do time 1 avanca para o campo do time 2
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && e.target.classList.contains('placar-input')) {
+    const isT1 = e.target.dataset.pdc === '1' || e.target.dataset.tpdc === '1';
+    if (isT1) {
+      const card = e.target.closest('.match-card') || e.target.parentElement;
+      const inp2 = card ? card.querySelector('[data-tpdc="2"],[data-pdc="2"]') : null;
+      if (inp2 && !inp2.disabled) { e.preventDefault(); inp2.focus(); inp2.select(); }
+    }
+  }
+});
+
 getRedirectResult(auth).catch(e => { mostraErro(e.message || 'Erro ao realizar login. Tente novamente.'); });
 
 onAuthStateChanged(auth, async u => {
@@ -5714,7 +5726,7 @@ function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar, fase
     ? `<span class="tag" style="background:rgba(245,158,11,0.25);color:#FCD34D;font-weight:900;letter-spacing:0.05em;">⭐ FINAL</span>`
     : `<span class="tag tag-yellow">ELIMINATORIA</span>`;
   const winnerEmoji = isFinal ? '👑' : '🏆';
-  return `<div class="match-card" style="margin-bottom:10px;${cardBorder}">
+  return `<div class="match-card" data-match-key="${cid}-ko-${faseIdx}-${confrontoIdx}" style="margin-bottom:10px;${cardBorder}">
     ${finalBanner}
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <div style="display:flex;align-items:center;gap:6px;">
@@ -5781,7 +5793,7 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
           </div>
           <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:not-allowed;opacity:0.4;">FIM</button>`;
 
-  return `<div class="match-card" style="margin-bottom:10px;">
+  return `<div class="match-card" data-match-key="${confKey}" style="margin-bottom:10px;">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="tag tag-purple">TORNEIO</span>
@@ -5900,6 +5912,15 @@ window.abrirCampeonato = (id) => {
       ${jogosHTML}
     </div>`;
   }).join('');
+
+  // Preservar placares digitados mas ainda nao salvos
+  const _savedScores = {};
+  document.querySelectorAll('.match-card[data-match-key]').forEach(card => {
+    const key = card.dataset.matchKey;
+    const inp1 = card.querySelector('[data-tpdc="1"],[data-pdc="1"]');
+    const inp2 = card.querySelector('[data-tpdc="2"],[data-pdc="2"]');
+    if (inp1 && !inp1.disabled && inp2 && !inp2.disabled) _savedScores[key] = { v1: inp1.value, v2: inp2.value };
+  });
 
   fullscreen(c.nome.toUpperCase(), `
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
@@ -6029,6 +6050,16 @@ window.abrirCampeonato = (id) => {
     })()}
   `, 'TORNEIOS', 'campeonatos');
   document.getElementById('fullscreen-title').style.color = c.status === 'finalizado' ? '#94A3B8' : '#6EE7B7';
+  // Restaurar placares digitados mas ainda nao salvos
+  Object.entries(_savedScores).forEach(([key, vals]) => {
+    const card = document.querySelector(`.match-card[data-match-key="${CSS.escape(key)}"]`);
+    if (card) {
+      const inp1 = card.querySelector('[data-tpdc="1"],[data-pdc="1"]');
+      const inp2 = card.querySelector('[data-tpdc="2"],[data-pdc="2"]');
+      if (inp1) inp1.value = vals.v1;
+      if (inp2) inp2.value = vals.v2;
+    }
+  });
 };
 
 // Salva partida diretamente dos inputs no card (sem modal)
