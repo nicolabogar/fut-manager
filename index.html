@@ -1129,7 +1129,7 @@ window.badgeTimeCountryInfo = badgeTimeCountryInfo;
 function _htmlCountryRow(timeId, nomeTime, tipo) {
   const isSel = tipo === 'selecoes';
   if (isSel) {
-    const d = SELECAO_PAIS[timeId] || { pais:'', paisNome: nomeTime||'' };
+    const d = SELECAO_PAIS[timeId] || { pais:'eu', paisNome: nomeTime||'' };
     return `<div style="display:flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap;visibility:hidden;">${flagImg(d.pais || 'eu', 20)}<span style="font-size:9px;color:var(--text-muted);font-weight:600;">${d.paisNome || nomeTime}</span></div>`;
   }
   const d = _teamDataOuFallback(timeId, nomeTime);
