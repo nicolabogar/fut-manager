@@ -5567,6 +5567,10 @@ function _temIdaVolta(tipo) {
   return tipo === 'brasileirao';
 }
 
+function _getCurrentTurno(c) {
+  return _temIdaVolta(c.tipo) && c.fase === 'returno' ? 2 : 1;
+}
+
 function _classificadosPorGrupo(c) {
   const classificados = [];
   (c.grupos||[]).forEach(g => {
@@ -5578,7 +5582,7 @@ function _classificadosPorGrupo(c) {
 
 function _verificarFaseGruposCompleta(c) {
   const qtdTimes = c.qtdTimes || 1;
-  const turno = c.fase === 'returno' ? 2 : 1;
+  const turno = _getCurrentTurno(c);
   return (c.grupos||[]).length > 0 && (c.grupos||[]).every(g => calcularDisp(g, qtdTimes, turno).length === 0);
 }
 
@@ -5872,7 +5876,7 @@ window.abrirCampeonato = (id) => {
   };
 
   const temIdaVolta = _temIdaVolta(c.tipo);
-  const currentTurno = temIdaVolta && c.fase === 'returno' ? 2 : 1;
+  const currentTurno = _getCurrentTurno(c);
 
   const gruposHTML = (c.grupos||[]).map((g,gi) => {
     const ord = [...g.membros].sort((a,b)=>b.pts!==a.pts?b.pts-a.pts:(b.gp-b.gc)!==(a.gp-a.gc)?(b.gp-b.gc)-(a.gp-a.gc):b.gp-a.gp);
@@ -6330,7 +6334,7 @@ window.salvarPartida = async (cid, gi) => {
   const {m1,m2} = _disponiveis[0];
   const g1 = parseInt(document.getElementById('rg1').value)||0;
   const g2 = parseInt(document.getElementById('rg2').value)||0;
-  const turno = c.fase === 'returno' ? 2 : 1;
+  const turno = _getCurrentTurno(c);
   const grupos = c.grupos.map((g,idx) => {
     if (idx!==gi) return g;
     const membros = g.membros.map(m => {
@@ -6996,7 +7000,7 @@ function cardCampHome(c, modoLista=false) {
   // Jogos em andamento (pendentes sem placar) — mostrar até 2
   const jogosPendentes = [];
   const temIdaVoltaHome = _temIdaVolta(c.tipo);
-  const currentTurnoHome = temIdaVoltaHome && c.fase === 'returno' ? 2 : 1;
+  const currentTurnoHome = _getCurrentTurno(c);
   (c.grupos||[]).forEach((g,gi) => {
     for (let i=0;i<g.membros.length;i++) for (let j=i+1;j<g.membros.length;j++) {
       const m1=g.membros[i],m2=g.membros[j];
