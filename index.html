@@ -1431,14 +1431,16 @@ function parRepetido(tipo, id1, id2) {
 
 // ─── COOLDOWN PERSISTENTE (times ficam de fora por N sorteios) ────────
 const COOLDOWN_DRAWS = 3; // times nao repetem nos proximos 3 sorteios
+const COOLDOWN_MAX_ENTRIES = 40; // maximo de IDs no historico de cooldown (20 sorteios)
 function _cooldownKey(tipo) { return `sorteio_cd_${tipo}`; }
 function _getCooldownList(tipo) {
   try { return JSON.parse(localStorage.getItem(_cooldownKey(tipo)) || '[]'); } catch { return []; }
 }
 function _addToCooldown(tipo, id1, id2) {
   const list = _getCooldownList(tipo);
+  // Coloca os novos IDs no inicio, remove duplicados, limita tamanho
   const nova = [id1, id2, ...list.filter(id => id !== id1 && id !== id2)];
-  try { localStorage.setItem(_cooldownKey(tipo), JSON.stringify(nova.slice(0, 40))); } catch {}
+  try { localStorage.setItem(_cooldownKey(tipo), JSON.stringify(nova.slice(0, COOLDOWN_MAX_ENTRIES))); } catch {}
 }
 
 // ─── HISTÓRICO DE TIPO (clubes/seleções) PARA MODO "AMBOS" ───────────
@@ -1488,7 +1490,8 @@ function sortearBalanceado(pool, historicoIds = [], tipo = '') {
   pool = pool.filter(t => !t.inativo);
 
   // Cooldown: hard-exclude times dos últimos COOLDOWN_DRAWS sorteios
-  // Limita exclusão a no máximo 60% do pool para garantir disponibilidade
+  // COOLDOWN_DRAWS * 2 = 6 IDs (2 times por sorteio × 3 sorteios)
+  // Limita a 60% do pool para garantir que pelo menos 40% dos times fiquem disponíveis
   const cooldownPersist = tipo ? _getCooldownList(tipo) : [];
   const maxExclude = Math.min(COOLDOWN_DRAWS * 2, Math.floor(pool.length * 0.6));
   const cooldownIds = new Set([
