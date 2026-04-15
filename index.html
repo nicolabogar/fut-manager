@@ -5415,7 +5415,7 @@ window.criarCampeonato = async () => {
   const nome = document.getElementById('cn').value.trim().toUpperCase();
   const tipo = document.getElementById('ct').value;
   const modoDupla = document.getElementById('camp-dupla')?.checked || false;
-  const qtdTimes = parseInt(document.getElementById('camp-qtd-times')?.value) || 1;
+  const qtdTimes = _ccQtdTimes || 1;
   const sortearDuplaAuto = modoDupla && (document.getElementById('camp-sortear-dupla-auto')?.checked || false);
   const escolherDuplas = modoDupla && !sortearDuplaAuto;
   if (!nome) { toast('DIGITE O NOME DO TORNEIO', 'erro'); _unlockBtn(btn); return; }
@@ -5738,17 +5738,32 @@ window.abrirCampeonato = (id) => {
       const playerRow = (p) => {
         const jogNome = _nomeJogPorId(p.jogadorId, p.nome);
         const times = p.times || [p.time].filter(Boolean);
-        const primTime = times[0] || p.time;
-        const tipoTime = selecoes.some(s => s.id === primTime?.id) ? 'selecoes' : 'clubes';
-        const timesExtras = times.length > 1 ? `<div style="font-size:9px;color:var(--text-muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${times.slice(1).map(t=>t?.nome||'').filter(Boolean).join(' · ')}</div>` : '';
-        return `<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;margin-bottom:6px;">
-          <div style="flex-shrink:0;">${badgeTimeIcon(primTime?.id, primTime?.nome, tipoTime)}</div>
-          <div style="flex:1;min-width:0;">
-            <div style="font-weight:900;font-size:13px;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_nomeAbrevTime(primTime?.id, primTime?.nome||'?')}</div>
-            ${timesExtras}
-            <div style="margin-top:2px;">${eficBadge(eficienciaAtual(primTime?.id))}</div>
+        if (times.length <= 1) {
+          const primTime = times[0] || p.time;
+          const tipoTime = selecoes.some(s => s.id === primTime?.id) ? 'selecoes' : 'clubes';
+          return `<div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;margin-bottom:6px;">
+            <div style="flex-shrink:0;">${badgeTimeIcon(primTime?.id, primTime?.nome, tipoTime)}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:900;font-size:13px;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_nomeAbrevTime(primTime?.id, primTime?.nome||'?')}</div>
+              <div style="margin-top:2px;">${eficBadge(eficienciaAtual(primTime?.id))}</div>
+            </div>
+            ${jogNome ? `<span class="tag tag-cyan" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:45%;flex-shrink:0;">${jogNome.toUpperCase()}</span>` : ''}
+          </div>`;
+        }
+        const timesHtml = times.map(t => {
+          const tt = selecoes.some(s => s.id === t?.id) ? 'selecoes' : 'clubes';
+          return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;">
+            <div style="flex-shrink:0;">${badgeTimeIcon(t?.id, t?.nome, tt)}</div>
+            <div style="font-weight:800;font-size:12px;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;">${_nomeAbrevTime(t?.id, t?.nome||'?')}</div>
+            ${eficBadge(eficienciaAtual(t?.id))}
+          </div>`;
+        }).join('');
+        return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:10px 12px;margin-bottom:6px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+            <span style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;">${times.length} TIMES</span>
+            ${jogNome ? `<span class="tag tag-cyan" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:55%;">${jogNome.toUpperCase()}</span>` : ''}
           </div>
-          ${jogNome ? `<span class="tag tag-cyan" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:45%;flex-shrink:0;">${jogNome.toUpperCase()}</span>` : ''}
+          ${timesHtml}
         </div>`;
       };
       if (c.modoDupla) {
