@@ -5664,7 +5664,7 @@ window.salvarPartidaKnockout = async (cid, faseIdx, confrontoIdx, btnEl) => {
   } catch(e) { toast('ERRO AO SALVAR','erro'); } finally { _unlockBtn(btnEl); }
 };
 
-function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar) {
+function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar, faseKey) {
   const t1 = (cf.j1Times||[])[0];
   const t2 = (cf.j2Times||[])[0];
   const tipo1 = selecoes.some(s => s.id === t1?.id) ? 'selecoes' : 'clubes';
@@ -5672,30 +5672,48 @@ function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar) {
   const nome1 = _nomeJogPorId(cf.j1Id, cf.j1Nome);
   const nome2 = _nomeJogPorId(cf.j2Id, cf.j2Nome);
   const temRes = cf.vencedor !== null;
+  const isFinal = faseKey === 'final';
   const g1r = temRes ? cf.g1 : null;
   const g2r = temRes ? cf.g2 : null;
   const vit1 = temRes && cf.vencedor === cf.j1Id;
   const vit2 = temRes && cf.vencedor === cf.j2Id;
+  const placarColor = isFinal ? '#FCD34D' : 'var(--yellow)';
+  const btnStyle = isFinal
+    ? 'margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#B45309,#F59E0B);border:none;color:#fff;border-radius:8px;cursor:pointer;'
+    : 'margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;';
   const placarArea = temRes
-    ? `<div style="font-size:29px;font-weight:900;letter-spacing:1px;color:var(--yellow);">${g1r}<span style="color:var(--text-muted);font-size:13px;"> × </span>${g2r}</div>`
+    ? `<div style="font-size:29px;font-weight:900;letter-spacing:1px;color:${placarColor};">${g1r}<span style="color:var(--text-muted);font-size:13px;"> × </span>${g2r}</div>`
     : podeMudar
       ? `<div style="display:flex;align-items:center;gap:4px;">
            <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="1" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
            <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
            <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="2" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
          </div>
-         <button onclick="event.stopPropagation();salvarPartidaKnockout('${cid}',${faseIdx},${confrontoIdx},this)" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>`
+         <button onclick="event.stopPropagation();salvarPartidaKnockout('${cid}',${faseIdx},${confrontoIdx},this)" class="btn-primary" style="${btnStyle}">FIM</button>`
       : `<div style="display:flex;align-items:center;gap:4px;opacity:0.4;">
            <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="1" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
            <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
            <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="2" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
          </div>
-         <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:not-allowed;opacity:0.4;">FIM</button>`;
-  return `<div class="match-card" style="margin-bottom:10px;${vit1?'border-color:rgba(110,231,183,0.4);':vit2?'border-color:rgba(110,231,183,0.4);':''}">
+         <button disabled onclick="event.stopPropagation()" class="btn-primary" style="${btnStyle}opacity:0.4;cursor:not-allowed;">FIM</button>`;
+  const cardBorder = isFinal
+    ? (temRes ? 'border-color:rgba(252,211,77,0.6);box-shadow:0 0 18px rgba(252,211,77,0.18);' : 'border-color:rgba(252,211,77,0.4);box-shadow:0 0 14px rgba(252,211,77,0.12);')
+    : (vit1 || vit2 ? 'border-color:rgba(110,231,183,0.4);' : '');
+  const finalBanner = isFinal
+    ? `<div style="text-align:center;margin-bottom:10px;padding:6px 0 4px;background:linear-gradient(90deg,rgba(180,83,9,0.18),rgba(245,158,11,0.22),rgba(180,83,9,0.18));border-radius:10px;">
+        <span style="font-size:13px;font-weight:900;letter-spacing:0.12em;color:#FCD34D;text-transform:uppercase;">🏆 GRANDE FINAL 🏆</span>
+       </div>`
+    : '';
+  const tagFase = isFinal
+    ? `<span class="tag" style="background:rgba(245,158,11,0.25);color:#FCD34D;font-weight:900;letter-spacing:0.05em;">⭐ FINAL</span>`
+    : `<span class="tag tag-yellow">ELIMINATORIA</span>`;
+  const winnerEmoji = isFinal ? '👑' : '🏆';
+  return `<div class="match-card" style="margin-bottom:10px;${cardBorder}">
+    ${finalBanner}
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="tag tag-purple">TORNEIO</span>
-        <span class="tag tag-yellow">ELIMINATORIA</span>
+        ${tagFase}
       </div>
       ${temRes ? (vit1 ? `<span class="tag tag-green">VITORIA: ${nome1}</span>` : `<span class="tag tag-green">VITORIA: ${nome2}</span>`) : `<span class="tag tag-cyan">EM ANDAMENTO</span>`}
     </div>
@@ -5705,7 +5723,7 @@ function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar) {
         <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(t1?.id, t1?.nome||'?')}</div>
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${badgeTimeIcon(t1?.id||'', t1?.nome||'', tipo1)}</div>
         ${nome1 ? `<div style="margin-top:4px;"><div style="font-size:11px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome1}</div></div>` : ''}
-        ${vit1 ? `<div style="margin-top:4px;font-size:18px;">🏆</div>` : ''}
+        ${vit1 ? `<div style="margin-top:4px;font-size:18px;">${winnerEmoji}</div>` : ''}
       </div>
       <div style="text-align:center;min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
         ${placarArea}
@@ -5715,7 +5733,7 @@ function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar) {
         <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(t2?.id, t2?.nome||'?')}</div>
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${badgeTimeIcon(t2?.id||'', t2?.nome||'', tipo2)}</div>
         ${nome2 ? `<div style="margin-top:4px;"><div style="font-size:11px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome2}</div></div>` : ''}
-        ${vit2 ? `<div style="margin-top:4px;font-size:18px;">🏆</div>` : ''}
+        ${vit2 ? `<div style="margin-top:4px;font-size:18px;">${winnerEmoji}</div>` : ''}
       </div>
     </div>
   </div>`;
@@ -5991,7 +6009,7 @@ window.abrirCampeonato = (id) => {
       const fasesHTML = fases.map((fase, faseIdx) => {
         const concluida = _verificarFaseElimCompleta(fase);
         const confrontosHTML = (fase.confrontos||[]).map((cf, ci) =>
-          cardJogoKnockout(cf, c.id, faseIdx, ci, isSel, podeMudar)
+          cardJogoKnockout(cf, c.id, faseIdx, ci, isSel, podeMudar, fase.fase)
         ).join('');
         return `<div class="grupo-header aberto" onclick="toggleGrupo(this)" style="margin-bottom:8px;">
           <span class="grupo-titulo">${fase.nome} <span style="color:var(--text-muted);font-weight:600;">${concluida ? '· CONCLUIDO' : ''}</span></span>
