@@ -1,0 +1,67 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Prepare deployment directory
+        run: mkdir _site
+
+      - name: Copy static files
+        run: |
+          cp index.html sw.js manifest.json icon-192.png icon.svg _site/
+
+      - name: Generate firebase-config.js
+        env:
+          API_KEY: ${{ secrets.SUA_API_KEY_AQUI }}
+          PROJECT_ID: ${{ secrets.SEU_PROJETO }}
+          MESSAGING_SENDER_ID: ${{ secrets.SEU_MESSAGING_SENDER_ID }}
+          APP_ID: ${{ secrets.SEU_APP_ID }}
+        run: |
+          cat > _site/firebase-config.js << 'ENDOFFILE'
+          window.FIREBASE_CONFIG = {
+            apiKey: "API_KEY_PLACEHOLDER",
+            authDomain: "PROJECT_ID_PLACEHOLDER.firebaseapp.com",
+            projectId: "PROJECT_ID_PLACEHOLDER",
+            storageBucket: "PROJECT_ID_PLACEHOLDER.firebasestorage.app",
+            messagingSenderId: "MESSAGING_SENDER_ID_PLACEHOLDER",
+            appId: "APP_ID_PLACEHOLDER"
+          };
+          ENDOFFILE
+          sed -i "s|API_KEY_PLACEHOLDER|${API_KEY}|g" _site/firebase-config.js
+          sed -i "s|PROJECT_ID_PLACEHOLDER|${PROJECT_ID}|g" _site/firebase-config.js
+          sed -i "s|MESSAGING_SENDER_ID_PLACEHOLDER|${MESSAGING_SENDER_ID}|g" _site/firebase-config.js
+          sed -i "s|APP_ID_PLACEHOLDER|${APP_ID}|g" _site/firebase-config.js
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
