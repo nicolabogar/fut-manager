@@ -1950,9 +1950,9 @@ onAuthStateChanged(auth, async u => {
     document.getElementById('approval-pending-screen').style.display = 'none';
     try { await carregarTimes(); } catch(e) { console.warn('carregarTimes falhou:', e); }
     await carregarDados();
-    await _migrarMasterInicial();
-    // RG4: auto-cadastro de jogador no primeiro login
+    // RG4: auto-cadastro de jogador no primeiro login (antes de _migrarMasterInicial para que doc uid exista)
     await _autoCadastrarJogador(u);
+    await _migrarMasterInicial();
     // RG-APROV: verificar se usuário foi aprovado pelo master antes de exibir o app
     if (!_verificarAprovacaoUsuario(u)) {
       _mostrarTelaPendente();
@@ -2052,8 +2052,11 @@ async function _autoCadastrarJogador(u) {
     // 3. Novo jogador: solicitar celular e criar doc com uid como ID
     const celular = await _solicitarCelularNovoCadastro(u);
     const nome = _normalizarNome(u.displayName || u.email.split('@')[0] || '');
+    // Bootstrap master: se nenhum master existe e email é o do owner, já cria como master aprovado
+    const isMasterBootstrap = !getMasters().length && emailNorm === 'nicolabogar@gmail.com';
     await setDoc(doc(db, 'jogadores', uid), {
-      nome, email: emailNorm, celular, master: false, aprovado: false,
+      nome, email: emailNorm, celular,
+      master: isMasterBootstrap, aprovado: isMasterBootstrap,
       fotoUrl: u.photoURL || '', criadoEm: serverTimestamp(), _autoCriado: true
     });
     await carregarJogadores();
@@ -2067,8 +2070,11 @@ async function _autoCadastrarJogador(u) {
 async function _migrarJogadorParaUid(jogadorAntigo, uid) {
   const oldId = jogadorAntigo.id;
   const { id, ...dados } = jogadorAntigo;
-  // Backward compat: aprovado undefined → true (jogador criado manualmente pelo master)
-  const aprovadoFinal = dados.aprovado !== false;
+  // Backward compat: aprovado undefined → true (legado, jogador já existia antes das regras)
+  // aprovado:false = pendente (mantém), aprovado:true ou undefined = aprovado
+  let aprovadoFinal = dados.aprovado !== false;
+  // Bootstrap master: se nenhum master e email é o do owner, forçar aprovação
+  if (!getMasters().length && dados.email?.toLowerCase() === 'nicolabogar@gmail.com') aprovadoFinal = true;
   // Etapa 1: criar doc jogadores/{uid} (regra: create if uid == auth.uid)
   await setDoc(doc(db, 'jogadores', uid), {
     ...dados, aprovado: aprovadoFinal, criadoEm: dados.criadoEm || serverTimestamp()
@@ -2094,14 +2100,10 @@ async function _migrarJogadorParaUid(jogadorAntigo, uid) {
     // Atualizar referências em campeonatos
     for (const c of campeonatos) {
       let mudou = false;
-      const cUpdate = {};
-      const parts = (c.participantes || []).map(p =>
-        p.jogadorId === oldId ? { ...p, jogadorId: uid } : p
-      );
-      if (parts.some((p, i) => p !== (c.participantes || [])[i])) {
-        cUpdate.participantes = parts;
-        mudou = true;
-      }
+      const parts = (c.participantes || []).map(p => {
+        if (p.jogadorId === oldId) { mudou = true; return { ...p, jogadorId: uid }; }
+        return p;
+      });
       const grupos = (c.grupos || []).map(g => {
         const membros = (g.membros || []).map(m => {
           if (m.jogadorId === oldId) { mudou = true; return { ...m, jogadorId: uid }; }
@@ -2116,9 +2118,7 @@ async function _migrarJogadorParaUid(jogadorAntigo, uid) {
         return { ...g, membros, partidas };
       });
       if (mudou) {
-        cUpdate.participantes = parts;
-        cUpdate.grupos = grupos;
-        batch.update(doc(db, 'campeonatos', c.id), cUpdate);
+        batch.update(doc(db, 'campeonatos', c.id), { participantes: parts, grupos });
       }
     }
   }
@@ -2322,11 +2322,13 @@ async function _mostrarApp(u) {
   document.getElementById('ham-user-name').textContent = (u?.displayName || u?.email || 'USUARIO').toUpperCase();
   // RG-APROV: ao transicionar pendente→aprovado, recarregar listeners que falharam sem permissão
   if (vinhaDePendente) {
-    if (_unsubAmistosos)   { _unsubAmistosos();   _unsubAmistosos   = null; }
-    if (_unsubCampeonatos) { _unsubCampeonatos(); _unsubCampeonatos = null; }
-    try { await carregarTimes(); } catch(e) { console.warn('carregarTimes (pos-aprovacao):', e); }
-    await Promise.all([carregarAmistosos(), carregarCampeonatos()]);
-    atualizarDash();
+    if (typeof _unsubAmistosos === 'function')   { _unsubAmistosos();   _unsubAmistosos   = null; }
+    if (typeof _unsubCampeonatos === 'function') { _unsubCampeonatos(); _unsubCampeonatos = null; }
+    try {
+      await carregarTimes();
+      await Promise.all([carregarAmistosos(), carregarCampeonatos()]);
+      atualizarDash();
+    } catch(e) { console.warn('recarregar dados pos-aprovacao:', e); }
   }
   // RG5: aplicar controle de acesso na UI
   _aplicarControleAcesso();
