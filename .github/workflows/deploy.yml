@@ -30,7 +30,8 @@ jobs:
 
       - name: Copy static files
         run: |
-          cp index.html sw.js manifest.json icon-192.png icon.svg _site/
+          cp index.html sw.js manifest.json _site/
+          cp -r icons _site/
 
       - name: Generate firebase-config.js
         env:
