@@ -3271,20 +3271,13 @@ function _renderPlayersPanel() {
   const container = document.getElementById('jc-players-panel');
   if (!container) return;
   const allPlayers = [..._jcSel.entries()];
-  const sorteioAuto = document.getElementById('ami-sorteio-auto');
-  const modoManual = sorteioAuto && !sorteioAuto.checked;
 
   if (!allPlayers.length) {
     container.innerHTML = '';
   } else {
     const tags = allPlayers.map(([id, nome]) => {
-      const selTime = _amiManualSel.get(id);
-      const teamBadge = modoManual
-        ? `<span onclick="_abrirModalEscolherTime('${id}','${nome.replace(/'/g,"\\'")}',false)" style="cursor:pointer;font-size:11px;font-weight:700;color:${selTime ? 'var(--cyan)' : 'var(--text-muted)'};text-transform:uppercase;margin-left:4px;border-left:1px solid rgba(255,255,255,0.15);padding-left:6px;">${selTime ? selTime.nome.toUpperCase() : 'ESCOLHER'}</span>`
-        : '';
       return `<div style="display:inline-flex;align-items:center;gap:4px;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.35);border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700;color:#67E8F9;margin:2px;">
         ${_nomeTag(nome)}
-        ${teamBadge}
         <span onclick="removerJogJC('${id}',0)" style="cursor:pointer;color:var(--text-muted);font-size:16px;line-height:1;margin-left:4px;">×</span>
       </div>`;
     }).join('');
@@ -3303,6 +3296,7 @@ function _renderPlayersPanel() {
     inp.style.opacity = total >= maxTotal ? '0.4' : '';
     inp.style.cursor = total >= maxTotal ? 'not-allowed' : '';
   }
+  _renderManualTimesSection();
 }
 
 window.filtrarJogsJC = () => {
@@ -3336,11 +3330,6 @@ window.selecionarJogJC = (id, nome) => {
   if (box) { box.style.display = 'none'; box.innerHTML = ''; }
   const btnSalvar = document.getElementById('btn-ami-salvar');
   if (btnSalvar) btnSalvar.style.display = 'none';
-  // modo manual: abrir modal de escolha de time para o jogador recém adicionado
-  const sorteioAuto = document.getElementById('ami-sorteio-auto');
-  if (sorteioAuto && !sorteioAuto.checked) {
-    setTimeout(() => _abrirModalEscolherTime(id, nome, false), 80);
-  }
 };
 
 window.removerJogJC = (id, timeNum) => {
@@ -3381,6 +3370,7 @@ window.limparJogadoresJC = () => {
   if (box) { box.style.display = 'none'; box.innerHTML = ''; }
   const btnSalvar = document.getElementById('btn-ami-salvar');
   if (btnSalvar) btnSalvar.style.display = 'none';
+  _renderManualTimesSection();
 };
 
 function _htmlNovoAmistoso() {
@@ -3454,6 +3444,7 @@ function _htmlNovoAmistoso() {
       <div id="jc-dropdown" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:20;background:var(--bg);border:1px solid var(--card-border);border-radius:12px;max-height:200px;overflow-y:auto;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,0.5);"></div>
     </div>
     <div id="jc-players-panel" style="margin-bottom:8px;"></div>
+    <div id="ami-manual-times-section" style="display:none;margin-bottom:16px;"></div>
     <div id="ami-dupla-result-panel" style="display:none;margin-bottom:8px;"></div>
     <div style="display:flex;justify-content:center;margin-bottom:12px;">
       <button onclick="limparJogadoresJC()" class="btn-ghost" style="font-size:13px;padding:10px 24px;width:100%;">LIMPAR JOGADORES</button>
@@ -3461,10 +3452,13 @@ function _htmlNovoAmistoso() {
     </div>
     <div id="ami-sorteio" style="display:none;margin-bottom:16px;"></div>
     <div style="margin-top:12px;">
-      <button id="btn-ami-proximo" class="btn-primary" style="background:linear-gradient(135deg,#7C3AED,#06B6D4);width:100%;margin-bottom:8px;" onclick="sortearAmistoso()">SORTEAR</button>
+      <div style="display:flex;gap:8px;margin-bottom:8px;">
+        <button id="btn-ami-proximo" class="btn-primary" style="background:linear-gradient(135deg,#0284C7,#06B6D4);flex:1;" onclick="sortearAmistoso()">SORTEAR</button>
+        <button id="btn-ami-proximo2" class="btn-primary" style="background:linear-gradient(135deg,#15803D,#22C55E);flex:1;" onclick="sortearAmistoso()">SORTEAR</button>
+      </div>
       <div style="display:flex;gap:8px;">
         <button id="btn-ami-excluir" class="btn-primary" style="display:none;flex:1;background:linear-gradient(135deg,#EF4444,#DC2626);border-color:transparent;" onclick="">EXCLUIR</button>
-        <button class="btn-ghost" onclick="fecharFullscreen()" style="flex:1;">CANCELAR</button>
+        <button class="btn-primary" onclick="fecharFullscreen()" style="flex:1;background:linear-gradient(135deg,#EF4444,#DC2626);border-color:transparent;">CANCELAR</button>
         <button id="btn-ami-salvar" style="display:none;flex:1;" class="btn-primary" onclick="salvarAmistoso()">SALVAR</button>
       </div>
     </div>`;
@@ -3841,11 +3835,121 @@ window.toggleSorteioAuto = (ativo) => {
   if (btnSalvar) btnSalvar.style.display = 'none';
   const btnProximo = document.getElementById('btn-ami-proximo');
   if (btnProximo) btnProximo.textContent = ativo ? 'SORTEAR' : 'CONFIRMAR TIMES';
+  const btnProximo2 = document.getElementById('btn-ami-proximo2');
+  if (btnProximo2) btnProximo2.textContent = ativo ? 'SORTEAR' : 'CONFIRMAR TIMES';
+  _renderManualTimesSection();
 };
 
 function _renderSorteioManual() {
   _renderPlayersPanel();
 }
+
+// ── Seleção inline de times em modo manual (não-dupla) ──
+function _renderManualTimesSection() {
+  const section = document.getElementById('ami-manual-times-section');
+  if (!section) return;
+  const sorteioAuto = document.getElementById('ami-sorteio-auto');
+  const modoDupla = document.getElementById('ami-dupla')?.checked || false;
+  const modoManual = sorteioAuto && !sorteioAuto.checked;
+  if (!modoManual || modoDupla || !_jcSel.size) {
+    section.style.display = 'none';
+    section.innerHTML = '';
+    return;
+  }
+  section.style.display = '';
+  const items = [..._jcSel.entries()];
+  section.innerHTML = `<label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">TIMES</label>` +
+    items.map(([jogId, jogNome]) => {
+      const sel = _amiManualSel.get(jogId);
+      const safeId = jogId.replace(/[^a-zA-Z0-9_-]/g, '_');
+      const isSel = sel?._tipo === 'selecoes';
+      const _td = sel && !isSel ? _teamDataOuFallback(sel.timeId, sel.nome) : null;
+      const paisCode = sel ? (isSel ? (SELECAO_PAIS[sel.timeId]?.pais || '') : (_td?.pais || '')) : '';
+      const selectedHtml = sel ? `
+        <div style="display:flex;align-items:center;gap:8px;background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.35);border-radius:10px;padding:8px 12px;margin-top:6px;">
+          ${paisCode ? `<img src="https://flagcdn.com/w40/${paisCode}.png" alt="" loading="lazy" style="width:22px;height:16px;object-fit:cover;border-radius:2px;flex-shrink:0;" onerror="this.style.display='none'">` : ''}
+          ${!isSel && _td ? `<div style="width:22px;height:22px;border-radius:5px;background:${_td.fundo};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:${_td.cor};flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">${_td.abrev}</div>` : ''}
+          <span style="font-weight:700;font-size:12px;text-transform:uppercase;flex:1;">${sel.nome.toUpperCase()}</span>
+          ${eficBadge(sel.eficiencia || 'Bom')}
+          <span onclick="limparTimeManualInline('${jogId}')" style="cursor:pointer;color:var(--text-muted);font-size:16px;line-height:1;margin-left:4px;">×</span>
+        </div>` : '';
+      return `<div style="margin-bottom:12px;">
+        <label style="display:block;font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">${_nomeTag(jogNome)}</label>
+        <div style="position:relative;">
+          <input id="ami-ts-search-${safeId}" type="text" class="input" placeholder="BUSCAR TIME..." autocomplete="off"
+            oninput="filtrarTimesManualInline('${jogId}')"
+            onfocus="this.value='';filtrarTimesManualInline('${jogId}')"
+            onblur="setTimeout(()=>{const d=document.getElementById('ami-ts-drop-${safeId}');if(d)d.style.display='none';},200)"
+            style="margin-bottom:0;font-size:13px;padding:10px 14px;text-transform:uppercase;">
+          <div id="ami-ts-drop-${safeId}" style="display:none;position:absolute;top:100%;left:0;right:0;z-index:30;background:var(--bg);border:1px solid var(--card-border);border-radius:12px;max-height:200px;overflow-y:auto;margin-top:4px;box-shadow:0 8px 24px rgba(0,0,0,0.5);"></div>
+        </div>
+        ${selectedHtml}
+      </div>`;
+    }).join('');
+}
+
+window.filtrarTimesManualInline = (jogId) => {
+  const safeId = jogId.replace(/[^a-zA-Z0-9_-]/g, '_');
+  const q = (document.getElementById(`ami-ts-search-${safeId}`)?.value || '').toLowerCase();
+  const drop = document.getElementById(`ami-ts-drop-${safeId}`);
+  if (!drop) return;
+  const tiposDisponiveis = [..._amiTiposSel];
+  let pool = [];
+  if (tiposDisponiveis.length > 1) {
+    pool = [...clubes.map(t => ({ ...t, _tipo: 'clubes' })), ...selecoes.map(t => ({ ...t, _tipo: 'selecoes' }))];
+  } else if (tiposDisponiveis[0] === 'selecoes') {
+    pool = selecoes.map(t => ({ ...t, _tipo: 'selecoes' }));
+  } else {
+    pool = clubes.map(t => ({ ...t, _tipo: 'clubes' }));
+  }
+  pool = filtrarPoolEfic(pool);
+  const jaEscolhidos = new Set();
+  for (const [otherId, sel] of _amiManualSel) {
+    if (otherId !== jogId) jaEscolhidos.add(sel.timeId);
+  }
+  const filtrado = pool.filter(t => !jaEscolhidos.has(t.id) && (!q || t.nome.toLowerCase().includes(q))).slice(0, 30);
+  if (!filtrado.length) {
+    drop.innerHTML = '<div style="padding:12px;color:var(--text-muted);font-size:12px;text-align:center;">NENHUM TIME ENCONTRADO</div>';
+    drop.style.display = 'block';
+    return;
+  }
+  drop.innerHTML = filtrado.map(t => {
+    const isSel = t._tipo === 'selecoes';
+    const _td = !isSel ? _teamDataOuFallback(t.id, t.nome) : null;
+    const paisCode = isSel ? (SELECAO_PAIS[t.id]?.pais || '') : (_td?.pais || '');
+    const flagEl = paisCode ? `<img src="https://flagcdn.com/w40/${paisCode}.png" alt="" loading="lazy" style="width:22px;height:16px;object-fit:cover;border-radius:2px;flex-shrink:0;" onerror="this.style.display='none'">` : '';
+    const shieldEl = !isSel && _td ? `<div style="width:22px;height:22px;border-radius:5px;background:${_td.fundo};display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:${_td.cor};flex-shrink:0;border:1px solid rgba(255,255,255,0.1);">${_td.abrev}</div>` : '';
+    const eficEl = t.eficiencia ? eficBadge(t.eficiencia) : '';
+    return `<div onclick="selecionarTimeManualInline('${jogId.replace(/'/g,"\\'")}','${t.id}','${t.nome.replace(/'/g,"\\'")}',${t.forca},'${t._tipo}','${(t.eficiencia||'Bom').replace(/'/g,"\\'")}')"
+      style="padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);font-weight:600;font-size:12px;display:flex;align-items:center;gap:8px;">
+      ${flagEl}${shieldEl}
+      <span style="text-transform:uppercase;flex:1;">${t.nome}</span>
+      ${eficEl}
+    </div>`;
+  }).join('');
+  drop.style.display = 'block';
+};
+
+window.selecionarTimeManualInline = (jogId, timeId, timeNome, forca, tipo, eficiencia) => {
+  _amiManualSel.set(jogId, { timeId, nome: timeNome, forca, _tipo: tipo, eficiencia: eficiencia || 'Bom' });
+  const safeId = jogId.replace(/[^a-zA-Z0-9_-]/g, '_');
+  const drop = document.getElementById(`ami-ts-drop-${safeId}`);
+  if (drop) drop.style.display = 'none';
+  _renderManualTimesSection();
+  const box = document.getElementById('ami-sorteio');
+  if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+  const btnSalvar = document.getElementById('btn-ami-salvar');
+  if (btnSalvar) btnSalvar.style.display = 'none';
+};
+
+window.limparTimeManualInline = (jogId) => {
+  _amiManualSel.delete(jogId);
+  _renderManualTimesSection();
+  const box = document.getElementById('ami-sorteio');
+  if (box) { box.style.display = 'none'; box.innerHTML = ''; }
+  const btnSalvar = document.getElementById('btn-ami-salvar');
+  if (btnSalvar) btnSalvar.style.display = 'none';
+};
 
 // Modal de escolha de time para DUPLA (modo manual dupla + manual times)
 window._abrirModalEscolherTimeDupla = (duplaNum) => {
