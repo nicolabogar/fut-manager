@@ -3306,7 +3306,7 @@ function _renderPlayersPanel() {
         <span onclick="removerJogJC('${id}',0)" style="cursor:pointer;color:var(--text-muted);font-size:16px;line-height:1;margin-left:auto;padding-left:6px;">×</span>
       </div>`;
     }).join('');
-    const tagLimpar = `<span onclick="limparJogadoresJC()" style="cursor:pointer;color:#EF4444;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:20px;padding:5px 12px;margin:2px;">LIMPAR JOGADORES ×</span>`;
+    const tagLimpar = `<span onclick="limparJogadoresJC()" style="cursor:pointer;color:#EF4444;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:4px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:20px;padding:5px 12px;margin:2px;">LIMPAR JOGADORES X</span>`;
     container.innerHTML = `<div style="background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:12px;padding:10px;margin-bottom:4px;">
       <div style="display:flex;flex-wrap:wrap;gap:4px;align-items:center;min-height:28px;">${tags}${tagLimpar}</div>
     </div>`;
@@ -3480,12 +3480,12 @@ function _htmlNovoAmistoso() {
     <div id="ami-sorteio" style="display:none;margin-bottom:16px;"></div>
     <div style="margin-top:12px;">
       <div id="ami-btn-sortear-row" style="display:flex;gap:8px;margin-bottom:8px;">
-        <button id="btn-ami-proximo" class="btn-primary" style="background:linear-gradient(135deg,#0284C7,#06B6D4);flex:1;" onclick="sortearAmistoso()">SORTEAR</button>
+        <button id="btn-ami-proximo" class="btn-primary" style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);color:#F59E0B;flex:1;" onclick="sortearAmistoso()">SORTEAR</button>
       </div>
       <div style="display:flex;gap:8px;">
         <button id="btn-ami-excluir" class="btn-primary" style="display:none;flex:1;background:linear-gradient(135deg,#EF4444,#DC2626);border-color:transparent;" onclick="">EXCLUIR</button>
-        <button class="btn-primary" onclick="fecharFullscreen()" style="flex:1;background:linear-gradient(135deg,#EF4444,#DC2626);border-color:transparent;">CANCELAR</button>
-        <button id="btn-ami-salvar" style="display:none;flex:1;" class="btn-primary" onclick="salvarAmistoso()">SALVAR</button>
+        <button class="btn-primary" onclick="fecharFullscreen()" style="flex:1;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);color:#EF4444;">CANCELAR</button>
+        <button id="btn-ami-salvar" style="display:none;flex:1;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.3);color:#10B981;" class="btn-primary" onclick="salvarAmistoso()">SALVAR</button>
       </div>
     </div>`;
 }
