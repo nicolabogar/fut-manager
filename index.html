@@ -1234,6 +1234,38 @@ function _nomesTime(time) {
   if (ids.length) return ids.map((id, i) => _nomeTag(_nomeJogPorId(id, nomes[i] || '')));
   return nomes.map(n => _nomeTag(n));
 }
+
+/** Retorna HTML dos nomes dos jogadores de um time, com suporte a cores individuais via _playerColors.
+ * @param {object} time - objeto time (time1 ou time2) com jogadoresIds/jogadores
+ * @param {object|null} playerColors - mapa playerId→paletteIndex, ou null para cor padrão
+ * @param {string} defaultColor - cor padrão (CSS) quando playerColors é null
+ * @param {string} defaultBg - cor de fundo padrão (CSS), usada no modo bloco
+ * @param {boolean} compact - true = spans inline com · separador; false = divs em bloco
+ */
+function _htmlJogadoresTime(time, playerColors, defaultColor, defaultBg, compact) {
+  const ids = time?.jogadoresIds || [];
+  const nomes = time?.jogadores || [];
+  if (!ids.length && !nomes.length) return '';
+  if (compact) {
+    const parts = ids.length
+      ? ids.map((pid, i) => {
+          const c = playerColors ? _PLAYER_TAG_PALETTE[(playerColors[pid] ?? 0) % _PLAYER_TAG_PALETTE.length] : null;
+          const col = c ? c.color : defaultColor;
+          return `<span style="color:${col}">${_nomeTag(nomes[i] || _nomeJogPorId(pid, ''))}</span>`;
+        })
+      : nomes.map(n => `<span style="color:${defaultColor}">${_nomeTag(n)}</span>`);
+    return `<div style="font-size:10px;font-weight:700;">${parts.join(' · ')}</div>`;
+  }
+  const items = ids.length
+    ? ids.map((pid, i) => {
+        const c = playerColors ? _PLAYER_TAG_PALETTE[(playerColors[pid] ?? 0) % _PLAYER_TAG_PALETTE.length] : null;
+        const col = c ? c.color : defaultColor;
+        const bg = c ? c.cbg : defaultBg;
+        return `<div style="font-size:11px;color:${col};font-weight:700;text-transform:uppercase;background:${bg};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${_nomeTag(nomes[i] || _nomeJogPorId(pid, ''))}</div>`;
+      })
+    : nomes.map(n => `<div style="font-size:11px;color:${defaultColor};font-weight:700;text-transform:uppercase;background:${defaultBg};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${_nomeTag(n)}</div>`);
+  return `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;">${items.join('')}</div>`;
+}
 let amistosos  = [];
 let campeonatos= [];
 let clubes     = [...CLUBES_DEFAULT];
@@ -3083,10 +3115,7 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
         <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_nomeAbrevTime(a.time1?.timeId, a.time1?.nome || '?')}</div>
         ${b1}
-        ${_nomesTime(a.time1).length ? `<div style="font-size:10px;font-weight:700;">${a.time1.jogadoresIds
-          ? a.time1.jogadoresIds.map((pid,i) => { const c=_PLAYER_TAG_PALETTE[(a._playerColors?.[pid]??0)%_PLAYER_TAG_PALETTE.length]; return `<span style="color:${a._playerColors?c.color:'var(--cyan)'}">${_nomeTag(a.time1.jogadores?.[i]||_nomeJogPorId(pid,''))}</span>`; }).join(' · ')
-          : `<span style="color:var(--cyan)">${_nomesTime(a.time1).join(' · ')}</span>`
-        }</div>` : ''}
+        ${_nomesTime(a.time1).length ? _htmlJogadoresTime(a.time1, a._playerColors || null, 'var(--cyan)', '', true) : ''}
       </div>
       <div style="flex-shrink:0;text-align:center;">
         ${temRes
@@ -3108,10 +3137,7 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
         <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_nomeAbrevTime(a.time2?.timeId, a.time2?.nome || '?')}</div>
         ${b2}
-        ${_nomesTime(a.time2).length ? `<div style="font-size:10px;font-weight:700;">${a.time2.jogadoresIds
-          ? a.time2.jogadoresIds.map((pid,i) => { const c=_PLAYER_TAG_PALETTE[(a._playerColors?.[pid]??0)%_PLAYER_TAG_PALETTE.length]; return `<span style="color:${a._playerColors?c.color:(a.modoDupla?'var(--yellow)':'var(--cyan)')}">${_nomeTag(a.time2.jogadores?.[i]||_nomeJogPorId(pid,''))}</span>`; }).join(' · ')
-          : `<span style="color:${a.modoDupla?'var(--yellow)':'var(--cyan)'}">${_nomesTime(a.time2).join(' · ')}</span>`
-        }</div>` : ''}
+        ${_nomesTime(a.time2).length ? _htmlJogadoresTime(a.time2, a._playerColors || null, a.modoDupla ? 'var(--yellow)' : 'var(--cyan)', '', true) : ''}
       </div>
     </div>` : `
     <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;align-items:center;">
@@ -3121,10 +3147,7 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
         ${lpIcon1}
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(a.time1?.timeId))}</div>
         ${_nomesTime(a.time1).length
-          ? `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;">${a.time1.jogadoresIds
-            ? a.time1.jogadoresIds.map((pid,i) => { const c=_PLAYER_TAG_PALETTE[(a._playerColors?.[pid]??0)%_PLAYER_TAG_PALETTE.length]; const col=a._playerColors?c.color:'var(--cyan)'; const bg=a._playerColors?c.cbg:'rgba(6,182,212,0.08)'; return `<div style="font-size:11px;color:${col};font-weight:700;text-transform:uppercase;background:${bg};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${_nomeTag(a.time1.jogadores?.[i]||_nomeJogPorId(pid,''))}</div>`; }).join('')
-            : _nomesTime(a.time1).map(n=>`<div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')
-          }</div>`
+          ? _htmlJogadoresTime(a.time1, a._playerColors || null, 'var(--cyan)', 'rgba(6,182,212,0.08)', false)
           : ''}
       </div>
       <div style="text-align:center;min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
@@ -3136,10 +3159,7 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
         ${lpIcon2}
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(a.time2?.timeId))}</div>
         ${_nomesTime(a.time2).length
-          ? `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;">${a.time2.jogadoresIds
-            ? a.time2.jogadoresIds.map((pid,i) => { const c=_PLAYER_TAG_PALETTE[(a._playerColors?.[pid]??0)%_PLAYER_TAG_PALETTE.length]; const col=a._playerColors?c.color:(a.modoDupla?'var(--yellow)':'var(--cyan)'); const bg=a._playerColors?c.cbg:(a.modoDupla?'rgba(245,158,11,0.08)':'rgba(6,182,212,0.08)'); return `<div style="font-size:11px;color:${col};font-weight:700;text-transform:uppercase;background:${bg};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${_nomeTag(a.time2.jogadores?.[i]||_nomeJogPorId(pid,''))}</div>`; }).join('')
-            : _nomesTime(a.time2).map(n=>`<div style="font-size:11px;color:${a.modoDupla?'var(--yellow)':'var(--cyan)'};font-weight:700;text-transform:uppercase;background:${a.modoDupla?'rgba(245,158,11,0.08)':'rgba(6,182,212,0.08)'};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')
-          }</div>`
+          ? _htmlJogadoresTime(a.time2, a._playerColors || null, a.modoDupla ? 'var(--yellow)' : 'var(--cyan)', a.modoDupla ? 'rgba(245,158,11,0.08)' : 'rgba(6,182,212,0.08)', false)
           : ''}
       </div>
     </div>`}
@@ -3302,6 +3322,12 @@ const _PLAYER_TAG_PALETTE = [
 const _playerTagColorIdx = new Map(); // playerId → paletteIndex
 let _playerTagNextIdx = 0;
 function _resetPlayerTagColors() { _playerTagColorIdx.clear(); _playerTagNextIdx = 0; }
+function _assignPlayerTagColor(id) {
+  if (!_playerTagColorIdx.has(id)) {
+    _playerTagColorIdx.set(id, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length);
+    _playerTagNextIdx++;
+  }
+}
 
 function _syncJcMaps() {
   _jcSel.clear();
@@ -3376,10 +3402,7 @@ window.selecionarJogJC = (id, nome) => {
   } else {
     return; // ja cheio
   }
-  if (!_playerTagColorIdx.has(id)) {
-    _playerTagColorIdx.set(id, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length);
-    _playerTagNextIdx++;
-  }
+  _assignPlayerTagColor(id);
   _syncJcMaps();
   _renderPlayersPanel();
   // resetar sorteio ao mudar jogadores
@@ -3533,16 +3556,16 @@ function _preencherUltimoJogo() {
     const j = jogadores.find(x => x.id === jid);
     if (j && !_jcT1.has(jid) && !_jcT2.has(jid)) {
       const nome = _nomeExibicao(j);
-      if (_jcT1.size < maxPerTime) { _jcT1.set(jid, nome); if (!_playerTagColorIdx.has(jid)) { _playerTagColorIdx.set(jid, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length); _playerTagNextIdx++; } }
-      else if (_jcT2.size < maxPerTime) { _jcT2.set(jid, nome); if (!_playerTagColorIdx.has(jid)) { _playerTagColorIdx.set(jid, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length); _playerTagNextIdx++; } }
+      if (_jcT1.size < maxPerTime) { _jcT1.set(jid, nome); _assignPlayerTagColor(jid); }
+      else if (_jcT2.size < maxPerTime) { _jcT2.set(jid, nome); _assignPlayerTagColor(jid); }
     }
   });
   ids2.forEach(jid => {
     const j = jogadores.find(x => x.id === jid);
     if (j && !_jcT1.has(jid) && !_jcT2.has(jid)) {
       const nome = _nomeExibicao(j);
-      if (_jcT2.size < maxPerTime) { _jcT2.set(jid, nome); if (!_playerTagColorIdx.has(jid)) { _playerTagColorIdx.set(jid, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length); _playerTagNextIdx++; } }
-      else if (_jcT1.size < maxPerTime) { _jcT1.set(jid, nome); if (!_playerTagColorIdx.has(jid)) { _playerTagColorIdx.set(jid, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length); _playerTagNextIdx++; } }
+      if (_jcT2.size < maxPerTime) { _jcT2.set(jid, nome); _assignPlayerTagColor(jid); }
+      else if (_jcT1.size < maxPerTime) { _jcT1.set(jid, nome); _assignPlayerTagColor(jid); }
     }
   });
   _syncJcMaps();
