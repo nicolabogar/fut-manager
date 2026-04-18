@@ -3083,7 +3083,10 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
         <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_nomeAbrevTime(a.time1?.timeId, a.time1?.nome || '?')}</div>
         ${b1}
-        ${_nomesTime(a.time1).length ? `<div style="font-size:10px;color:var(--cyan);font-weight:700;">${_nomesTime(a.time1).join(' · ')}</div>` : ''}
+        ${_nomesTime(a.time1).length ? `<div style="font-size:10px;font-weight:700;">${a.time1.jogadoresIds
+          ? a.time1.jogadoresIds.map((pid,i) => { const c=_PLAYER_TAG_PALETTE[(a._playerColors?.[pid]??0)%_PLAYER_TAG_PALETTE.length]; return `<span style="color:${a._playerColors?c.color:'var(--cyan)'}">${_nomeTag(a.time1.jogadores?.[i]||_nomeJogPorId(pid,''))}</span>`; }).join(' · ')
+          : `<span style="color:var(--cyan)">${_nomesTime(a.time1).join(' · ')}</span>`
+        }</div>` : ''}
       </div>
       <div style="flex-shrink:0;text-align:center;">
         ${temRes
@@ -3105,7 +3108,10 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
         <div style="font-weight:800;font-size:13px;line-height:1.2;text-transform:uppercase;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${_nomeAbrevTime(a.time2?.timeId, a.time2?.nome || '?')}</div>
         ${b2}
-        ${_nomesTime(a.time2).length ? `<div style="font-size:10px;color:${a.modoDupla ? 'var(--yellow)' : 'var(--cyan)'};font-weight:700;">${_nomesTime(a.time2).join(' · ')}</div>` : ''}
+        ${_nomesTime(a.time2).length ? `<div style="font-size:10px;font-weight:700;">${a.time2.jogadoresIds
+          ? a.time2.jogadoresIds.map((pid,i) => { const c=_PLAYER_TAG_PALETTE[(a._playerColors?.[pid]??0)%_PLAYER_TAG_PALETTE.length]; return `<span style="color:${a._playerColors?c.color:(a.modoDupla?'var(--yellow)':'var(--cyan)')}">${_nomeTag(a.time2.jogadores?.[i]||_nomeJogPorId(pid,''))}</span>`; }).join(' · ')
+          : `<span style="color:${a.modoDupla?'var(--yellow)':'var(--cyan)'}">${_nomesTime(a.time2).join(' · ')}</span>`
+        }</div>` : ''}
       </div>
     </div>` : `
     <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;align-items:center;">
@@ -3115,7 +3121,10 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
         ${lpIcon1}
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(a.time1?.timeId))}</div>
         ${_nomesTime(a.time1).length
-          ? `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;">${_nomesTime(a.time1).map(n=>`<div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')}</div>`
+          ? `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;">${a.time1.jogadoresIds
+            ? a.time1.jogadoresIds.map((pid,i) => { const c=_PLAYER_TAG_PALETTE[(a._playerColors?.[pid]??0)%_PLAYER_TAG_PALETTE.length]; const col=a._playerColors?c.color:'var(--cyan)'; const bg=a._playerColors?c.cbg:'rgba(6,182,212,0.08)'; return `<div style="font-size:11px;color:${col};font-weight:700;text-transform:uppercase;background:${bg};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${_nomeTag(a.time1.jogadores?.[i]||_nomeJogPorId(pid,''))}</div>`; }).join('')
+            : _nomesTime(a.time1).map(n=>`<div style="font-size:11px;color:var(--cyan);font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.08);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')
+          }</div>`
           : ''}
       </div>
       <div style="text-align:center;min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
@@ -3127,7 +3136,10 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
         ${lpIcon2}
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(a.time2?.timeId))}</div>
         ${_nomesTime(a.time2).length
-          ? `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;">${_nomesTime(a.time2).map(n=>`<div style="font-size:11px;color:${a.modoDupla ? 'var(--yellow)' : 'var(--cyan)'};font-weight:700;text-transform:uppercase;background:${a.modoDupla ? 'rgba(245,158,11,0.08)' : 'rgba(6,182,212,0.08)'};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')}</div>`
+          ? `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;">${a.time2.jogadoresIds
+            ? a.time2.jogadoresIds.map((pid,i) => { const c=_PLAYER_TAG_PALETTE[(a._playerColors?.[pid]??0)%_PLAYER_TAG_PALETTE.length]; const col=a._playerColors?c.color:(a.modoDupla?'var(--yellow)':'var(--cyan)'); const bg=a._playerColors?c.cbg:(a.modoDupla?'rgba(245,158,11,0.08)':'rgba(6,182,212,0.08)'); return `<div style="font-size:11px;color:${col};font-weight:700;text-transform:uppercase;background:${bg};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${_nomeTag(a.time2.jogadores?.[i]||_nomeJogPorId(pid,''))}</div>`; }).join('')
+            : _nomesTime(a.time2).map(n=>`<div style="font-size:11px;color:${a.modoDupla?'var(--yellow)':'var(--cyan)'};font-weight:700;text-transform:uppercase;background:${a.modoDupla?'rgba(245,158,11,0.08)':'rgba(6,182,212,0.08)'};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${n}</div>`).join('')
+          }</div>`
           : ''}
       </div>
     </div>`}
@@ -3278,6 +3290,19 @@ const _jcT1 = new Map(); // jogadores do TIME 1
 const _jcT2 = new Map(); // jogadores do TIME 2
 const _jcSel = new Map(); // union derivada de _jcT1 + _jcT2
 
+// ── Paleta de cores para tags de jogadores ──
+const _PLAYER_TAG_PALETTE = [
+  { bg: 'rgba(139,92,246,0.18)', border: 'rgba(139,92,246,0.5)', color: '#C4B5FD', cbg: 'rgba(139,92,246,0.1)' },
+  { bg: 'rgba(6,182,212,0.18)',  border: 'rgba(6,182,212,0.5)',  color: '#67E8F9', cbg: 'rgba(6,182,212,0.1)' },
+  { bg: 'rgba(34,197,94,0.18)',  border: 'rgba(34,197,94,0.5)',  color: '#86EFAC', cbg: 'rgba(34,197,94,0.1)' },
+  { bg: 'rgba(245,158,11,0.18)', border: 'rgba(245,158,11,0.5)', color: '#FCD34D', cbg: 'rgba(245,158,11,0.1)' },
+  { bg: 'rgba(239,68,68,0.18)',  border: 'rgba(239,68,68,0.5)',  color: '#FCA5A5', cbg: 'rgba(239,68,68,0.1)' },
+  { bg: 'rgba(236,72,153,0.18)', border: 'rgba(236,72,153,0.5)', color: '#F9A8D4', cbg: 'rgba(236,72,153,0.1)' },
+];
+const _playerTagColorIdx = new Map(); // playerId → paletteIndex
+let _playerTagNextIdx = 0;
+function _resetPlayerTagColors() { _playerTagColorIdx.clear(); _playerTagNextIdx = 0; }
+
 function _syncJcMaps() {
   _jcSel.clear();
   for (const [k,v] of _jcT1) _jcSel.set(k,v);
@@ -3301,7 +3326,9 @@ function _renderPlayersPanel() {
     container.innerHTML = '';
   } else {
     const tags = allPlayers.map(([id, nome]) => {
-      return `<div style="display:inline-flex;align-items:center;background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.35);border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700;color:#67E8F9;margin:2px;">
+      const cidx = (_playerTagColorIdx.get(id) ?? 0) % _PLAYER_TAG_PALETTE.length;
+      const c = _PLAYER_TAG_PALETTE[cidx];
+      return `<div style="display:inline-flex;align-items:center;background:${c.bg};border:1px solid ${c.border};border-radius:20px;padding:5px 10px;font-size:12px;font-weight:700;color:${c.color};margin:2px;">
         ${_nomeTag(nome)}
         <span onclick="removerJogJC('${id}',0)" style="cursor:pointer;color:var(--text-muted);font-size:16px;line-height:1;margin-left:auto;padding-left:6px;">×</span>
       </div>`;
@@ -3349,6 +3376,10 @@ window.selecionarJogJC = (id, nome) => {
   } else {
     return; // ja cheio
   }
+  if (!_playerTagColorIdx.has(id)) {
+    _playerTagColorIdx.set(id, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length);
+    _playerTagNextIdx++;
+  }
   _syncJcMaps();
   _renderPlayersPanel();
   // resetar sorteio ao mudar jogadores
@@ -3381,6 +3412,7 @@ window.limparJogadoresJC = () => {
   _jcT1.clear(); _jcT2.clear();
   _amiManualSel.clear();
   _amiDuplaTimeSel.clear();
+  _resetPlayerTagColors();
   _syncJcMaps();
   _renderPlayersPanel();
   // Desmarcar checkbox de sortear dupla e limpar painel de resultados
@@ -3501,16 +3533,16 @@ function _preencherUltimoJogo() {
     const j = jogadores.find(x => x.id === jid);
     if (j && !_jcT1.has(jid) && !_jcT2.has(jid)) {
       const nome = _nomeExibicao(j);
-      if (_jcT1.size < maxPerTime) _jcT1.set(jid, nome);
-      else if (_jcT2.size < maxPerTime) _jcT2.set(jid, nome);
+      if (_jcT1.size < maxPerTime) { _jcT1.set(jid, nome); if (!_playerTagColorIdx.has(jid)) { _playerTagColorIdx.set(jid, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length); _playerTagNextIdx++; } }
+      else if (_jcT2.size < maxPerTime) { _jcT2.set(jid, nome); if (!_playerTagColorIdx.has(jid)) { _playerTagColorIdx.set(jid, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length); _playerTagNextIdx++; } }
     }
   });
   ids2.forEach(jid => {
     const j = jogadores.find(x => x.id === jid);
     if (j && !_jcT1.has(jid) && !_jcT2.has(jid)) {
       const nome = _nomeExibicao(j);
-      if (_jcT2.size < maxPerTime) _jcT2.set(jid, nome);
-      else if (_jcT1.size < maxPerTime) _jcT1.set(jid, nome);
+      if (_jcT2.size < maxPerTime) { _jcT2.set(jid, nome); if (!_playerTagColorIdx.has(jid)) { _playerTagColorIdx.set(jid, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length); _playerTagNextIdx++; } }
+      else if (_jcT1.size < maxPerTime) { _jcT1.set(jid, nome); if (!_playerTagColorIdx.has(jid)) { _playerTagColorIdx.set(jid, _playerTagNextIdx % _PLAYER_TAG_PALETTE.length); _playerTagNextIdx++; } }
     }
   });
   _syncJcMaps();
@@ -3522,6 +3554,7 @@ document.getElementById('btn-criar-ami').addEventListener('click', () => {
   _jcT1.clear(); _jcT2.clear(); _jcSel.clear();
   _amiManualSel.clear();
   _amiDuplaTimeSel.clear();
+  _resetPlayerTagColors();
   _amiTiposSel.clear(); _amiTiposSel.add('clubes'); _amiTiposSel.add('selecoes');
   _amiDistSel.t1.clear(); _amiDistSel.t2.clear();
   fullscreen('NOVO', _htmlNovoAmistoso());
@@ -3543,6 +3576,7 @@ window.iniciarPartida = () => {
   _jcT1.clear(); _jcT2.clear(); _jcSel.clear();
   _amiManualSel.clear();
   _amiDuplaTimeSel.clear();
+  _resetPlayerTagColors();
   _amiTiposSel.clear(); _amiTiposSel.add('clubes'); _amiTiposSel.add('selecoes');
   _amiDistSel.t1.clear(); _amiDistSel.t2.clear();
   fullscreen('NOVO', _htmlNovoAmistoso(), 'AMISTOSOS', 'amistosos');
@@ -3653,6 +3687,7 @@ window.toggleModoDupla = (ativo) => {
   _jcT1.clear(); _jcT2.clear();
   _amiManualSel.clear();
   _amiDuplaTimeSel.clear();
+  _resetPlayerTagColors();
   _syncJcMaps();
   _renderPlayersPanel();
   _renderDuplaPanel(1);
@@ -4417,6 +4452,7 @@ window.sortearAmistoso = () => {
       tipo, modoDupla, sortearDuplaAuto, maxPartidaDupla: maxDupla,
       time1: { nome: t1data.nome, timeId: t1data.timeId, forca: t1data.forca, eficiencia: t1data.eficiencia||'Bom', jogadores: j1.map(j=>_nomeExibicao(j)), jogadoresIds: j1.map(j=>j.id) },
       time2: { nome: t2data.nome, timeId: t2data.timeId, forca: t2data.forca, eficiencia: t2data.eficiencia||'Bom', jogadores: j2.map(j=>_nomeExibicao(j)), jogadoresIds: j2.map(j=>j.id) },
+      _playerColors: Object.fromEntries(_playerTagColorIdx),
     };
     _renderSorteioBox(_sorteioAmi, eq, diff);
     return;
@@ -4443,6 +4479,7 @@ window.sortearAmistoso = () => {
       maxPartidaDupla: maxDupla,
       time1: { nome: t1data.nome, timeId: t1data.timeId, forca: t1data.forca, eficiencia: t1data.eficiencia||'Bom', jogadores: j1.map(j=>_nomeExibicao(j)), jogadoresIds: j1.map(j=>j.id) },
       time2: { nome: t2data.nome, timeId: t2data.timeId, forca: t2data.forca, eficiencia: t2data.eficiencia||'Bom', jogadores: j2.map(j=>_nomeExibicao(j)), jogadoresIds: j2.map(j=>j.id) },
+      _playerColors: Object.fromEntries(_playerTagColorIdx),
     };
     _renderSorteioBox(_sorteioAmi, eq, diff);
     return;
@@ -4469,6 +4506,7 @@ window.sortearAmistoso = () => {
       maxPartidaDupla: maxDupla,
       time1: { nome: t1.nome, timeId: t1.id, forca: t1.forca, eficiencia: t1.eficiencia||'Bom', jogadores: j1.map(j => j.nome), jogadoresIds: j1.map(j => j.id) },
       time2: { nome: t2.nome, timeId: t2.id, forca: t2.forca, eficiencia: t2.eficiencia||'Bom', jogadores: j2.map(j => j.nome), jogadoresIds: j2.map(j => j.id) },
+      _playerColors: Object.fromEntries(_playerTagColorIdx),
     };
     _renderSorteioBox(_sorteioAmi, eq, diff);
     return;
@@ -4491,6 +4529,7 @@ window.sortearAmistoso = () => {
     maxPartidaDupla: maxDupla,
     time1: { nome: t1.nome, timeId: t1.id, forca: t1.forca, eficiencia: t1.eficiencia||'Bom', jogadores: j1.map(j => j.nome), jogadoresIds: j1.map(j => j.id) },
     time2: { nome: t2.nome, timeId: t2.id, forca: t2.forca, eficiencia: t2.eficiencia||'Bom', jogadores: j2.map(j => j.nome), jogadoresIds: j2.map(j => j.id) },
+    _playerColors: Object.fromEntries(_playerTagColorIdx),
   };
 
   _renderSorteioBox(_sorteioAmi, eq, diff);
