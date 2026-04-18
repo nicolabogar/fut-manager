@@ -1,0 +1,11 @@
+# FIFA FAR PLAY - Prompts de Features v31
+# FORMATO: Cada feature tem status: [ ] pendente | [x] concluído (hash: XXXXXXX)
+# O agente deve marcar o hash do commit ao concluir cada item.
+# Ao finalizar tudo, este arquivo é renomeado para FifaFarPlay_v31.txt e um novo é criado.
+
+## MELHORIAS ##
+
+- [x] Item 1: Na tela de amistoso colocar as cores dos botoes SORTEAR, SALVAR e CANCELAR em cores mais solidas (gradientes solidos ao inves de backgrounds semi-transparentes) (hash: 61493b0)
+- [x] Item 2: Quando for colocando os jogadores na tela de amistoso, colocar cada tag de uma cor diferente (paleta de cores); quando sortear ou escolher os times, as cores devem ser correspondentes nos cards de jogos (nomes dos jogadores mostrados nas cores da respectiva tag) (hash: f4443e4)
+- [x] Item 3: Na tela de torneio, quando selecionar mais de um time por jogador, apresentar 3 times em cada linha (grid 3 colunas); quando for apenas um time, colocar painel centralizado com largura equivalente a 1/3 do espaco disponivel (hash: 3014326)
+
