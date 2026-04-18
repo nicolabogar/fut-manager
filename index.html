@@ -5769,14 +5769,21 @@ function _renderTimesManualCC() {
       const slots = _ccTimesManual.get(key) || new Array(qtd).fill(null);
       const slotsHtml = slots.map((t, k) => {
         const hasTime = !!t;
-        return `<button onclick="_abrirPickerTimeTorneio('${key}',${k})" style="width:100%;background:${hasTime ? 'rgba(6,182,212,0.15)' : 'rgba(255,255,255,0.05)'};border:1px solid ${hasTime ? 'rgba(6,182,212,0.5)' : 'var(--card-border)'};border-radius:8px;padding:8px 10px;color:${hasTime ? '#67E8F9' : 'var(--text-muted)'};font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase;text-align:left;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box;">
-          <span>${hasTime ? t.nome.toUpperCase() : 'TIME ' + (k + 1)}</span>
-          ${hasTime ? `<span onclick="event.stopPropagation();_ccRemoveTime('${key}',${k})" style="color:var(--text-muted);font-size:16px;line-height:1;cursor:pointer;padding-left:4px;">×</span>` : ''}
+        return `<button onclick="_abrirPickerTimeTorneio('${key}',${k})" style="width:100%;background:${hasTime ? 'rgba(6,182,212,0.15)' : 'rgba(255,255,255,0.05)'};border:1px solid ${hasTime ? 'rgba(6,182,212,0.5)' : 'var(--card-border)'};border-radius:8px;padding:8px 6px;color:${hasTime ? '#67E8F9' : 'var(--text-muted)'};font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-sizing:border-box;min-height:44px;">
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${hasTime ? t.nome.toUpperCase() : 'TIME ' + (k + 1)}</span>
+          ${hasTime ? `<span onclick="event.stopPropagation();_ccRemoveTime('${key}',${k})" style="color:var(--text-muted);font-size:14px;line-height:1;cursor:pointer;">×</span>` : ''}
         </button>`;
       }).join('');
+      const gridStyle = qtd === 1
+        ? 'display:flex;justify-content:center;'
+        : 'display:grid;grid-template-columns:repeat(3,1fr);gap:6px;';
+      const btnWrapStyle = qtd === 1 ? 'width:calc(33.33% - 4px);' : '';
+      const slotsWrapped = qtd === 1
+        ? `<div style="${btnWrapStyle}">${slotsHtml}</div>`
+        : slotsHtml;
       return `<div style="background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.25);border-radius:12px;padding:10px;margin-bottom:8px;">
         <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:8px;">DUPLA ${di + 1}: ${par.j1Nome} &amp; ${par.j2Nome}</div>
-        <div style="display:flex;flex-direction:column;gap:6px;">${slotsHtml}</div>
+        <div style="${gridStyle}">${slotsWrapped}</div>
       </div>`;
     }).join('');
   } else {
@@ -5807,14 +5814,20 @@ function _renderTimesManualCC() {
       const slots = _ccTimesManual.get(j.id) || new Array(qtd).fill(null);
       const slotsHtml = slots.map((t, k) => {
         const hasTime = !!t;
-        return `<button onclick="_abrirPickerTimeTorneio('${j.id}',${k})" style="width:100%;background:${hasTime ? 'rgba(139,92,246,0.15)' : 'rgba(255,255,255,0.05)'};border:1px solid ${hasTime ? 'rgba(139,92,246,0.5)' : 'var(--card-border)'};border-radius:8px;padding:8px 10px;color:${hasTime ? '#C4B5FD' : 'var(--text-muted)'};font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase;text-align:left;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box;">
-          <span>${hasTime ? t.nome.toUpperCase() : 'TIME ' + (k + 1)}</span>
-          ${hasTime ? `<span onclick="event.stopPropagation();_ccRemoveTime('${j.id}',${k})" style="color:var(--text-muted);font-size:16px;line-height:1;cursor:pointer;padding-left:4px;">×</span>` : ''}
+        return `<button onclick="_abrirPickerTimeTorneio('${j.id}',${k})" style="width:100%;background:${hasTime ? 'rgba(139,92,246,0.15)' : 'rgba(255,255,255,0.05)'};border:1px solid ${hasTime ? 'rgba(139,92,246,0.5)' : 'var(--card-border)'};border-radius:8px;padding:8px 6px;color:${hasTime ? '#C4B5FD' : 'var(--text-muted)'};font-size:10px;font-weight:700;cursor:pointer;text-transform:uppercase;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;box-sizing:border-box;min-height:44px;">
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${hasTime ? t.nome.toUpperCase() : 'TIME ' + (k + 1)}</span>
+          ${hasTime ? `<span onclick="event.stopPropagation();_ccRemoveTime('${j.id}',${k})" style="color:var(--text-muted);font-size:14px;line-height:1;cursor:pointer;">×</span>` : ''}
         </button>`;
       }).join('');
+      const gridStyle = qtd === 1
+        ? 'display:flex;justify-content:center;'
+        : 'display:grid;grid-template-columns:repeat(3,1fr);gap:6px;';
+      const slotsWrapped = qtd === 1
+        ? `<div style="width:calc(33.33% - 4px);">${slotsHtml}</div>`
+        : slotsHtml;
       return `<div style="background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:10px;margin-bottom:8px;">
         <div style="font-size:11px;font-weight:700;color:#C4B5FD;margin-bottom:8px;">${j.nome.toUpperCase()}</div>
-        <div style="display:flex;flex-direction:column;gap:6px;">${slotsHtml}</div>
+        <div style="${gridStyle}">${slotsWrapped}</div>
       </div>`;
     }).join('');
   }
