@@ -7328,8 +7328,8 @@ function _renderRankFiltros() {
 
   // Painel 4: Data
   const hoje = new Date().toISOString().split('T')[0];
-  const dataPainel = `<div class="rank-filter-label">FILTRO POR PERIODO</div>
-    <div class="rank-filter-panel">
+  const dataPainel = `<div class="rank-filter-panel" style="overflow:hidden;">
+      <div class="rank-filter-label" style="margin-top:0;">FILTRO POR PERIODO</div>
       <div class="rank-date-row">
         <div>
           <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:5px;">DATA INICIO</div>
@@ -7348,7 +7348,7 @@ function _renderRankFiltros() {
 
   // Botão limpar filtros
   const limparBtn = temFiltros
-    ? `<button onclick="_rankLimparFiltros()" style="width:100%;padding:14px 20px;border-radius:14px;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.08);color:#FCA5A5;font-size:15px;font-weight:700;cursor:pointer;text-transform:uppercase;margin-top:4px;">LIMPAR FILTROS ✕</button>`
+    ? `<button onclick="_rankLimparFiltros()" style="width:100%;padding:10px 16px;border-radius:14px;border:1px solid rgba(239,68,68,0.35);background:rgba(239,68,68,0.08);color:#FCA5A5;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase;margin-top:4px;">LIMPAR FILTROS X</button>`
     : '';
 
   el.innerHTML = `
