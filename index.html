@@ -1978,8 +1978,28 @@ document.addEventListener('click', (e) => {
 document.addEventListener('focus', (e) => {
   if (e.target.classList.contains('placar-input')) {
     e.target.select();
+    // F2b: Rolar o card para ficar visivel acima do teclado apos abertura
+    setTimeout(() => {
+      const card = e.target.closest('.match-card');
+      if (card) card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 300);
   }
 }, true);
+
+// F2c: Reposicionar card acima do teclado quando o viewport redimensiona (teclado abre/fecha)
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    const el = document.activeElement;
+    if (!el || !el.classList.contains('placar-input')) return;
+    const card = el.closest('.match-card');
+    if (!card) return;
+    const vvBottom = window.visualViewport.offsetTop + window.visualViewport.height;
+    const cardRect = card.getBoundingClientRect();
+    if (cardRect.bottom > vvBottom - 8) {
+      window.scrollBy({ top: cardRect.bottom - vvBottom + 16, behavior: 'smooth' });
+    }
+  });
+}
 
 // F3: Enter no campo do time 1 avanca para o campo do time 2
 document.addEventListener('keydown', (e) => {
@@ -3091,13 +3111,13 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
           <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="2" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
         </div>
-        <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}',this)" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>`
+        <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}',this)" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--green);border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>`
       : `<div style="display:flex;align-items:center;gap:4px;opacity:0.4;">
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="1" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
           <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="2" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
         </div>
-        <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:not-allowed;opacity:0.4;">FIM</button>`;
+        <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--green);border:none;color:#fff;border-radius:8px;cursor:not-allowed;opacity:0.4;">FIM</button>`;
   const cardId = `ami-card-${a.id}`;
   const swipeOuter = (master && !noSwipe)
     ? `<div class="swipe-wrap" data-swipe-id="${a.id}" data-swipe-nome="Amistoso">`
@@ -3112,7 +3132,7 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
         <span class="tag tag-gray">${a.tipo === 'selecoes' ? 'SELECOES' : 'CLUBES'}</span>
         ${a.modoDupla ? `<span class="tag tag-cyan">DUPLA</span>` : ''}
       </div>
-      ${!isRanking && !temRes ? `<span class="tag tag-cyan">EM ANDAMENTO</span>` : ''}
+      ${!isRanking && !temRes ? `<span class="tag tag-green">EM ANDAMENTO</span>` : ''}
     </div>
     ${compact ? `
     <div style="display:flex;align-items:center;gap:8px;">
@@ -3129,13 +3149,13 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
                 <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="1" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
                 <span style="color:var(--text-muted);font-size:11px;font-weight:900;">×</span>
                 <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="2" class="placar-input" onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;">
-                <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}',this)" style="margin-left:4px;padding:4px 8px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:6px;cursor:pointer;">OK</button>
+                <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}',this)" style="margin-left:4px;padding:4px 8px;font-size:10px;font-weight:700;background:var(--green);border:none;color:#fff;border-radius:6px;cursor:pointer;">OK</button>
               </div>`
             : `<div style="display:flex;align-items:center;gap:3px;opacity:0.4;">
                 <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="1" class="placar-input" disabled onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
                 <span style="color:var(--text-muted);font-size:11px;font-weight:900;">×</span>
                 <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="2" class="placar-input" disabled onclick="event.stopPropagation()" style="width:32px;text-align:center;font-size:16px;font-weight:900;padding:4px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:6px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
-                <button disabled onclick="event.stopPropagation()" style="margin-left:4px;padding:4px 8px;font-size:10px;font-weight:700;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:6px;cursor:not-allowed;opacity:1;">OK</button>
+                <button disabled onclick="event.stopPropagation()" style="margin-left:4px;padding:4px 8px;font-size:10px;font-weight:700;background:var(--green);border:none;color:#fff;border-radius:6px;cursor:not-allowed;opacity:1;">OK</button>
               </div>`}
       </div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;min-width:0;">
@@ -6326,7 +6346,7 @@ function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar, fase
   const placarColor = isFinal ? '#FCD34D' : 'var(--yellow)';
   const btnStyle = isFinal
     ? 'margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#B45309,#F59E0B);border:none;color:#fff;border-radius:8px;cursor:pointer;'
-    : 'margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;';
+    : 'margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--green);border:none;color:#fff;border-radius:8px;cursor:pointer;';
   const escolhaStyle = 'padding:7px 10px;font-size:11px;font-weight:800;background:linear-gradient(135deg,rgba(139,92,246,0.4),rgba(6,182,212,0.4));border:1px solid rgba(139,92,246,0.5);color:#C4B5FD;border-radius:8px;cursor:pointer;width:100%;margin-top:4px;letter-spacing:0.04em;';
   let placarArea;
   if (temRes && isMesmoJogador) {
@@ -6407,7 +6427,7 @@ function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar, fase
         <span class="tag tag-purple">TORNEIO</span>
         ${tagFase}
       </div>
-      ${!temRes ? `<span class="tag tag-cyan">EM ANDAMENTO</span>` : ''}
+      ${!temRes ? `<span class="tag tag-green">EM ANDAMENTO</span>` : ''}
     </div>
     <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;align-items:center;">
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;${vit1?'opacity:1;':''}${temRes&&!vit1?'opacity:0.45;':''}">
@@ -6460,13 +6480,13 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
             <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
             <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="2" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
           </div>
-          <button onclick="event.stopPropagation();salvarPartidaDireta('${cid}',${gi},'${m1.jogadorId}','${m2.jogadorId}',${timeIndex},this,${turno})" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>`
+          <button onclick="event.stopPropagation();salvarPartidaDireta('${cid}',${gi},'${m1.jogadorId}','${m2.jogadorId}',${timeIndex},this,${turno})" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--green);border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>`
       : `<div style="display:flex;align-items:center;gap:4px;opacity:0.4;">
             <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="1" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
             <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
             <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="2" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
           </div>
-          <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--cyan));border:none;color:#fff;border-radius:8px;cursor:not-allowed;opacity:0.4;">FIM</button>`;
+          <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--green);border:none;color:#fff;border-radius:8px;cursor:not-allowed;opacity:0.4;">FIM</button>`;
 
   const t1nom = (t1?.nome||'').replace(/'/g,"\\'");
   const t2nom = (t2?.nome||'').replace(/'/g,"\\'");
@@ -6486,7 +6506,7 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
         ${temIdaVolta && turno === 1 ? `<span class="tag tag-green">TURNO</span>` : ''}
         ${temIdaVolta && turno === 2 ? `<span class="tag tag-yellow">RETURNO</span>` : ''}
       </div>
-      ${!temRes ? `<span class="tag tag-cyan">EM ANDAMENTO</span>` : ''}
+      ${!temRes ? `<span class="tag tag-green">EM ANDAMENTO</span>` : ''}
     </div>
     <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;align-items:center;">
       <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
@@ -8273,7 +8293,7 @@ function cardCampHome(c, modoLista=false) {
   const idAttr = modoLista ? '' : `id="camp-home-${c.id}" `;
   const statusTag = finalizado
     ? `<span class="tag tag-gray">FINALIZADO</span>`
-    : `<span class="tag tag-yellow">EM ANDAMENTO</span>`;
+    : `<span class="tag tag-green">EM ANDAMENTO</span>`;
 
   // Datas formatadas — em painel separado
   const datasHtml = (dataInicio || dataFimTorneio)
