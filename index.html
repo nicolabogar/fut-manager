@@ -1248,23 +1248,14 @@ function _htmlJogadoresTime(time, playerColors, defaultColor, defaultBg, compact
   if (!ids.length && !nomes.length) return '';
   if (compact) {
     const parts = ids.length
-      ? ids.map((pid, i) => {
-          const c = playerColors ? _PLAYER_TAG_PALETTE[(playerColors[pid] ?? 0) % _PLAYER_TAG_PALETTE.length] : null;
-          const col = c ? c.color : defaultColor;
-          return `<span style="color:${col}">${_nomeTag(nomes[i] || _nomeJogPorId(pid, ''))}</span>`;
-        })
-      : nomes.map(n => `<span style="color:${defaultColor}">${_nomeTag(n)}</span>`);
-    return `<div style="font-size:10px;font-weight:700;">${parts.join(' · ')}</div>`;
+      ? ids.map((pid, i) => _htmlJogadorPill(pid, _nomeTag(nomes[i] || _nomeJogPorId(pid, '')), 16))
+      : nomes.map(n => _htmlJogadorPill(null, _nomeTag(n), 16));
+    return `<div style="display:flex;align-items:center;justify-content:center;gap:4px;flex-wrap:wrap;">${parts.join('')}</div>`;
   }
   const items = ids.length
-    ? ids.map((pid, i) => {
-        const c = playerColors ? _PLAYER_TAG_PALETTE[(playerColors[pid] ?? 0) % _PLAYER_TAG_PALETTE.length] : null;
-        const col = c ? c.color : defaultColor;
-        const bg = c ? c.cbg : defaultBg;
-        return `<div style="font-size:11px;color:${col};font-weight:700;text-transform:uppercase;background:${bg};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${_nomeTag(nomes[i] || _nomeJogPorId(pid, ''))}</div>`;
-      })
-    : nomes.map(n => `<div style="font-size:11px;color:${defaultColor};font-weight:700;text-transform:uppercase;background:${defaultBg};border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${_nomeTag(n)}</div>`);
-  return `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;">${items.join('')}</div>`;
+    ? ids.map((pid, i) => _htmlJogadorPill(pid, _nomeTag(nomes[i] || _nomeJogPorId(pid, '')), 20))
+    : nomes.map(n => _htmlJogadorPill(null, _nomeTag(n), 20));
+  return `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:4px;">${items.join('')}</div>`;
 }
 let amistosos  = [];
 let campeonatos= [];
@@ -2332,6 +2323,15 @@ function avatarSvg(size=46) {
   return `<div style="width:${size}px;height:${size}px;border-radius:${Math.round(size*0.3)}px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:linear-gradient(135deg,rgba(139,92,246,0.3),rgba(6,182,212,0.3));"><svg width="${Math.round(size*0.48)}" height="${Math.round(size*0.48)}" viewBox="0 0 24 24" fill="none" stroke="#C7B8FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 016-6h4a6 6 0 016 6v1"/></svg></div>`;
 }
 window.avatarSvg = avatarSvg;
+
+function _htmlJogadorPill(id, nome, size) {
+  size = size || 20;
+  const fotoUrl = id ? (jogadores.find(x => x.id === id)?.fotoUrl || '') : '';
+  const imgHtml = fotoUrl
+    ? `<img src="${fotoUrl}" style="width:${size}px;height:${size}px;border-radius:${Math.round(size*0.3)}px;object-fit:cover;flex-shrink:0;" onerror="this.outerHTML=window.avatarSvg(${size})">`
+    : avatarSvg(size);
+  return `<div style="display:inline-flex;align-items:center;gap:4px;max-width:100%;">${imgHtml}<span style="font-size:11px;color:#fff;font-weight:700;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nome}</span></div>`;
+}
 
 function getMaster() { return jogadores.find(j => j.master); }
 function getMasters() { return jogadores.filter(j => j.master); }
@@ -6457,7 +6457,7 @@ function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar, fase
         ${_htmlCountryRow(t1?.id||'', t1?.nome||'', tipo1)}
         <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(t1?.id, t1?.nome||'?')}</div>
         ${lpKo1}
-        ${nome1 ? `<div style="margin-top:4px;"><div style="font-size:11px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome1}</div></div>` : ''}
+        ${nome1 ? `<div style="margin-top:4px;">${_htmlJogadorPill(cf.j1Id, nome1, 20)}</div>` : ''}
         ${vit1 ? `<div style="margin-top:4px;font-size:18px;">${winnerEmoji}</div>` : ''}
       </div>
       <div style="text-align:center;min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
@@ -6467,7 +6467,7 @@ function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar, fase
         ${_htmlCountryRow(t2?.id||'', t2?.nome||'', tipo2)}
         <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(t2?.id, t2?.nome||'?')}</div>
         ${lpKo2}
-        ${nome2 ? `<div style="margin-top:4px;"><div style="font-size:11px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome2}</div></div>` : ''}
+        ${nome2 ? `<div style="margin-top:4px;">${_htmlJogadorPill(cf.j2Id, nome2, 20)}</div>` : ''}
         ${vit2 ? `<div style="margin-top:4px;font-size:18px;">${winnerEmoji}</div>` : ''}
       </div>
     </div>
@@ -6539,7 +6539,7 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
         <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(t1?.id, t1?.nome||'?')}</div>
         ${lpIcon1}
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(t1?.id))}</div>
-        ${nome1 ? `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:11px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome1}</div></div>` : ''}
+        ${nome1 ? `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;">${_htmlJogadorPill(m1.jogadorId, nome1, 20)}</div>` : ''}
       </div>
       <div style="text-align:center;min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
         ${placarArea}
@@ -6549,7 +6549,7 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
         <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(t2?.id, t2?.nome||'?')}</div>
         ${lpIcon2}
         <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(t2?.id))}</div>
-        ${nome2 ? `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:11px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome2}</div></div>` : ''}
+        ${nome2 ? `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;">${_htmlJogadorPill(m2.jogadorId, nome2, 20)}</div>` : ''}
       </div>
     </div>
     ${temRes ? `<div style="display:flex;justify-content:center;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">${g1r > g2r ? `<span class="tag tag-green">VITÓRIA: ${nome1}</span>` : g2r > g1r ? `<span class="tag tag-green">VITÓRIA: ${nome2}</span>` : `<span class="tag tag-yellow">EMPATE</span>`}</div>` : ''}
@@ -7816,7 +7816,7 @@ function _renderRankJogos() {
             ${j.j1Time?`<div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(j.j1TimeId, j.j1Time)}</div>`:''}
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon1}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.j1TimeId))}</div>
-            ${j.j1Nome?`<div style="font-size:13px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${j.j1Nome}</div>`:''}
+            ${j.j1Nome?`<div style="margin-top:2px;">${_htmlJogadorPill(j.j1Id, j.j1Nome, 20)}</div>`:''}
           </div>
           <div style="text-align:center;min-width:70px;">
             <div style="font-size:29px;font-weight:900;letter-spacing:1px;color:${empate?'var(--text-muted)':'var(--yellow)'};">${j.g1}<span style="color:var(--text-muted);font-size:13px;"> × </span>${j.g2}</div>
@@ -7826,7 +7826,7 @@ function _renderRankJogos() {
             ${j.j2Time?`<div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(j.j2TimeId, j.j2Time)}</div>`:''}
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon2}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.j2TimeId))}</div>
-            ${j.j2Nome?`<div style="font-size:13px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${j.j2Nome}</div>`:''}
+            ${j.j2Nome?`<div style="margin-top:2px;">${_htmlJogadorPill(j.j2Id, j.j2Nome, 20)}</div>`:''}
           </div>
         </div>
         <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
@@ -7859,7 +7859,7 @@ function _renderRankJogos() {
             <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(j.meuTimeId, j.meuTime)}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon1}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.meuTimeId))}</div>
-            ${nome1?`<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:13px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome1}</div></div>`:''}
+            ${nome1?`<div style="margin-top:4px;">${_htmlJogadorPill(j.meuJogadorId, nome1, 20)}</div>`:''}
           </div>
           <div style="text-align:center;min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
             <div style="font-size:29px;font-weight:900;letter-spacing:1px;color:var(--yellow);">${j.meuGol}<span style="color:var(--text-muted);font-size:13px;"> × </span>${j.advGol}</div>
@@ -7869,7 +7869,7 @@ function _renderRankJogos() {
             <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(j.advTimeId, nomeAdvTime)}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon2}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.advTimeId))}</div>
-            ${nome2?`<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:13px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome2}</div></div>`:''}
+            ${nome2?`<div style="margin-top:4px;">${_htmlJogadorPill((j.advJogadoresIds||[])[0]||null, nome2, 20)}</div>`:''}
           </div>
         </div>
         <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
@@ -8110,7 +8110,7 @@ function _renderHistorico() {
           <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(j.meuTimeId, j.meuTime)}</div>
           <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon1}</div>
           <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.meuTimeId))}</div>
-          ${nome1?`<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:13px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome1}</div></div>`:''}
+          ${nome1?`<div style="margin-top:4px;">${_htmlJogadorPill(j.meuJogadorId, nome1, 20)}</div>`:''}
         </div>
         <div style="text-align:center;min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
           <div style="font-size:29px;font-weight:900;letter-spacing:1px;color:var(--yellow);">${j.meuGol}<span style="color:var(--text-muted);font-size:13px;"> × </span>${j.advGol}</div>
@@ -8120,7 +8120,7 @@ function _renderHistorico() {
           <div style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(j.advTimeId, nomeAdvTime)}</div>
           <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon2}</div>
           <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.advTimeId))}</div>
-          ${nome2?`<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:2px;"><div style="font-size:13px;color:#67E8F9;font-weight:700;text-transform:uppercase;background:rgba(6,182,212,0.2);border-radius:6px;padding:2px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;">${nome2}</div></div>`:''}
+          ${nome2?`<div style="margin-top:4px;">${_htmlJogadorPill((j.advJogadoresIds||[])[0]||null, nome2, 20)}</div>`:''}
         </div>
       </div>
       <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
