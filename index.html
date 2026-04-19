@@ -3058,6 +3058,10 @@ function _tagVitoriaAmistoso(a) {
   return `<span class="tag tag-yellow">EMPATE</span>`;
 }
 
+function _iconExcluirCard(onclick) {
+  return `<span onclick="${onclick}" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:#FCA5A5;line-height:1;display:flex;align-items:center;" title="EXCLUIR"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></span>`;
+}
+
 function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking=false) {
   const temRes = a.resultado != null;
   const master = temPermissao(); // RG7b: controle de acesso no card
@@ -3102,7 +3106,7 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
   const swipeBg = (master && !noSwipe) ? `<div class="swipe-bg"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg><span class="swipe-bg-label">EXCLUIR</span></div>` : '';
   return `${swipeOuter}${swipeBg}
   <div id="${cardId}" class="match-card" style="${compact?'padding:12px;':''}overflow:hidden;" ${readonly || a.resultado || !master ? '' : `onclick="editarAmistoso('${a.id}')" style="cursor:pointer;"`}>
-    ${!temRes && !compact ? `<div style="margin:-14px -14px 10px -14px;padding:10px 14px;background:rgba(16,185,129,0.2);border-bottom:2px solid rgba(16,185,129,0.5);border-radius:18px 18px 0 0;text-align:center;"><span style="font-size:16px;font-weight:900;color:#6EE7B7;letter-spacing:0.05em;">AMISTOSO</span></div>` : `<div style="text-align:center;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.35);border-radius:12px;padding:6px 12px;margin-bottom:10px;"><span style="font-size:15px;font-weight:800;color:#6EE7B7;letter-spacing:0.05em;text-transform:uppercase;">AMISTOSO</span></div>`}
+    ${!temRes && !compact ? `<div style="margin:-14px -14px 10px -14px;padding:10px 14px;background:rgba(16,185,129,0.2);border-bottom:2px solid rgba(16,185,129,0.5);border-radius:18px 18px 0 0;display:flex;align-items:center;justify-content:center;position:relative;"><span style="font-size:16px;font-weight:900;color:#6EE7B7;letter-spacing:0.05em;">AMISTOSO</span>${master && !noSwipe ? _iconExcluirCard(`event.stopPropagation();_swipeExcluirAmistoso('${a.id}')`) : ''}</div>` : `<div style="text-align:center;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.35);border-radius:12px;padding:6px 12px;margin-bottom:10px;"><span style="font-size:15px;font-weight:800;color:#6EE7B7;letter-spacing:0.05em;text-transform:uppercase;">AMISTOSO</span></div>`}
     <div style="display:flex;align-items:center;${isRanking?'':'justify-content:space-between;'} margin-bottom:${compact?'8':'10'}px;">
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="tag tag-gray">${a.tipo === 'selecoes' ? 'SELECOES' : 'CLUBES'}</span>
@@ -3174,7 +3178,6 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
       COMPARTILHAR NO WHATSAPP
     </button>
   </div>` : ''}
-  ${!temRes && master && !noSwipe ? `<div onclick="event.stopPropagation();_swipeExcluirAmistoso('${a.id}')" style="margin:10px -14px -14px -14px;padding:10px 14px;background:rgba(239,68,68,0.18);border-top:2px solid rgba(239,68,68,0.4);border-radius:0 0 18px 18px;text-align:center;cursor:pointer;"><span style="font-size:14px;font-weight:900;color:#FCA5A5;letter-spacing:0.05em;">EXCLUIR X</span></div>` : ''}
   </div>
   ${swipeClose}`;
 }
@@ -5806,7 +5809,10 @@ function _renderTimesManualCC() {
         ? `<div style="${btnWrapStyle}">${slotsHtml}</div>`
         : slotsHtml;
       return `<div style="background:rgba(6,182,212,0.06);border:1px solid rgba(6,182,212,0.25);border-radius:12px;padding:10px;margin-bottom:8px;">
-        <div style="font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:8px;">DUPLA ${di + 1}: ${par.j1Nome} &amp; ${par.j2Nome}</div>
+        <div style="display:flex;justify-content:center;align-items:center;gap:6px;margin-bottom:6px;">
+          <div style="font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;">DUPLA ${di + 1}: ${par.j1Nome} &amp; ${par.j2Nome}</div>
+        </div>
+        <div style="border-top:1px solid rgba(6,182,212,0.25);margin:0 -2px 8px -2px;"></div>
         <div style="${gridStyle}">${slotsWrapped}</div>
       </div>`;
     }).join('');
@@ -5835,6 +5841,7 @@ function _renderTimesManualCC() {
     });
 
     panel.innerHTML = jogs.map(j => {
+      const jog = jogadores.find(x => x.id === j.id);
       const slots = _ccTimesManual.get(j.id) || new Array(qtd).fill(null);
       const slotsHtml = slots.map((t, k) => {
         const hasTime = !!t;
@@ -5850,7 +5857,11 @@ function _renderTimesManualCC() {
         ? `<div style="width:calc(33.33% - 4px);">${slotsHtml}</div>`
         : slotsHtml;
       return `<div style="background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.25);border-radius:12px;padding:10px;margin-bottom:8px;">
-        <div style="font-size:11px;font-weight:700;color:#C4B5FD;margin-bottom:8px;">${j.nome.toUpperCase()}</div>
+        <div style="display:flex;justify-content:center;align-items:center;gap:6px;margin-bottom:6px;">
+          ${avatarJogador({fotoUrl: jog?.fotoUrl||''}, 22)}
+          <div style="font-size:11px;font-weight:700;color:#C4B5FD;text-transform:uppercase;">${j.nome.toUpperCase()}</div>
+        </div>
+        <div style="border-top:1px solid rgba(139,92,246,0.3);margin:0 -2px 8px -2px;"></div>
         <div style="${gridStyle}">${slotsWrapped}</div>
       </div>`;
     }).join('');
@@ -6467,11 +6478,7 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
     ? `<div style="display:flex;justify-content:center;margin-bottom:4px;cursor:pointer;user-select:none;-webkit-touch-callout:none;" title="Segure para editar o time" onpointerdown="_lpTornStart('${cid}','${t2?.id||''}','${t2nom}','${tipo2}')" onpointerup="_lpTornEnd()" onpointercancel="_lpTornEnd()" oncontextmenu="return false;" onclick="if(window._lpTornTriggered){window._lpTornTriggered=false;event.stopPropagation();}">${badgeTimeIcon(t2?.id||'', t2?.nome||'', tipo2)}</div>`
     : `<div style="display:flex;justify-content:center;margin-bottom:4px;">${badgeTimeIcon(t2?.id||'', t2?.nome||'', tipo2)}</div>`;
 
-  const nomecamp = ((campeonatos.find(c2 => c2.id === cid)?.nome) || 'TORNEIO').toUpperCase();
   return `<div class="match-card" data-match-key="${confKey}" style="margin-bottom:10px;">
-    <div style="text-align:center;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);border-radius:12px;padding:6px 12px;margin-bottom:10px;">
-      <span style="font-size:15px;font-weight:800;color:#FCD34D;letter-spacing:0.05em;text-transform:uppercase;">${nomecamp}</span>
-    </div>
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="tag tag-gray">${isSel ? 'SELECOES' : 'CLUBES'}</span>
@@ -6763,30 +6770,26 @@ window.abrirCampeonato = (id) => {
       const tipo = isSel ? 'selecoes' : 'clubes';
       const participantes = c.participantes || [];
       const playerRow = (p) => {
+        const jog = jogadores.find(x => x.id === p.jogadorId);
         const jogNome = _nomeJogPorId(p.jogadorId, p.nome);
         const times = p.times || [p.time].filter(Boolean);
-        const playerHeader = jogNome ? `<div style="text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;">${jogNome.toUpperCase()}</div>` : '';
+        const playerHeader = jogNome ? `<div style="display:flex;justify-content:center;align-items:center;gap:6px;margin-bottom:6px;">
+          ${avatarJogador({fotoUrl: jog?.fotoUrl||''}, 24)}
+          <div style="font-size:12px;font-weight:700;color:var(--cyan);text-transform:uppercase;">${jogNome.toUpperCase()}</div>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,0.1);margin:0 -4px 10px -4px;"></div>` : '';
         const teamCard = (t) => {
           const tt = selecoes.some(s => s.id === t?.id) ? 'selecoes' : 'clubes';
-          return `<div style="background:transparent;border:none;border-radius:10px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:4px;">
+          return `<div style="background:transparent;border:none;border-radius:10px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px;">
             ${_htmlCountryRow(t?.id, t?.nome, tt)}
-            <div style="font-weight:900;font-size:13px;text-transform:uppercase;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%;">${_nomeAbrevTime(t?.id, t?.nome||'?')}</div>
+            <div style="font-weight:900;font-size:11px;text-transform:uppercase;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:70px;">${_nomeAbrevTime(t?.id, t?.nome||'?')}</div>
             ${badgeTimeIcon(t?.id, t?.nome, tt)}
             ${eficBadge(eficienciaAtual(t?.id))}
           </div>`;
         };
-        if (times.length <= 1) {
-          const primTime = times[0] || p.time;
-          return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;margin-bottom:8px;">
-            ${playerHeader}
-            ${teamCard(primTime)}
-          </div>`;
-        }
         return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;margin-bottom:8px;">
           ${playerHeader}
-          <div style="display:flex;flex-direction:column;gap:12px;">
-            ${times.map(t => `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:8px;">${teamCard(t)}</div>`).join('')}
-          </div>
+          <div style="display:flex;gap:8px;overflow-x:auto;justify-content:center;">${times.map(t => teamCard(t)).join('')}</div>
         </div>`;
       };
       if (c.modoDupla) {
@@ -8179,11 +8182,12 @@ function cardCampHome(c, modoLista=false) {
         </div>`;
       }).join('');
       return `<div style="display:flex;flex-direction:column;gap:4px;padding:6px 8px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:10px;">
-        <div style="display:flex;align-items:center;gap:4px;">
-          ${avatarJogador({fotoUrl: jog?.fotoUrl||''}, 20)}
-          <div style="font-size:9px;font-weight:700;color:var(--cyan);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${jogNome}</div>
+        <div style="display:flex;justify-content:center;align-items:center;gap:6px;margin-bottom:4px;">
+          ${avatarJogador({fotoUrl: jog?.fotoUrl||''}, 22)}
+          <div style="font-size:10px;font-weight:700;color:var(--cyan);text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${jogNome}</div>
         </div>
-        <div style="display:flex;gap:8px;overflow-x:auto;">${timesHtml}</div>
+        <div style="border-top:1px solid rgba(255,255,255,0.1);margin:0 -4px 4px -4px;"></div>
+        <div style="display:flex;gap:8px;overflow-x:auto;justify-content:center;">${timesHtml}</div>
       </div>`;
     };
     return `<div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;">${participantes.map(p => playerRow(p)).join('')}</div>`;
@@ -8280,8 +8284,9 @@ function cardCampHome(c, modoLista=false) {
 
   const podeMudar = temPermissao();
   const cardHtml = `<div ${idAttr}class="match-card" style="margin-bottom:${modoLista?'0':'10px'};padding:12px;cursor:pointer;overflow:hidden;" onclick="abrirCampeonato('${c.id}')">
-    <div style="margin:-12px -12px 10px -12px;padding:14px 16px;background:${finalizado?'rgba(148,163,184,0.07)':'rgba(252,211,77,0.14)'};border-bottom:2px solid ${finalizado?'rgba(148,163,184,0.2)':'rgba(252,211,77,0.5)'};border-radius:18px 18px 0 0;">
+    <div style="margin:-12px -12px 10px -12px;padding:14px 16px;background:${finalizado?'rgba(148,163,184,0.07)':'rgba(252,211,77,0.14)'};border-bottom:2px solid ${finalizado?'rgba(148,163,184,0.2)':'rgba(252,211,77,0.5)'};border-radius:18px 18px 0 0;display:flex;align-items:center;justify-content:center;position:relative;">
       <div style="font-weight:900;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:${finalizado?'#94A3B8':'#FBBF24'};letter-spacing:0.05em;text-align:center;">${c.nome.toUpperCase()}</div>
+      ${!finalizado && podeMudar ? _iconExcluirCard(`event.stopPropagation();_swipeExcluirCampeonato('${c.id}')`) : ''}
     </div>
     <div style="display:flex;align-items:center;justify-content:center;margin-bottom:8px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;">
@@ -8303,7 +8308,6 @@ function cardCampHome(c, modoLista=false) {
     ${jogadoresTimesHtml}
     ${campeaoMiniHtml}
     ${!finalizado && jogosHtml ? `<div style="margin-top:8px;" onclick="event.stopPropagation();abrirCampeonato('${c.id}')">${jogosHtml}</div>` : ''}
-    ${!finalizado && podeMudar ? `<div onclick="event.stopPropagation();_swipeExcluirCampeonato('${c.id}')" style="margin:10px -12px -12px -12px;padding:10px 14px;background:rgba(239,68,68,0.18);border-top:2px solid rgba(239,68,68,0.4);border-radius:0 0 18px 18px;text-align:center;cursor:pointer;"><span style="font-size:14px;font-weight:900;color:#FCA5A5;letter-spacing:0.05em;">EXCLUIR X</span></div>` : ''}
   </div>`;
 
   return podeMudar ? `<div class="swipe-wrap" data-swipe-id="${c.id}" data-swipe-nome="${c.nome}">
