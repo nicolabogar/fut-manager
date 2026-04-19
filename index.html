@@ -3079,7 +3079,7 @@ function _tagVitoriaAmistoso(a) {
 }
 
 function _iconExcluirCard(onclick) {
-  return `<span onclick="${onclick}" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:#EF4444;line-height:1;display:flex;align-items:center;background:rgba(239,68,68,0.15);border-radius:6px;padding:4px;" title="EXCLUIR"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></span>`;
+  return `<span onclick="${onclick}" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);cursor:pointer;color:#EF4444;line-height:1;display:flex;align-items:center;" title="EXCLUIR"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></span>`;
 }
 
 function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking=false) {
@@ -3128,7 +3128,7 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
   const swipeBg = (master && !noSwipe) ? `<div class="swipe-bg"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg><span class="swipe-bg-label">EXCLUIR</span></div>` : '';
   return `${swipeOuter}${swipeBg}
   <div id="${cardId}" class="match-card" style="${compact?'padding:12px;':''}overflow:hidden;" ${readonly || a.resultado || !master ? '' : `onclick="editarAmistoso('${a.id}')" style="cursor:pointer;"`}>
-    ${!temRes && !compact ? `<div style="margin:-14px -14px 0 -14px;padding:10px 14px 8px;background:rgba(16,185,129,0.2);border-bottom:2px solid rgba(16,185,129,0.5);border-radius:18px 18px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;">${master && !noSwipe ? _iconExcluirCard(`event.stopPropagation();_swipeExcluirAmistoso('${a.id}')`) : ''}<span style="font-size:16px;font-weight:900;color:#6EE7B7;letter-spacing:0.05em;">AMISTOSO</span>${criadoEmFmt ? `<span style="font-size:11px;color:rgba(110,231,183,0.7);font-weight:600;margin-top:2px;">${criadoEmFmt}</span>` : ''}</div><div style="margin-bottom:10px;"></div>` : `<div style="text-align:center;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.35);border-radius:12px;padding:6px 12px;margin-bottom:10px;"><span style="font-size:15px;font-weight:800;color:#6EE7B7;letter-spacing:0.05em;text-transform:uppercase;">AMISTOSO</span></div>`}
+    ${!temRes && !compact ? `<div style="margin:-14px -14px 0 -14px;padding:10px 14px 8px;background:rgba(16,185,129,0.2);border-bottom:2px solid rgba(16,185,129,0.5);border-radius:18px 18px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;">${master && !noSwipe ? _iconExcluirCard(`event.stopPropagation();confirmarExcluirAmistoso('${a.id}')`) : ''}<span style="font-size:16px;font-weight:900;color:#6EE7B7;letter-spacing:0.05em;">AMISTOSO</span>${criadoEmFmt ? `<span style="font-size:11px;color:rgba(110,231,183,0.7);font-weight:600;margin-top:2px;">${criadoEmFmt}</span>` : ''}</div><div style="margin-bottom:10px;"></div>` : `<div style="text-align:center;background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.35);border-radius:12px;padding:6px 12px;margin-bottom:10px;"><span style="font-size:15px;font-weight:800;color:#6EE7B7;letter-spacing:0.05em;text-transform:uppercase;">AMISTOSO</span></div>`}
     <div style="display:flex;align-items:center;${isRanking?'':'justify-content:space-between;'} margin-bottom:${compact?'8':'10'}px;">
       <div style="display:flex;align-items:center;gap:6px;">
         <span class="tag tag-gray">${a.tipo === 'selecoes' ? 'SELECOES' : 'CLUBES'}</span>
@@ -6759,6 +6759,8 @@ window.abrirCampeonato = (id) => {
   });
 
   fullscreen(c.nome.toUpperCase(), `
+    ${_dataInicioFS ? `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:10px;text-align:center;margin-bottom:16px;font-size:12px;color:var(--text-muted);">INICIO: <strong style="color:var(--text);">${_dataInicioFS}</strong></div>` : ''}
+
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
       <div style="flex:1;">
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px;">
@@ -6770,23 +6772,11 @@ window.abrirCampeonato = (id) => {
           <span class="tag tag-gray">${isSel?'SELECOES':'CLUBES'}</span>
         </div>
         <p style="color:var(--text-muted);font-size:12px;">${c.participantes?.length||0} PARTICIPANTES · ${totalJogosReg} JOGOS REGISTRADOS</p>
-        ${(_dataInicioFS || _dataFimFS) ? `<div style="display:flex;align-items:center;gap:10px;margin-top:4px;font-size:11px;color:var(--text-muted);">
-          ${_dataInicioFS ? `<span>📅 INICIO: <strong>${_dataInicioFS}</strong></span>` : ''}
-          ${_dataFimFS ? `<span>🏁 FIM: <strong>${_dataFimFS}</strong></span>` : ''}
-        </div>` : ''}
+        ${_dataFimFS ? `<div style="margin-top:4px;font-size:11px;color:var(--text-muted);"><span>🏁 FIM: <strong>${_dataFimFS}</strong></span></div>` : ''}
       </div>
     </div>
 
     ${_cardCampeao(c)}
-
-    ${meta.desc ? `
-    <div class="grupo-header" onclick="toggleGrupo(this)" style="margin-bottom:8px;">
-      <span class="grupo-titulo">COMO FUNCIONA</span>
-      <span class="grupo-seta">›</span>
-    </div>
-    <div class="grupo-body fechado" style="margin-bottom:16px;">
-      <p style="color:var(--text-muted);font-size:13px;line-height:1.6;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:12px;padding:12px;">${meta.desc}</p>
-    </div>` : ''}
 
     ${podeMudar ? `<label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">NOME DO TORNEIO</label><span style="display:block;font-size:11px;color:var(--text-muted);margin-bottom:6px;">TITULO OFICIAL QUE IDENTIFICARA O TORNEIO</span><input id="torneio-nome-inline-${c.id}" class="input" value="${c.nome.toUpperCase().replace(/"/g,'&quot;')}" style="text-transform:uppercase;margin-bottom:8px;width:100%;box-sizing:border-box;" autocomplete="off" oninput="this.value=this.value.toUpperCase()" onblur="_autoSalvarNomeTorneio('${c.id}',this.value)">` : ''}
     ${podeMudar ? `
@@ -6801,6 +6791,14 @@ window.abrirCampeonato = (id) => {
           }
         }).join('')}
       </div>` : ''}
+    ${meta.desc ? `
+    <div class="grupo-header" onclick="toggleGrupo(this)" style="margin-bottom:8px;">
+      <span class="grupo-titulo">COMO FUNCIONA</span>
+      <span class="grupo-seta">›</span>
+    </div>
+    <div class="grupo-body fechado" style="margin-bottom:16px;">
+      <p style="color:var(--text-muted);font-size:13px;line-height:1.6;background:rgba(255,255,255,0.03);border:1px solid var(--card-border);border-radius:12px;padding:12px;">${meta.desc}</p>
+    </div>` : ''}
     ${naoIniciado && podeMudar ? `
       <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">${c.modoDupla ? 'TIMES POR DUPLA' : 'TIMES POR JOGADOR'}</label>
       <div style="display:flex;gap:6px;margin-bottom:12px;">
@@ -8356,9 +8354,9 @@ function cardCampHome(c, modoLista=false) {
     <div style="margin:-12px -12px 10px -12px;padding:14px 16px;background:${finalizado?'rgba(148,163,184,0.07)':'rgba(252,211,77,0.14)'};border-bottom:2px solid ${finalizado?'rgba(148,163,184,0.2)':'rgba(252,211,77,0.5)'};border-radius:18px 18px 0 0;display:flex;align-items:center;justify-content:center;position:relative;">
       <div style="display:flex;flex-direction:column;align-items:center;text-align:center;max-width:calc(100% - 40px);">
         <div style="font-weight:900;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:${finalizado?'#94A3B8':'#FBBF24'};letter-spacing:0.05em;">${c.nome.toUpperCase()}</div>
-        ${!finalizado && dataInicio ? `<div style="font-size:11px;font-weight:600;color:rgba(251,191,36,0.7);margin-top:2px;">📅 ${dataInicio}</div>` : ''}
+        ${!finalizado && dataInicio ? `<div style="font-size:11px;font-weight:600;color:rgba(251,191,36,0.7);margin-top:2px;">${dataInicio}</div>` : ''}
       </div>
-      ${!finalizado && podeMudar ? _iconExcluirCard(`event.stopPropagation();_swipeExcluirCampeonato('${c.id}')`) : ''}
+      ${!finalizado && podeMudar ? _iconExcluirCard(`event.stopPropagation();excluirCampeonato('${c.id}')`) : ''}
     </div>
     <div style="display:flex;align-items:center;justify-content:center;margin-bottom:8px;">
       <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;">
