@@ -4754,7 +4754,7 @@ window.editarTimeAmistoso = (amiId, timeId, timeNome, tipoT) => {
   modal(`<p class="modal-title">${timeNome.toUpperCase()}</p>
     <div style="margin-bottom:14px;">
       <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">NOME ABREVIADO</label>
-      <input type="text" id="etami-abrev" value="${(t.nomeAbreviado||'').replace(/"/g,'&quot;')}" maxlength="8" placeholder="${abreviarNome(timeNome)}" style="width:100%;padding:8px 12px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;text-transform:uppercase;box-sizing:border-box;" oninput="this.value=this.value.toUpperCase()">
+      <input type="text" id="etami-abrev" value="${(t.nomeAbreviado||'').replace(/"/g,'&quot;')}" maxlength="8" placeholder="${abreviarNome(timeNome)}" autocapitalize="characters" style="width:100%;padding:8px 12px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;text-transform:uppercase;box-sizing:border-box;">
     </div>
     <div class="efic-panel" style="margin-bottom:14px;">
       <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIENCIA</label>
@@ -4828,7 +4828,7 @@ window.editarTimeTorneio = (cid, timeId, timeNome, tipoT) => {
   modal(`<p class="modal-title">${timeNome.toUpperCase()}</p>
     <div style="margin-bottom:14px;">
       <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;">NOME ABREVIADO</label>
-      <input type="text" id="etorn-abrev" value="${(t.nomeAbreviado||'').replace(/"/g,'&quot;')}" maxlength="8" placeholder="${abreviarNome(timeNome)}" style="width:100%;padding:8px 12px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;text-transform:uppercase;box-sizing:border-box;" oninput="this.value=this.value.toUpperCase()">
+      <input type="text" id="etorn-abrev" value="${(t.nomeAbreviado||'').replace(/"/g,'&quot;')}" maxlength="8" placeholder="${abreviarNome(timeNome)}" autocapitalize="characters" style="width:100%;padding:8px 12px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);font-size:13px;font-weight:700;text-transform:uppercase;box-sizing:border-box;">
     </div>
     <div class="efic-panel" style="margin-bottom:14px;">
       <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;">EFICIENCIA</label>
