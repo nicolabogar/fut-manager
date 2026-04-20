@@ -3526,13 +3526,11 @@ window.limparJogadoresJC = () => {
   _resetPlayerTagColors();
   _syncJcMaps();
   _renderPlayersPanel();
-  // Desmarcar checkbox de sortear dupla e limpar painel de resultados
-  const cbDupla = document.getElementById('ami-sortear-dup-auto');
-  if (cbDupla && cbDupla.checked) {
-    cbDupla.checked = false;
-    const resultPanel = document.getElementById('ami-dupla-result-panel');
-    if (resultPanel) { resultPanel.style.display = 'none'; resultPanel.innerHTML = ''; }
-  }
+  // Limpar painel de resultados sem alterar o estado dos parâmetros selecionados
+  const resultPanel = document.getElementById('ami-dupla-result-panel');
+  if (resultPanel) { resultPanel.style.display = 'none'; resultPanel.innerHTML = ''; }
+  _renderDuplaPanel(1);
+  _renderDuplaPanel(2);
   const box = document.getElementById('ami-sorteio');
   if (box) { box.style.display = 'none'; box.innerHTML = ''; }
   _syncBtnSalvar();
@@ -3803,11 +3801,11 @@ window.toggleModoDupla = (ativo) => {
   const autoSection = document.getElementById('ami-jogadores-auto-section');
   const resultPanel = document.getElementById('ami-dupla-result-panel');
   if (ativo) {
-    // Ao ativar modo dupla: começar no modo manual (checkbox desmarcado)
+    // Ao ativar modo dupla: começar no modo sortear (checkbox marcado por padrão)
     const sortearAuto = document.getElementById('ami-sortear-dup-auto');
-    if (sortearAuto) sortearAuto.checked = false;
-    if (manualBox) manualBox.style.display = '';
-    if (autoSection) autoSection.style.display = 'none';
+    if (sortearAuto) sortearAuto.checked = true;
+    if (manualBox) manualBox.style.display = 'none';
+    if (autoSection) autoSection.style.display = '';
   } else {
     // Ao desativar modo dupla: resetar tudo
     const sortearAuto = document.getElementById('ami-sortear-dup-auto');
