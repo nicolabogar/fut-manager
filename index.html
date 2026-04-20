@@ -605,26 +605,18 @@
 
       <!-- Amistosos em andamento -->
       <div id="home-ami-sec" style="display:none;margin-bottom:24px;">
-        <div class="grupo-header aberto" id="home-acc-header-ami" onclick="toggleHomeSection(this,'ami')">
-          <span style="width:14px;flex-shrink:0;"></span>
-          <span class="grupo-titulo" style="flex:1;text-align:center;font-size:16px;">AMISTOSOS EM ANDAMENTO</span>
-          <span class="grupo-seta">›</span>
+        <div style="text-align:center;margin-bottom:12px;">
+          <span style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.07em;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">AMISTOSOS EM ANDAMENTO</span>
         </div>
-        <div class="grupo-body">
-          <div id="home-amistosos"></div>
-        </div>
+        <div id="home-amistosos"></div>
       </div>
 
       <!-- Torneios em andamento -->
       <div id="home-camp-sec" style="display:none;margin-bottom:24px;">
-        <div class="grupo-header aberto" id="home-acc-header-camp" onclick="toggleHomeSection(this,'camp')">
-          <span style="width:14px;flex-shrink:0;"></span>
-          <span class="grupo-titulo" style="flex:1;text-align:center;font-size:16px;">TORNEIOS EM ANDAMENTO</span>
-          <span class="grupo-seta">›</span>
+        <div style="text-align:center;margin-bottom:12px;">
+          <span style="font-size:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.07em;background:linear-gradient(135deg,var(--purple),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">TORNEIOS EM ANDAMENTO</span>
         </div>
-        <div class="grupo-body">
-          <div id="home-torneios"></div>
-        </div>
+        <div id="home-torneios"></div>
       </div>
 
       <!-- Ranking Amistosos -->
@@ -3142,13 +3134,13 @@ function cardAmistoso(a, compact=false, readonly=false, noSwipe=false, isRanking
           <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="2" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
         </div>
-        <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}',this)" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--green);border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>`
+        <button onclick="event.stopPropagation();salvarPlacarDireto('${a.id}',this)" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--card);border:1px solid var(--card-border);border-radius:8px;cursor:pointer;"><span class="grad">FIM</span></button>`
       : `<div style="display:flex;align-items:center;gap:4px;opacity:0.4;">
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="1" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
           <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
           <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-pdc="2" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
         </div>
-        <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--green);border:none;color:#fff;border-radius:8px;cursor:not-allowed;opacity:0.4;">FIM</button>`;
+        <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--card);border:1px solid var(--card-border);border-radius:8px;cursor:not-allowed;opacity:0.4;"><span class="grad">FIM</span></button>`;
   const cardId = `ami-card-${a.id}`;
   const useSwipe = (master && !noSwipe && temRes);
   const swipeOuter = useSwipe
@@ -4966,7 +4958,7 @@ window.abrirPlacar = id => {
       </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;justify-content:center;">
-      <button class="btn-primary" onclick="salvarPlacar('${id}')" style="max-width:200px;">FIM</button>
+      <button class="btn-primary" onclick="salvarPlacar('${id}')" style="max-width:200px;background:var(--card);border:1px solid var(--card-border);"><span class="grad">FIM</span></button>
     </div>`);
 };
 window.salvarPlacar = async id => {
@@ -6444,7 +6436,7 @@ function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar, fase
   const placarColor = isFinal ? '#FCD34D' : 'var(--yellow)';
   const btnStyle = isFinal
     ? 'margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:linear-gradient(135deg,#B45309,#F59E0B);border:none;color:#fff;border-radius:8px;cursor:pointer;'
-    : 'margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--green);border:none;color:#fff;border-radius:8px;cursor:pointer;';
+    : 'margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--card);border:1px solid var(--card-border);border-radius:8px;cursor:pointer;';
   const escolhaStyle = 'padding:7px 10px;font-size:11px;font-weight:800;background:linear-gradient(135deg,rgba(139,92,246,0.4),rgba(6,182,212,0.4));border:1px solid rgba(139,92,246,0.5);color:#C4B5FD;border-radius:8px;cursor:pointer;width:100%;margin-top:4px;letter-spacing:0.04em;';
   let placarArea;
   if (temRes && isMesmoJogador) {
@@ -6472,14 +6464,14 @@ function cardJogoKnockout(cf, cid, faseIdx, confrontoIdx, isSel, podeMudar, fase
            <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
            <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="2" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
          </div>
-         <button onclick="event.stopPropagation();salvarPartidaKnockout('${cid}',${faseIdx},${confrontoIdx},this)" class="btn-primary" style="${btnStyle}">FIM</button>`;
+         <button onclick="event.stopPropagation();salvarPartidaKnockout('${cid}',${faseIdx},${confrontoIdx},this)" class="btn-primary" style="${btnStyle}">${isFinal ? 'FIM' : '<span class="grad">FIM</span>'}</button>`;
   } else {
     placarArea = `<div style="display:flex;align-items:center;gap:4px;opacity:0.4;">
            <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="1" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
            <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
            <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="2" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
          </div>
-         <button disabled onclick="event.stopPropagation()" class="btn-primary" style="${btnStyle}opacity:0.4;cursor:not-allowed;">FIM</button>`;
+         <button disabled onclick="event.stopPropagation()" class="btn-primary" style="${btnStyle}opacity:0.4;cursor:not-allowed;">${isFinal ? 'FIM' : '<span class="grad">FIM</span>'}</button>`;
   }
   const cardBorder = isMesmoJogador
     ? (temRes ? 'border-color:rgba(139,92,246,0.4);' : 'border-color:rgba(139,92,246,0.35);box-shadow:0 0 10px rgba(139,92,246,0.12);')
@@ -6589,13 +6581,13 @@ function cardJogoTorneio(m1, m2, played, confKey, cid, gi, isSel, podeMudar=true
             <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
             <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="2" class="placar-input" onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;">
           </div>
-          <button onclick="event.stopPropagation();salvarPartidaDireta('${cid}',${gi},'${m1.jogadorId}','${m2.jogadorId}',${timeIndex},this,${turno})" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--green);border:none;color:#fff;border-radius:8px;cursor:pointer;">FIM</button>`
+          <button onclick="event.stopPropagation();salvarPartidaDireta('${cid}',${gi},'${m1.jogadorId}','${m2.jogadorId}',${timeIndex},this,${turno})" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--card);border:1px solid var(--card-border);border-radius:8px;cursor:pointer;"><span class="grad">FIM</span></button>`
       : `<div style="display:flex;align-items:center;gap:4px;opacity:0.4;">
             <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="1" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
             <span style="color:var(--text-muted);font-size:13px;font-weight:900;">×</span>
             <input type="number" inputmode="numeric" pattern="[0-9]*" min="0" max="99" value="0" data-tpdc="2" class="placar-input" disabled onclick="event.stopPropagation()" style="width:40px;text-align:center;font-size:22px;font-weight:900;padding:6px 2px;background:rgba(255,255,255,0.06);border:1px solid var(--card-border);border-radius:8px;color:var(--text);-moz-appearance:textfield;cursor:not-allowed;">
           </div>
-          <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--green);border:none;color:#fff;border-radius:8px;cursor:not-allowed;opacity:0.4;">FIM</button>`;
+          <button disabled onclick="event.stopPropagation()" class="btn-primary" style="margin-top:20px;padding:8px 18px;font-size:13px;font-weight:800;background:var(--card);border:1px solid var(--card-border);border-radius:8px;cursor:not-allowed;opacity:0.4;"><span class="grad">FIM</span></button>`;
 
   const t1nom = (t1?.nome||'').replace(/'/g,"\\'");
   const t2nom = (t2?.nome||'').replace(/'/g,"\\'");
@@ -8230,7 +8222,7 @@ let _homeAccInited = false;
 function initHomeAccordions() {
   if (_homeAccInited) return;
   _homeAccInited = true;
-  ['ami','camp','rank-ami','rank-camp'].forEach(key => {
+  ['rank-ami','rank-camp'].forEach(key => {
     const header = document.getElementById('home-acc-header-' + key);
     if (!header) return;
     const body = header.nextElementSibling;
