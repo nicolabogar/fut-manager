@@ -3896,7 +3896,7 @@ window.toggleSortearDuplaAuto = (ativo) => {
 
   if (ativo) {
     // Checkbox marcado: exibir painel de todos os jogadores para sortear dupla
-    _jcT1.clear(); _jcT2.clear();
+    // Preserva jogadores ja selecionados (nao limpa _jcT1/_jcT2)
     _amiManualSel.clear();
     _amiDuplaTimeSel.clear();
     _syncJcMaps();
@@ -3906,7 +3906,7 @@ window.toggleSortearDuplaAuto = (ativo) => {
     _renderPlayersPanel();
   } else {
     // Checkbox desmarcado: modo manual
-    _jcT1.clear(); _jcT2.clear();
+    // Preserva jogadores ja selecionados (nao limpa _jcT1/_jcT2)
     _amiManualSel.clear();
     _amiDuplaTimeSel.clear();
     _syncJcMaps();
@@ -5147,6 +5147,14 @@ window.editarAmistoso = (id) => {
         if (manualBox) manualBox.style.display = 'none';
         const autoSection = document.getElementById('ami-jogadores-auto-section');
         if (autoSection) autoSection.style.display = '';
+      } else {
+        // Modo manual de dupla: exibir painel de selecao manual
+        const manualBox = document.getElementById('ami-dupla-manual-box');
+        if (manualBox) manualBox.style.display = '';
+        const autoSection = document.getElementById('ami-jogadores-auto-section');
+        if (autoSection) autoSection.style.display = 'none';
+        _renderDuplaPanel(1);
+        _renderDuplaPanel(2);
       }
       // Mostrar painel de duplas com os jogadores ja pre-carregados
       _renderDuplasResultPanel();
@@ -5300,6 +5308,14 @@ window._criarNovoJogoMesmosParams = () => {
         if (manualBox) manualBox.style.display = 'none';
         const autoSection = document.getElementById('ami-jogadores-auto-section');
         if (autoSection) autoSection.style.display = '';
+      } else {
+        // Modo manual de dupla: exibir painel de selecao manual
+        const manualBox = document.getElementById('ami-dupla-manual-box');
+        if (manualBox) manualBox.style.display = '';
+        const autoSection = document.getElementById('ami-jogadores-auto-section');
+        if (autoSection) autoSection.style.display = 'none';
+        _renderDuplaPanel(1);
+        _renderDuplaPanel(2);
       }
       _renderDuplasResultPanel();
     }
