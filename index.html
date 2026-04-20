@@ -3807,8 +3807,6 @@ window.toggleTipoAmi = tipo => {
 };
 
 window.toggleModoDupla = (ativo) => {
-  const label = document.getElementById('label-dupla');
-  if (label) label.style.borderColor = ativo ? 'var(--cyan)' : '';
   const limiteBox = document.getElementById('ami-limite-box');
   if (limiteBox) limiteBox.style.display = ativo ? '' : 'none';
   const sortearDuplaBox = document.getElementById('ami-sortear-dupla-box');
