@@ -575,7 +575,7 @@
     <div id="view-home" class="view active">
       <!-- Botao + CRIAR com dropdown -->
       <div id="wrap-btn-criar-home" style="padding:16px 0 0;margin-bottom:16px;">
-        <button id="btn-criar-home" onclick="toggleCriarMenu()" class="btn-primary" style="width:100%;font-size:14px;padding:10px 18px;text-transform:uppercase;font-weight:700;">+ CRIAR</button>
+        <button id="btn-criar-home" onclick="toggleCriarMenu()" class="btn-primary" style="width:100%;font-size:14px;padding:10px 18px;text-transform:uppercase;font-weight:700;background:#000;border:none;"><span class="grad">+ CRIAR</span></button>
       </div>
       <div id="criar-menu-dropdown" style="display:none;margin:0 -16px 24px;background:var(--bg2);border-top:1px solid var(--card-border);border-bottom:1px solid var(--card-border);box-shadow:0 8px 32px rgba(0,0,0,0.5);">
         <button class="criar-opt" onclick="abrirCriarJogador();fecharCriarMenu()">
@@ -601,7 +601,8 @@
       <!-- Amistosos em andamento -->
       <div id="home-ami-sec" style="display:none;margin-bottom:24px;">
         <div class="grupo-header aberto" id="home-acc-header-ami" onclick="toggleHomeSection(this,'ami')">
-          <span class="grupo-titulo">AMISTOSOS EM ANDAMENTO</span>
+          <span style="width:14px;flex-shrink:0;"></span>
+          <span class="grupo-titulo" style="flex:1;text-align:center;font-size:16px;">AMISTOSOS EM ANDAMENTO</span>
           <span class="grupo-seta">›</span>
         </div>
         <div class="grupo-body">
@@ -612,7 +613,8 @@
       <!-- Torneios em andamento -->
       <div id="home-camp-sec" style="display:none;margin-bottom:24px;">
         <div class="grupo-header aberto" id="home-acc-header-camp" onclick="toggleHomeSection(this,'camp')">
-          <span class="grupo-titulo">TORNEIOS EM ANDAMENTO</span>
+          <span style="width:14px;flex-shrink:0;"></span>
+          <span class="grupo-titulo" style="flex:1;text-align:center;font-size:16px;">TORNEIOS EM ANDAMENTO</span>
           <span class="grupo-seta">›</span>
         </div>
         <div class="grupo-body">
@@ -1939,11 +1941,11 @@ window.toggleCriarMenu = () => {
     menu.classList.remove('aberto');
     void menu.offsetWidth; // force reflow para reiniciar animação
     menu.classList.add('aberto');
-    btn.textContent = '✕ FECHAR';
+    btn.innerHTML = '<span class="grad">✕ FECHAR</span>';
   } else {
     menu.style.display = 'none';
     menu.classList.remove('aberto');
-    btn.textContent = '+ CRIAR';
+    btn.innerHTML = '<span class="grad">+ CRIAR</span>';
   }
 };
 window.fecharCriarMenu = () => {
@@ -1951,7 +1953,7 @@ window.fecharCriarMenu = () => {
   const btn = document.getElementById('btn-criar-home');
   menu.style.display = 'none';
   menu.classList.remove('aberto');
-  if (btn) btn.textContent = '+ CRIAR';
+  if (btn) btn.innerHTML = '<span class="grad">+ CRIAR</span>';
 };
 document.getElementById('btn-hamburger').addEventListener('click', (e) => {
   e.stopPropagation();
