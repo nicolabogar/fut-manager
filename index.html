@@ -131,6 +131,9 @@
     }
     label.check-row:has(input:checked) { border-color: var(--purple); }
     input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--purple); cursor: pointer; flex-shrink: 0; }
+    .check-row input[type=checkbox] { appearance:none;-webkit-appearance:none;width:20px;height:20px;flex-shrink:0;cursor:pointer;background:#000;border:2px solid rgba(255,255,255,0.25);border-radius:5px;position:relative;transition:background 0.15s,border-color 0.15s; }
+    .check-row input[type=checkbox]:checked { background:#000;border-color:var(--purple); }
+    .check-row input[type=checkbox]:checked::after { content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);color:var(--purple);font-size:14px;font-weight:900;line-height:1; }
     input[type=number] { -webkit-appearance: none; -moz-appearance: textfield; }
     input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
     .placar-input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 2px rgba(139,92,246,0.3); }
@@ -1336,10 +1339,10 @@ window.toggleEficFiltro = (val) => {
   if (typeof _renderTimesLista === 'function') _renderTimesLista();
   if (typeof _atualizarTimesManualCC === 'function') _atualizarTimesManualCC();
 };
-function htmlEficFiltro(containerId) {
+function htmlEficFiltro(containerId, showLabel = true) {
   const sel = carregarEficFiltro();
   return `<div>
-    <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">EFICIENCIA DOS TIMES</label>
+    ${showLabel ? `<label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">EFICIENCIA DOS TIMES</label>` : ''}
     <div class="efic-tags" id="${containerId}">
       ${EFIC_TODAS.map(e=>`<span class="efic-tag${sel.has(e)?' selecionado':''}" data-efic="${e}" onclick="toggleEficFiltro('${e}')">${e}</span>`).join('')}
     </div>
@@ -3557,7 +3560,7 @@ function _syncBtnSalvar() {
 
 function _htmlNovoAmistoso() {
   return `
-    <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">TIPO</label>
+    <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">PARAMETROS</label>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
       <div class="tipo-btn sel" id="tp-clubes" onclick="toggleTipoAmi('clubes')"><span style="font-size:12px;font-weight:700;">CLUBES</span></div>
       <div class="tipo-btn sel" id="tp-selecoes" onclick="toggleTipoAmi('selecoes')"><span style="font-size:12px;font-weight:700;">SELECOES</span></div>
@@ -3615,7 +3618,8 @@ function _htmlNovoAmistoso() {
         style="font-size:13px;padding:10px 14px;margin-bottom:4px;">
       <div style="font-size:11px;color:var(--text-muted);">0 = SEM LIMITE. SE MAIOR QUE 0, DUPLAS QUE JA JOGARAM N VEZES NA ULTIMA HORA NAO SERAO SORTEADAS JUNTAS.</div>
     </div>
-    <div id="ami-efic-filtro-box" class="efic-panel" style="margin-bottom:16px;">${htmlEficFiltro('ami-efic-filtro')}</div>
+    <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">EFICIÊNCIA DOS TIMES</label>
+    <div id="ami-efic-filtro-box" class="efic-panel" style="margin-bottom:16px;">${htmlEficFiltro('ami-efic-filtro', false)}</div>
     <div id="ami-jogadores-auto-section">
     <label style="display:block;font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">JOGADORES</label>
     <div style="position:relative;margin-bottom:8px;">
