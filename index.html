@@ -198,7 +198,7 @@
     .rank-confr-table tr:hover td { background:rgba(255,255,255,0.03); }
     /* Date inputs */
     .rank-date-row { display:flex;gap:8px;margin-top:8px; }
-    .rank-date-row > div { flex:1;min-width:100px; }
+    .rank-date-row > div { flex:1;min-width:80px; }
     .rank-date-input { background:rgba(255,255,255,0.04);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px 12px;width:100%;box-sizing:border-box;cursor:pointer;outline:none;min-height:44px; }
     .rank-date-input:disabled { opacity:0.35;cursor:not-allowed; }
     .rank-date-input::-webkit-calendar-picker-indicator { filter:invert(0.7); }
@@ -7837,14 +7837,17 @@ function _renderRankJogos() {
       jogosParaConfrontos.forEach(j => {
         const advIds = j.advJogadoresIds || [];
         const advNomes = j.advJogadores || [];
+        // Skip games with no opponent data
+        const numAdv = Math.max(advIds.length, advNomes.length);
+        if (numAdv === 0) return;
         // Iterate over each individual opponent (handles dupla mode with multiple opponents)
-        const numAdv = Math.max(advIds.length, advNomes.length) || 1;
         for (let i = 0; i < numAdv; i++) {
           let advId = advIds[i] || '';
           const advNome = advNomes[i] || '';
+          const advNomeUpper = advNome.toUpperCase();
           // If no ID, try to resolve from jogadores by name for proper grouping
           if (!advId && advNome) {
-            const found = jogadores.find(jj => _nomeExibicao(jj).toUpperCase() === advNome.toUpperCase() || jj.nome.toUpperCase() === advNome.toUpperCase());
+            const found = jogadores.find(jj => _nomeExibicao(jj).toUpperCase() === advNomeUpper || jj.nome.toUpperCase() === advNomeUpper);
             if (found) advId = found.id;
           }
           const chave = advId || advNome || '?';
