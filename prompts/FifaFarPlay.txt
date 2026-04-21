@@ -5,8 +5,8 @@
 
 ## MELHORIAS ##
 
-- [ ] Item 1: Pagina de ranking - incluir dropdown de adversário (quando jogador está selecionado, listar todos os adversários daquele jogador; ao selecionar adversário, filtrar jogos apenas contra aquele adversário)
-- [ ] Item 2: Pagina de ranking - corrigir computação da tabela: jogos de dupla devem ser contabilizados corretamente, e vitórias/derrotas sempre do ponto de vista do filtro do jogador
-- [ ] Item 3: Pagina de ranking - colocar filtros de data início e data fim em linhas separadas
-- [ ] Item 4: Cards de jogos de torneio finalizados - header deve mostrar nome do torneio (cor amarela, mesmo tamanho que o título do card amistoso font-size 16px)
-- [ ] Item 5: Corrigir adversário sendo listado duas vezes na tabela de confrontos do ranking (ex: Nicola aparece 2x com dados diferentes ao filtrar por Montanha)
+- [x] Item 1: Pagina de ranking - incluir dropdown de adversário (hash: e3a775a)
+- [x] Item 2: Pagina de ranking - corrigir computação da tabela: jogos de dupla devem ser contabilizados corretamente (hash: e3a775a)
+- [x] Item 3: Pagina de ranking - colocar filtros de data início e data fim em linhas separadas (hash: e3a775a)
+- [x] Item 4: Cards de jogos de torneio finalizados - header deve mostrar nome do torneio em amarelo 16px (hash: e3a775a)
+- [x] Item 5: Corrigir adversário sendo listado duas vezes na tabela de confrontos do ranking (hash: e3a775a)
