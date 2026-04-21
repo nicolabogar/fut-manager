@@ -2314,8 +2314,6 @@ window.confirmarMesclarLegado = async (idDestino) => {
   const orig = jogadores.find(j => j.id === idOrigem);
   const dest = jogadores.find(j => j.id === idDestino);
   if (!orig || !dest) return;
-  const btn = document.querySelector('#sel-mesclar-origem + div .btn-primary') || document.querySelector('.btn-primary');
-  if (btn) { btn.textContent = 'MESCLANDO...'; btn.disabled = true; }
   fecharModal();
   try {
     await _mesclarJogadorLegado(idDestino, idOrigem);
