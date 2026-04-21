@@ -176,7 +176,7 @@
     .rank-mdrop-wrap { margin-bottom:10px; }
     .rank-filter-label { font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px;margin-top:12px;padding-left:2px; }
     .rank-filter-label:first-child { margin-top:0; }
-    .rank-filter-panel { background:rgba(255,255,255,0.02);border:1px solid var(--card-border);border-radius:14px;padding:10px;margin-bottom:10px; }
+    .rank-filter-panel { background:rgba(255,255,255,0.02);border:1px solid var(--card-border);border-radius:14px;padding:10px;margin-bottom:10px;overflow:hidden; }
     .rank-mdrop-header { display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase;user-select:none;transition:border-radius 0.15s; }
     .rank-mdrop-header.open { border-radius:10px 10px 0 0; }
     .rank-mdrop-arrow { font-size:10px;transition:transform 0.2s;flex-shrink:0;margin-left:8px;line-height:1; }
@@ -197,7 +197,8 @@
     .rank-confr-table tr:last-child td { border-bottom:none; }
     .rank-confr-table tr:hover td { background:rgba(255,255,255,0.03); }
     /* Date inputs */
-    .rank-date-row { display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px; }
+    .rank-date-row { display:flex;gap:8px;margin-top:8px; }
+    .rank-date-row > div { flex:1;min-width:80px; }
     .rank-date-input { background:rgba(255,255,255,0.04);border:1px solid var(--card-border);border-radius:10px;color:var(--text);font-size:14px;font-weight:700;padding:10px 12px;width:100%;box-sizing:border-box;cursor:pointer;outline:none;min-height:44px; }
     .rank-date-input:disabled { opacity:0.35;cursor:not-allowed; }
     .rank-date-input::-webkit-calendar-picker-indicator { filter:invert(0.7); }
@@ -707,9 +708,6 @@
         <span class="breadcrumb-item" onclick="irParaHome()"><span class="grad">HOME</span></span>
         <span class="breadcrumb-sep">›</span>
         <span class="breadcrumb-item active"><span class="grad">RANKING</span></span>
-      </div>
-      <div style="display:flex; align-items:center; justify-content:flex-end; padding:0 0 16px;">
-        <button id="btn-sync-ranking" onclick="sincronizarRanking(this)" class="btn-primary" style="width:auto; padding:10px 18px; font-size:14px;"><span class="grad">SINCRONIZAR</span></button>
       </div>
       <div id="rank-filtros" style="margin-bottom:20px;"></div>
       <div id="rank-ami-sec" style="margin-bottom:24px;">
@@ -2056,9 +2054,6 @@ function _aplicarControleAcesso() {
   if (btnCriarCamp) btnCriarCamp.style.display = master ? '' : 'none';
   const btnAddTime = document.getElementById('btn-add-time');
   if (btnAddTime) btnAddTime.style.display = master ? '' : 'none';
-  // Botão sincronizar ranking: apenas para master
-  const btnSyncRanking = document.getElementById('btn-sync-ranking');
-  if (btnSyncRanking) btnSyncRanking.style.display = master ? '' : 'none';
   // RG-SIM: atualiza a tag de impersonificacao no header
   _atualizarBannerSimulacao();
   // Itens do menu hamburger para não-master: apenas home e ranking visíveis
@@ -2345,7 +2340,7 @@ function _htmlJogadorPill(id, nome, size, bg) {
     return `<div style="${wrapStyle}">${imgHtml}<span style="font-size:11px;color:${textColor};font-weight:700;text-transform:uppercase;letter-spacing:0.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nome}</span></div>`;
   }
   const wrapStyle = `display:inline-flex;align-items:center;gap:4px;max-width:100%;`;
-  return `<div style="${wrapStyle}">${imgHtml}<span style="font-size:11px;color:#fff;font-weight:700;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nome}</span></div>`;
+  return `<div style="${wrapStyle}">${imgHtml}<span class="grad" style="font-size:11px;font-weight:700;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nome}</span></div>`;
 }
 
 function getMaster() { return jogadores.find(j => j.master); }
@@ -7842,22 +7837,36 @@ function _renderRankJogos() {
       jogosParaConfrontos.forEach(j => {
         const advIds = j.advJogadoresIds || [];
         const advNomes = j.advJogadores || [];
-        const chave = advIds.length ? advIds[0] : (advNomes[0]||'?');
-        if (!advStats[chave]) {
-          const jAdv = advIds.length ? jogadores.find(jj=>jj.id===advIds[0]) : null;
-          advStats[chave] = {
-            nome: jAdv ? _nomeExibicao(jAdv) : (advNomes[0]||'?'),
-            fotoUrl: jAdv?.fotoUrl||'',
-            id: advIds[0]||'',
-            j:0, v:0, e:0, d:0, gf:0, gs:0
-          };
+        // Skip games with no opponent data
+        const numAdv = Math.max(advIds.length, advNomes.length);
+        if (numAdv === 0) return;
+        // Iterate over each individual opponent (handles dupla mode with multiple opponents)
+        for (let i = 0; i < numAdv; i++) {
+          let advId = advIds[i] || '';
+          const advNome = advNomes[i] || '';
+          const advNomeUpper = advNome.toUpperCase();
+          // If no ID, try to resolve from jogadores by name for proper grouping
+          if (!advId && advNome) {
+            const found = jogadores.find(jj => _nomeExibicao(jj).toUpperCase() === advNomeUpper || jj.nome.toUpperCase() === advNomeUpper);
+            if (found) advId = found.id;
+          }
+          const chave = advId || advNome || '?';
+          if (!advStats[chave]) {
+            const jAdv = advId ? jogadores.find(jj=>jj.id===advId) : null;
+            advStats[chave] = {
+              nome: jAdv ? _nomeExibicao(jAdv) : (advNome||'?'),
+              fotoUrl: jAdv?.fotoUrl||'',
+              id: advId,
+              j:0, v:0, e:0, d:0, gf:0, gs:0
+            };
+          }
+          advStats[chave].j++;
+          advStats[chave].v += j.res==='V'?1:0;
+          advStats[chave].e += j.res==='E'?1:0;
+          advStats[chave].d += j.res==='D'?1:0;
+          advStats[chave].gf += j.meuGol||0;
+          advStats[chave].gs += j.advGol||0;
         }
-        advStats[chave].j++;
-        advStats[chave].v += j.res==='V'?1:0;
-        advStats[chave].e += j.res==='E'?1:0;
-        advStats[chave].d += j.res==='D'?1:0;
-        advStats[chave].gf += j.meuGol||0;
-        advStats[chave].gs += j.advGol||0;
       });
       const linhas = Object.values(advStats).sort((a,b)=>b.v-a.v||(b.gf-b.gs)-(a.gf-a.gs));
       if (linhas.length) {
@@ -7879,7 +7888,7 @@ function _renderRankJogos() {
           const sg = r.gf - r.gs;
           const sgColor = sg > 0 ? 'color:var(--green);' : sg < 0 ? 'color:var(--red);' : '';
           return `<tr>
-            <td><div style="display:flex;align-items:center;gap:8px;">${foto}<span style="text-transform:uppercase;">${r.nome}</span></div></td>
+            <td><div style="display:flex;align-items:center;gap:8px;">${foto}<span class="grad" style="text-transform:uppercase;">${r.nome}</span></div></td>
             <td>${r.j}</td>
             <td style="color:var(--green);">${r.v}</td>
             <td>${r.e}</td>
@@ -7936,12 +7945,15 @@ function _renderRankJogos() {
       const icon2 = badgeTimeIcon(j.j2TimeId, j.j2Time, tipo);
       const empate = j.g1 === j.g2;
       return `<div class="match-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;margin-bottom:10px;">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span class="tag tag-purple">TORNEIO</span>
-            <span class="tag tag-gray">${j.isSel?'SELECOES':'CLUBES'}</span>
-            ${j.torneio?`<span class="tag tag-yellow" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${j.torneio.toUpperCase()}</span>`:''}
-          </div>
+        <div style="margin:-14px -14px 0 -14px;padding:10px 14px 8px;background:transparent;border-bottom:1px solid var(--card-border);border-radius:18px 18px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <span class="tag tag-purple">TORNEIO</span>
+        </div>
+        <div style="margin-bottom:10px;"></div>
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:10px;">
+          <span class="tag tag-gray">${j.isSel?'SELECOES':'CLUBES'}</span>
+          ${j.torneio?`<span class="tag tag-yellow" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${j.torneio.toUpperCase()}</span>`:''}
+          <span class="tag tag-red">FINALIZADO</span>
+          ${data?`<span class="tag tag-gray" style="margin-left:auto;">${data}</span>`:''}
         </div>
         <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;align-items:center;">
           <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
@@ -7964,7 +7976,6 @@ function _renderRankJogos() {
         </div>
         <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
           ${empate?`<span class="tag tag-yellow">EMPATE</span>`:''}
-          ${data?`<span style="font-size:10px;color:var(--text-muted);">${data}</span>`:''}
         </div>
         ${!empate?_htmlSecaoVencedor([{id:j.g1>j.g2?j.j1Id:j.j2Id,nome:j.g1>j.g2?(j.j1Nome||'J1'):(j.j2Nome||'J2')}],null):''}
       </div>`;
@@ -7980,12 +7991,15 @@ function _renderRankJogos() {
       const nome2 = j.advTime || '';
       const nomeAdvTime = j.advTimeNome || j.advTime || '?';
       return `<div class="match-card" style="margin-bottom:10px;">
-        <div style="display:flex;align-items:center;margin-bottom:10px;">
-          <div style="display:flex;align-items:center;gap:6px;">
-            <span class="tag tag-purple">TORNEIO</span>
-            <span class="tag tag-gray">${isSel ? 'SELECOES' : 'CLUBES'}</span>
-            ${j.torneio?`<span class="tag tag-yellow" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${j.torneio.toUpperCase()}</span>`:''}
-          </div>
+        <div style="margin:-14px -14px 0 -14px;padding:10px 14px 8px;background:transparent;border-bottom:1px solid var(--card-border);border-radius:18px 18px 0 0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+          <span class="tag tag-purple">TORNEIO</span>
+        </div>
+        <div style="margin-bottom:10px;"></div>
+        <div style="display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:10px;">
+          <span class="tag tag-gray">${isSel ? 'SELECOES' : 'CLUBES'}</span>
+          ${j.torneio?`<span class="tag tag-yellow" style="max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${j.torneio.toUpperCase()}</span>`:''}
+          <span class="tag tag-red">FINALIZADO</span>
+          ${data?`<span class="tag tag-gray" style="margin-left:auto;">${data}</span>`:''}
         </div>
         <div style="display:grid;grid-template-columns:1fr auto 1fr;column-gap:16px;align-items:center;">
           <div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
@@ -8008,7 +8022,6 @@ function _renderRankJogos() {
         </div>
         <div style="display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
           ${j.res==='E'?`<span class="tag tag-yellow">EMPATE</span>`:''}
-          ${data?`<span style="font-size:10px;color:var(--text-muted);">${data}</span>`:''}
         </div>
         ${j.res!=='E'?_htmlSecaoVencedor([{id:j.res==='V'?j.meuJogadorId:(j.advJogadoresIds||[])[0]||null,nome:j.res==='V'?(nome1||'?'):(nome2||'?')}],null):''}
       </div>`;
