@@ -146,6 +146,8 @@
     .tag-yellow { background: rgba(245,158,11,0.2); color: #FCD34D; }
     .tag-gray { background: rgba(100,116,139,0.2); color: #94A3B8; }
     .tag-red { background: rgba(239,68,68,0.2); color: #FCA5A5; }
+    .teams-scroll { overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; }
+    .teams-scroll::-webkit-scrollbar { display: none; }
     /* ── Agrupadores ── */
     .grupo-header { display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid var(--card-border);border-radius:14px;cursor:pointer;margin-bottom:8px;user-select:none; }
     #view-home .grupo-header { padding-top:13px;padding-bottom:13px; }
@@ -6935,7 +6937,7 @@ window.abrirCampeonato = (id) => {
         <div style="border-top:1px solid rgba(255,255,255,0.1);margin:0 -4px 10px -4px;"></div>` : '';
         const teamCard = (t) => {
           const tt = selecoes.some(s => s.id === t?.id) ? 'selecoes' : 'clubes';
-          return `<div style="background:transparent;border:none;border-radius:10px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px;">
+          return `<div style="background:transparent;border:none;border-radius:10px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:calc(calc(100% - 16px) / 3);flex-shrink:0;">
             ${_htmlCountryRow(t?.id, t?.nome, tt)}
             <div class="grad" style="font-weight:900;font-size:11px;text-transform:uppercase;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:70px;">${_nomeAbrevTime(t?.id, t?.nome||'?')}</div>
             ${badgeTimeIcon(t?.id, t?.nome, tt)}
@@ -6944,7 +6946,7 @@ window.abrirCampeonato = (id) => {
         };
         return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;margin-bottom:8px;">
           ${playerHeader}
-          <div style="display:flex;gap:8px;overflow-x:auto;justify-content:center;">${times.map(t => teamCard(t)).join('')}</div>
+          <div class="teams-scroll" style="display:flex;gap:8px;">${times.map(t => teamCard(t)).join('')}</div>
         </div>`;
       };
       if (c.modoDupla) {
@@ -8332,7 +8334,7 @@ function cardCampHome(c, modoLista=false) {
         <div style="border-top:1px solid rgba(255,255,255,0.1);margin:0 -4px 10px -4px;"></div>` : '';
       const teamCard = (t) => {
         const tt = selecoes.some(s => s.id === t?.id) ? 'selecoes' : 'clubes';
-        return `<div style="background:transparent;border:none;border-radius:10px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px;">
+        return `<div style="background:transparent;border:none;border-radius:10px;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:calc(calc(100% - 16px) / 3);flex-shrink:0;">
           ${_htmlCountryRow(t?.id||'', t?.nome||'', tt)}
           <div style="font-weight:900;font-size:11px;text-transform:uppercase;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:70px;">${_nomeAbrevTime(t?.id, t?.nome||'?')}</div>
           ${badgeTimeIcon(t?.id||'', t?.nome||'', tt)}
@@ -8341,7 +8343,7 @@ function cardCampHome(c, modoLista=false) {
       };
       return `<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px;margin-bottom:8px;">
         ${playerHeader}
-        <div style="display:flex;gap:8px;overflow-x:auto;justify-content:center;">${times.map(t => teamCard(t)).join('')}</div>
+        <div class="teams-scroll" style="display:flex;gap:8px;">${times.map(t => teamCard(t)).join('')}</div>
       </div>`;
     };
     if (c.modoDupla) {
