@@ -748,8 +748,7 @@
         <span class="breadcrumb-sep">›</span>
         <span class="breadcrumb-item active"><span class="grad">TIMES</span></span>
       </div>
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:0 0 16px;">
-        <h2 style="font-size:22px; font-weight:900;" class="grad">TIMES</h2>
+      <div style="display:flex; align-items:center; justify-content:flex-end; padding:0 0 16px;">
         <button class="btn-primary" id="btn-add-time" style="width:auto;padding:10px 18px;font-size:14px;background:var(--card);border:1px solid var(--card-border);border-radius:18px;font-weight:800;"><span class="grad">+ CRIAR</span></button>
       </div>
 
@@ -1431,7 +1430,7 @@ function htmlMsDropPaisTimes(paises) {
   const label = _msTriggerLabel('ms-pais-times');
   return `<div class="ms-drop" id="ms-pais-times">
     <button class="ms-trigger" onclick="_toggleMsDrop(event,'ms-pais-times')" type="button">
-      <span class="ms-trigger-label">${label}</span>
+      <span class="ms-trigger-label grad" style="font-weight:900;letter-spacing:-0.5px;">${label}</span>
       <span class="ms-trigger-arrow">▼</span>
     </button>
     <div class="ms-panel">
@@ -1440,7 +1439,7 @@ function htmlMsDropPaisTimes(paises) {
         return `<div class="ms-opt${checked?' checked':''}" data-val="${window._escSQ(p.nome)}" onclick="togglePaisFiltroTimes(event,'${window._escSQ(p.nome)}')">
           <div class="ms-opt-check">${checked?'✓':''}</div>
           ${p.code ? `<img src="https://flagcdn.com/w40/${p.code}.png" style="width:22px;height:16px;object-fit:cover;border-radius:3px;" loading="lazy">` : ''}
-          <span style="text-transform:uppercase;font-size:12px;">${p.nome}</span>
+          <span class="grad" style="text-transform:uppercase;font-size:12px;font-weight:900;letter-spacing:-0.5px;">${p.nome}</span>
         </div>`;
       }).join('')}
     </div>
