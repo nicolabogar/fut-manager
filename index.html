@@ -9043,15 +9043,13 @@ function abrirModalAddTime(tipoInicial) {
     <div style="display:flex;flex-direction:column;gap:14px;max-width:400px;margin:0 auto;">
       <div>
         <h2 style="font-size:22px;font-weight:900;margin-bottom:16px;" class="grad">NOVO TIME</h2>
-        <label style="display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;" class="grad">TIPO</label>
+        <label style="display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;color:var(--text-muted);">TIPO</label>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
           <div class="tipo-btn ${tipoInicial==='clube'?'sel':''}" id="nt-c" onclick="selTipoTime('clube')">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2.5l-8 2.5v6c0 5 3.5 9.4 8 10.5 4.5-1.1 8-5.5 8-10.5V5z"/></svg>
-            <span style="font-size:12px;font-weight:700;display:block;margin-top:4px;" class="grad">CLUBE</span>
+            <span style="font-size:12px;font-weight:700;display:block;" class="grad">CLUBE</span>
           </div>
           <div class="tipo-btn ${tipoInicial==='selecao'?'sel':''}" id="nt-s" onclick="selTipoTime('selecao')">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18"/></svg>
-            <span style="font-size:12px;font-weight:700;display:block;margin-top:4px;" class="grad">SELEÇÃO</span>
+            <span style="font-size:12px;font-weight:700;display:block;" class="grad">SELEÇÃO</span>
           </div>
         </div>
       </div>
@@ -9060,7 +9058,7 @@ function abrirModalAddTime(tipoInicial) {
       <!-- CLUBE: formulário do zero -->
       <div id="nt-clube-section" style="display:${tipoInicial==='clube'?'flex':'none'};flex-direction:column;gap:14px;">
         <div style="position:relative;">
-          <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;" class="grad">PAÍS</label>
+          <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;color:var(--text-muted);">PAÍS</label>
           <input type="hidden" id="nt-clube-pais" value="">
           <div id="nt-clube-pais-display" class="input" style="cursor:pointer;display:flex;align-items:center;gap:8px;min-height:42px;" onclick="_ntTogglePaisDropdown()">
             <span style="font-size:14px;" class="grad" id="nt-clube-pais-label">Selecione o país...</span>
@@ -9073,15 +9071,15 @@ function abrirModalAddTime(tipoInicial) {
           </div>
         </div>
         <div>
-          <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;" class="grad">NOME DO CLUBE</label>
+          <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;color:var(--text-muted);">NOME DO CLUBE</label>
           <input class="input input-grad" id="nt-clube-nome" placeholder="Nome do clube..." autocomplete="off" oninput="_ntClubePreview()" style="text-transform:uppercase;">
         </div>
         <div>
-          <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;" class="grad">NOME ABREVIADO (OPCIONAL)</label>
+          <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;color:var(--text-muted);">NOME ABREVIADO (OPCIONAL)</label>
           <input class="input input-grad" id="nt-clube-nomeAbrev" placeholder="Ex: MAN. UTD" autocomplete="off" style="text-transform:uppercase;">
         </div>
         <div>
-          <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;" class="grad">BRASÃO (OPCIONAL)</label>
+          <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:6px;color:var(--text-muted);">BRASÃO (OPCIONAL)</label>
           <div style="display:flex;flex-direction:column;gap:10px;">
             <label style="cursor:pointer;">
               <div class="btn-ghost" style="text-align:center;pointer-events:none;font-size:13px;padding:10px;">ESCOLHER IMAGEM</div>
@@ -9096,7 +9094,7 @@ function abrirModalAddTime(tipoInicial) {
           </div>
         </div>
         <div class="efic-panel">
-          <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;" class="grad">EFICIÊNCIA</label>
+          <label style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;color:var(--text-muted);">EFICIÊNCIA</label>
           <div class="efic-tags" id="nt-efic-tags">
             <span class="efic-tag${_eficienciaNT==='Ruim'?' selecionado':''}" data-efic="Ruim"     onclick="selecionarEficienciaNT('Ruim')">Ruim</span>
             <span class="efic-tag${_eficienciaNT==='Moderado'?' selecionado':''}" data-efic="Moderado" onclick="selecionarEficienciaNT('Moderado')">Moderado</span>
@@ -9107,16 +9105,16 @@ function abrirModalAddTime(tipoInicial) {
         <!-- Preview ao vivo do time -->
         <div id="nt-clube-live-preview" style="display:none;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.18);border-radius:14px;padding:16px;"></div>
 
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
-          <button id="btn-salvar-time" class="btn-primary" onclick="salvarNovoTime()" disabled style="opacity:0.4;background:var(--card);border:1px solid var(--card-border);border-radius:18px;font-weight:800;"><span class="grad">CRIAR</span></button>
-          <button class="btn-primary" style="background:var(--card);border:1px solid var(--card-border);border-radius:18px;font-weight:800;" onclick="fecharFullscreen()"><span class="grad">CANCELAR</span></button>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:20px;">
+          <button id="btn-salvar-time" class="btn-primary" onclick="salvarNovoTime()" disabled>SALVAR</button>
+          <button class="btn-ghost" onclick="fecharFullscreen()">CANCELAR</button>
         </div>
       </div>
 
       <!-- SELEÇÃO: busca existente -->
       <div id="nt-selecao-section" style="display:${tipoInicial==='selecao'?'flex':'none'};flex-direction:column;gap:14px;">
         <div>
-          <label style="display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;" class="grad">BUSCAR SELEÇÃO</label>
+          <label style="display:block;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;color:var(--text-muted);">BUSCAR SELEÇÃO</label>
           <input class="input input-grad" id="nt-busca" placeholder="Buscar país..." autocomplete="off" oninput="filtrarListaAddTime()">
         </div>
         <div id="nt-lista" style="max-height:280px;overflow-y:auto;border-radius:12px;border:1px solid var(--card-border);background:rgba(0,0,0,0.2);padding:8px;"></div>
@@ -9127,7 +9125,7 @@ function abrirModalAddTime(tipoInicial) {
         </div>
 
         <div class="efic-panel">
-          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;" class="grad">EFICIÊNCIA</label>
+          <label style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:8px;color:var(--text-muted);">EFICIÊNCIA</label>
           <div class="efic-tags" id="nt-efic-tags-sel">
             <span class="efic-tag${_eficienciaNT==='Ruim'?' selecionado':''}" data-efic="Ruim"     onclick="selecionarEficienciaNTSel('Ruim')">Ruim</span>
             <span class="efic-tag${_eficienciaNT==='Moderado'?' selecionado':''}" data-efic="Moderado" onclick="selecionarEficienciaNTSel('Moderado')">Moderado</span>
@@ -9135,9 +9133,9 @@ function abrirModalAddTime(tipoInicial) {
             <span class="efic-tag${_eficienciaNT==='Super'?' selecionado':''}" data-efic="Super"   onclick="selecionarEficienciaNTSel('Super')">Super</span>
           </div>
         </div>
-        <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
-          <button id="btn-salvar-time-sel" class="btn-primary" onclick="salvarNovoTimeSel()" disabled style="opacity:0.4;background:var(--card);border:1px solid var(--card-border);border-radius:18px;font-weight:800;"><span class="grad">CRIAR</span></button>
-          <button class="btn-primary" style="background:var(--card);border:1px solid var(--card-border);border-radius:18px;font-weight:800;" onclick="fecharFullscreen()"><span class="grad">CANCELAR</span></button>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:20px;">
+          <button id="btn-salvar-time-sel" class="btn-primary" onclick="salvarNovoTimeSel()" disabled>SALVAR</button>
+          <button class="btn-ghost" onclick="fecharFullscreen()">CANCELAR</button>
         </div>
       </div>
     </div>`);
