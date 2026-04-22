@@ -3666,7 +3666,7 @@ window.filtrarJogsJC = () => {
   drop.innerHTML = disponiveis.map(j =>
     `<div onclick="selecionarJogJC('${j.id}','${_nomeExibicao(j).replace(/'/g,"\\'").replace(/"/g,'&quot;')}');document.getElementById('jc-search').value='';document.getElementById('jc-dropdown').style.display='none';"
       style="padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;">
-      ${SVG_USER_CHIP}<span>${_nomeExibicao(j)}</span>
+      ${SVG_USER_CHIP}<span class="grad">${_nomeExibicao(j)}</span>
     </div>`
   ).join('');
   drop.style.display = 'block';
@@ -4167,7 +4167,7 @@ window.filtrarJogsDupla = (duplaNum) => {
   drop.innerHTML = disponiveis.map(j =>
     `<div onclick="selecionarJogDupla('${j.id}','${_nomeExibicao(j).replace(/'/g,"\\'").replace(/"/g,'&quot;')}',${duplaNum});document.getElementById('jc-search-d${duplaNum}').value='';document.getElementById('jc-dropdown-d${duplaNum}').style.display='none';"
       style="padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.05);font-weight:600;font-size:13px;display:flex;align-items:center;gap:8px;">
-      ${SVG_USER_CHIP}<span>${_nomeExibicao(j)}</span>
+      ${SVG_USER_CHIP}<span class="grad">${_nomeExibicao(j)}</span>
     </div>`
   ).join('');
   drop.style.display = 'block';
