@@ -7779,7 +7779,7 @@ window._rankCDropFilter = (id, q) => {
   if (!list) return;
   const query = q.toUpperCase().trim();
   list.querySelectorAll('.rank-cdrop-item').forEach(item => {
-    const label = (item.dataset.label || item.textContent).toUpperCase();
+    const label = (item.dataset.label || '').toUpperCase();
     item.style.display = !query || label.includes(query) ? '' : 'none';
   });
 };
