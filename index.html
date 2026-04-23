@@ -7634,6 +7634,7 @@ function renderRankRow(p, i, fromHome) {
     ? `irParaRankingComJogador('${p.id}')` 
     : `_setRankJogFiltro('${p.id}')`;
   const titulosHtml = (p.titulos||0) > 0 ? `<span title="TITULOS TORNEIOS" style="color:var(--yellow);">🏆${p.titulos}</span>` : '';
+  const pctVit = p.j > 0 ? Math.round(p.vit / p.j * 100) : 0;
   return `<div style="display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--card-border);border-radius:16px;padding:12px;margin-bottom:8px;cursor:pointer;" onclick="${clickHandler}">
     <div class="rank-pos" style="color:${i===0?'var(--yellow)':i===1?'#C0C0C0':i===2?'#CD7F32':'var(--text-muted)'};font-weight:900;">${i+1}°</div>
     ${foto}
@@ -7646,6 +7647,7 @@ function renderRankRow(p, i, fromHome) {
       <span title="VITORIAS">${p.vit}V</span>
       <span title="DERROTAS">${p.der}D</span>
       <span title="EMPATES">${p.emp}E</span>
+      <span title="PERCENTUAL DE VITORIAS" style="color:var(--green);">${pctVit}%V</span>
       <span title="GOLS FEITOS" style="color:var(--green);">${p.gp}GF</span>
       <span title="GOLS SOFRIDOS" style="color:var(--red);">${p.gc}GS</span>
     </div>
@@ -8481,6 +8483,35 @@ function _coletarJogosJogador(jogadorId, dataIni, dataFim) {
         advTimeId: mAdv?.time?.id||'',
         advJogadores: advNome ? [advNome] : [],
         advJogadoresIds: advJogadorId ? [advJogadorId] : [],
+        meuGol, advGol, res, ts, torneio: c.nome, isDupla: !!c.modoDupla
+      });
+    }));
+    (c.fasesEliminatorias||[]).forEach(fase => (fase.confrontos||[]).forEach(cf => {
+      if (cf.vencedor === null || cf.g1 === null || cf.g2 === null) return;
+      if (cf.mesmoJogador) return;
+      const isJ1 = cf.j1Id === jogadorId;
+      const isJ2 = cf.j2Id === jogadorId;
+      if (!isJ1 && !isJ2) return;
+      const meuGol = isJ1 ? cf.g1 : cf.g2;
+      const advGol = isJ1 ? cf.g2 : cf.g1;
+      const res = meuGol > advGol ? 'V' : meuGol < advGol ? 'D' : 'E';
+      const advNome = isJ1 ? cf.j2Nome : cf.j1Nome;
+      const advId = isJ1 ? cf.j2Id : cf.j1Id;
+      const meuTimes = isJ1 ? cf.j1Times : cf.j2Times;
+      const advTimes = isJ1 ? cf.j2Times : cf.j1Times;
+      const meuTime = (meuTimes||[])[0] || null;
+      const advTime = (advTimes||[])[0] || null;
+      const isSel = CAMP_META[c.tipo]?.tipo === 'selecoes';
+      jogos.push({
+        tipo:'TORNEIO', tipoTime: isSel ? 'SELECAO' : 'CLUBE',
+        meuTime: meuTime?.nome||'?',
+        meuTimeId: meuTime?.id||'',
+        meuJogadorId: jogadorId,
+        advTime: advNome,
+        advTimeNome: advTime?.nome||'',
+        advTimeId: advTime?.id||'',
+        advJogadores: advNome ? [advNome] : [],
+        advJogadoresIds: advId ? [advId] : [],
         meuGol, advGol, res, ts, torneio: c.nome, isDupla: !!c.modoDupla
       });
     }));
