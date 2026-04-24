@@ -5,12 +5,12 @@
 
 ## MELHORIAS ##
 
-- [ ] Item 1: Botões de cancelar - padronizar estilo em todo o projeto para o mesmo estilo do botão cancelar da página de criar times (btn-ghost: fundo de card, borda, texto cinza)
-- [ ] Item 2: Todos os botões principais (exceto cancelar e excluir) devem ter o estilo do botão da tela de cadastro de times (btn-primary com texto degradê)
-- [ ] Item 3: Cards de jogos em andamento (torneio e amistoso) devem ter o mesmo comportamento estrutural, apenas mudando cor do texto do header e tags específicas de cada tipo
-- [ ] Item 4: Cards de jogos finalizados (torneio e amistoso) devem ter o mesmo comportamento que os cards finalizados da tela de amistosos
-- [ ] Item 5: Todos os dropdowns de listagem devem ter o mesmo estilo (cor, modo de listagem, cor de texto) do filtro da página de listar times
-- [ ] Item 6: Tags com os mesmos nomes devem sempre ter a mesma cor em todo o projeto
-- [ ] Item 7: Todas as tags devem estar com alinhamento centralizado e no meio do componente (justify-content: center nos contêineres de tags)
-- [ ] Item 8: Labels de componentes (textbox, checkbox, radiobutton, dropdown) devem ter a mesma cor em toda a aplicação, igual ao campo jogadores do criar amistoso (color: var(--text-muted))
-- [ ] Item 9: Todos os componentes devem ter espaçamento que deixe o layout agradável e alinhado nas páginas
+- [x] Item 1: Botões de cancelar - padronizar estilo em todo o projeto para o mesmo estilo do botão cancelar da página de criar times (btn-ghost: fundo de card, borda, texto cinza) (hash: 09b44c0)
+- [x] Item 2: Todos os botões principais (exceto cancelar e excluir) devem ter o estilo do botão da tela de cadastro de times (btn-primary com texto degradê) (hash: 09b44c0)
+- [x] Item 3: Cards de jogos em andamento (torneio e amistoso) devem ter o mesmo comportamento estrutural, apenas mudando cor do texto do header e tags específicas de cada tipo (hash: 09b44c0)
+- [x] Item 4: Cards de jogos finalizados (torneio e amistoso) devem ter o mesmo comportamento que os cards finalizados da tela de amistosos (hash: 09b44c0)
+- [x] Item 5: Todos os dropdowns de listagem devem ter o mesmo estilo (cor, modo de listagem, cor de texto) do filtro da página de listar times (hash: 09b44c0)
+- [x] Item 6: Tags com os mesmos nomes devem sempre ter a mesma cor em todo o projeto (hash: 09b44c0)
+- [x] Item 7: Todas as tags devem estar com alinhamento centralizado e no meio do componente (justify-content: center nos contêineres de tags) (hash: 09b44c0)
+- [x] Item 8: Labels de componentes (textbox, checkbox, radiobutton, dropdown) devem ter a mesma cor em toda a aplicação, igual ao campo jogadores do criar amistoso (color: var(--text-muted)) (hash: 09b44c0)
+- [x] Item 9: Todos os componentes devem ter espaçamento que deixe o layout agradável e alinhado nas páginas (hash: 09b44c0)
