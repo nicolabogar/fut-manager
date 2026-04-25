@@ -1297,7 +1297,7 @@ function _htmlJogadoresTime(time, playerColors, defaultColor, defaultBg, compact
     ? ids.map((pid, i) => _htmlJogadorPill(pid, _nomeTag(nomes[i] || _nomeJogPorId(pid, '')), 20, pid ? _jogadorBg(pid, playerColors) : (defaultBg || null)))
     : nomes.map(n => _htmlJogadorPill(null, _nomeTag(n), 20, defaultBg || null));
   if (isWinner) {
-    return `<div style="margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;"><span style="font-size:16px;line-height:1;">🏆</span>${items.join('')}</div>`;
+    return `<div style="margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap;"><span style="font-size:16px;line-height:1;" role="img" aria-label="Vencedor">🏆</span>${items.join('')}</div>`;
   }
   return `<div style="margin-top:4px;display:flex;flex-direction:column;align-items:center;gap:4px;">${items.join('')}</div>`;
 }
@@ -8356,7 +8356,7 @@ function _renderRankJogos() {
             ${j.j1Time?`<div class="grad" style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(j.j1TimeId, j.j1Time)}</div>`:''}
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon1}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.j1TimeId))}</div>
-            ${j.j1Nome?`<div style="margin-top:2px;display:flex;align-items:center;justify-content:center;gap:6px;">${!empate&&j.g1>j.g2?'<span style="font-size:16px;line-height:1;">🏆</span>':''}${_htmlJogadorPill(j.j1Id, j.j1Nome, 20)}</div>`:''}
+            ${j.j1Nome?`<div style="margin-top:2px;display:flex;align-items:center;justify-content:center;gap:6px;">${!empate&&j.g1>j.g2?'<span style="font-size:16px;line-height:1;" role="img" aria-label="Vencedor">🏆</span>':''}${_htmlJogadorPill(j.j1Id, j.j1Nome, 20)}</div>`:''}
           </div>
           <div style="text-align:center;min-width:70px;">
             <div class="grad" style="font-size:29px;font-weight:900;letter-spacing:1px;">${j.g1}<span style="font-size:13px;"> × </span>${j.g2}</div>
@@ -8366,7 +8366,7 @@ function _renderRankJogos() {
             ${j.j2Time?`<div class="grad" style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(j.j2TimeId, j.j2Time)}</div>`:''}
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon2}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.j2TimeId))}</div>
-            ${j.j2Nome?`<div style="margin-top:2px;display:flex;align-items:center;justify-content:center;gap:6px;">${!empate&&j.g2>j.g1?'<span style="font-size:16px;line-height:1;">🏆</span>':''}${_htmlJogadorPill(j.j2Id, j.j2Nome, 20)}</div>`:''}
+            ${j.j2Nome?`<div style="margin-top:2px;display:flex;align-items:center;justify-content:center;gap:6px;">${!empate&&j.g2>j.g1?'<span style="font-size:16px;line-height:1;" role="img" aria-label="Vencedor">🏆</span>':''}${_htmlJogadorPill(j.j2Id, j.j2Nome, 20)}</div>`:''}
           </div>
         </div>
       </div>`;
@@ -8399,7 +8399,7 @@ function _renderRankJogos() {
             <div class="grad" style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(j.meuTimeId, j.meuTime)}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon1}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.meuTimeId))}</div>
-            ${nome1?`<div style="margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px;">${j.res==='V'?'<span style="font-size:16px;line-height:1;">🏆</span>':''}${_htmlJogadorPill(j.meuJogadorId, nome1, 20)}</div>`:''}
+            ${nome1?`<div style="margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px;">${j.res==='V'?'<span style="font-size:16px;line-height:1;" role="img" aria-label="Vencedor">🏆</span>':''}${_htmlJogadorPill(j.meuJogadorId, nome1, 20)}</div>`:''}
           </div>
           <div style="text-align:center;min-width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
             <div class="grad" style="font-size:29px;font-weight:900;letter-spacing:1px;">${j.meuGol}<span style="font-size:13px;"> × </span>${j.advGol}</div>
@@ -8409,7 +8409,7 @@ function _renderRankJogos() {
             <div class="grad" style="font-weight:900;font-size:16px;line-height:1.2;text-transform:uppercase;">${_nomeAbrevTime(j.advTimeId, nomeAdvTime)}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${icon2}</div>
             <div style="display:flex;justify-content:center;margin-bottom:4px;">${eficBadge(eficienciaAtual(j.advTimeId))}</div>
-            ${nome2?`<div style="margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px;">${j.res==='D'?'<span style="font-size:16px;line-height:1;">🏆</span>':''}${_htmlJogadorPill((j.advJogadoresIds||[])[0]||null, nome2, 20)}</div>`:''}
+            ${nome2?`<div style="margin-top:4px;display:flex;align-items:center;justify-content:center;gap:6px;">${j.res==='D'?'<span style="font-size:16px;line-height:1;" role="img" aria-label="Vencedor">🏆</span>':''}${_htmlJogadorPill((j.advJogadoresIds||[])[0]||null, nome2, 20)}</div>`:''}
           </div>
         </div>
       </div>`;

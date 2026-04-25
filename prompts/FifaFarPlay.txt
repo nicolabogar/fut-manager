@@ -5,6 +5,6 @@
 
 ## MELHORIAS ##
 
-- [ ] Card de jogos: data do jogo no menu do card e como tag (todos os cards: amistosos pendentes, finalizados e partidas de torneio no ranking)
-- [ ] Cards finalizados: remover quebra de linha e tag do vencedor, adicionar ícone de taça à esquerda do nome do jogador abaixo da eficiência do time
-- [ ] Ranking: textos e estilos iguais à tela de amistoso (cor dos botões filtro, tipo de botão modo de jogo, título das seções com grad)
+- [x] Card de jogos: data do jogo no menu do card e como tag (todos os cards: amistosos pendentes, finalizados e partidas de torneio no ranking) (hash: b59a708)
+- [x] Cards finalizados: remover quebra de linha e tag do vencedor, adicionar ícone de taça à esquerda do nome do jogador abaixo da eficiência do time (hash: b59a708)
+- [x] Ranking: textos e estilos iguais à tela de amistoso (cor dos botões filtro, tipo de botão modo de jogo, título das seções com grad) (hash: b59a708)
